@@ -7,21 +7,40 @@ mkdir input
 mkdir input_l93
 mkdir output
 
-for layer in plan-de-voirie-trottoirs-emprises plan-de-voirie-passages-pietons plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-ilots-directionnels plan-de-voirie-terre-pleins plan-de-voirie-voies-en-escalier arrondissements
+getData () {
+list=$2[@]
+l=("${!list}")
+mkdir -p input_l93/$1
+mkdir -p output/$1
+mkdir -p input/$1
+for layer in "${l[@]}"
 do
     # get the data from opendata paris
-    wget ${BASE_URL}/${layer}/${OPTS} -O input/${layer}.geojson
+    wget ${BASE_URL}/${layer}/${OPTS} -O input/$1/${layer}.geojson
     # reproject everything to lambert93 (EPSG:2154)
-    ogr2ogr -s_srs EPSG:4326 -t_srs EPSG:2154 -f GeoJSON input_l93/${layer}.geojson input/${layer}.geojson
+    ogr2ogr -s_srs EPSG:4326 -t_srs EPSG:2154 -f GeoJSON input_l93/$1/${layer}.geojson input/$1/${layer}.geojson
     # rasterize
-    gdal_rasterize -at -burn 255 -a_nodata 0.0 -tr 1.0 1.0 -te 651000 6859000 654000 6862000 -ot Byte -of GTiff input_l93/${layer}.geojson output/${layer}.tif
+    gdal_rasterize -at -burn 255 -a_nodata 0.0 -tr 1.0 1.0 -te 651000 6859000 654000 6862000 -ot Byte -of GTiff input_l93/$1/${layer}.geojson output/$1/${layer}.tif
 done
+}
+
+declare -a lType 
+#lType=(plan-de-voirie-trottoirs-emprises plan-de-voirie-passages-pietons plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-ilots-directionnels plan-de-voirie-terre-pleins plan-de-voirie-voies-en-escalier deconfinement-rues-amenagees-pour-pietons)
+lType=(plan-de-voirie-voies-en-escalier)
+getData "voirie" lType
+lType=(deconfinement-pistes-cyclables-temporaires)
+getData "cycle" lType
+lType=(secteurs-des-bureaux-de-vote-en-2017 arrondissements)
+getData "zoning" lType
 
 # merge the different layers in a single tif
 # with all layers
-gdal_merge.py -o all_layers.tif output/plan-de-voirie-ilots-directionnels.tif output/plan-de-voirie-aires-mixtes-vehicules-et-pietons.tif output/plan-de-voirie-emprises-espaces-verts.tif output/plan-de-voirie-passages-pietons.tif output/plan-de-voirie-terre-pleins.tif output/plan-de-voirie-trottoirs-emprises.tif output/plan-de-voirie-voies-en-escalier.tif
+voirieFiles=(./output/voirie/*.tif)
+gdal_merge.py -o all_layers_voirie.tif $voirieFiles
+
+voirieFilesNoGreen=(./output/voirie/*.tif --ignore={*verts*})
 # without green spaces
-gdal_merge.py -o all_except_green.tif output/plan-de-voirie-ilots-directionnels.tif output/plan-de-voirie-aires-mixtes-vehicules-et-pietons.tif output/plan-de-voirie-passages-pietons.tif output/plan-de-voirie-terre-pleins.tif output/plan-de-voirie-trottoirs-emprises.tif output/plan-de-voirie-voies-en-escalier.tif
+gdal_merge.py -o all_except_green.tif $voirieFilesNoGreen
 
 # get the activity data
 #https://geodatamine.fr/data/shop_craft_office/-71525?format=csv&aspoint=true&metadata=true
