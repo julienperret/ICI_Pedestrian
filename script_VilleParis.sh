@@ -25,8 +25,7 @@ done
 }
 
 declare -a lType 
-#lType=(plan-de-voirie-trottoirs-emprises plan-de-voirie-passages-pietons plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-ilots-directionnels plan-de-voirie-terre-pleins plan-de-voirie-voies-en-escalier deconfinement-rues-amenagees-pour-pietons)
-lType=(plan-de-voirie-voies-en-escalier)
+lType=(plan-de-voirie-acces-pietons-metro-et-parkings troncon_voie plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees plan-de-voirie-ilots-directionnels plan-de-voirie-mobiliers-urbains-jardinieres-bancs-corbeilles-de-rue plan-de-voirie-trottoirs plan-de-voirie-passages-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-pistes-cyclables-et-couloirs-de-bus plan-de-voirie-voies-privees-fermees plan-de-voirie-mobiliers-urbains-abris-voyageurs-points-darrets-bus plan-de-voirie-voies-en-escalier plan-de-voirie-trottoirs-emprises espaces_verts plan-de-voirie-terre-pleins plan-de-voirie-emprises-ferroviaires reseau-cyclable)
 getData "voirie" lType
 lType=(deconfinement-pistes-cyclables-temporaires)
 getData "cycle" lType
