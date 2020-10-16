@@ -12,17 +12,31 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.operation.TransformException;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Geom;
 import fr.ign.tools.dataImporter.SortAmenitiesCategories;
 
 public class SIRENEImport {
-	public static void main(String[] args) throws IOException, URISyntaxException {
+	public static void main(String[] args)
+			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
 		// getSIRENEData();
-		parseSIRENEData(new File("/home/ubuntu/sirene.json"));
+		// parseSIRENEData(new File("/home/ubuntu/sirene.json"));
+		MakePointOutOfGeocode(new File("/tmp/geocodage.ign.fr.json"));
 	}
 
 	public static void getSIRENEData() throws IOException, URISyntaxException {
@@ -125,5 +139,48 @@ public class SIRENEImport {
 		// response.close();
 		// }
 		return null;
+	}
+
+	public static void MakePointOutOfGeocode(File jsonFile)
+			throws IOException, NoSuchAuthorityCodeException, FactoryException{
+		JsonFactory factory = new JsonFactory();
+		JsonParser parser = factory.createParser(jsonFile);
+		JsonToken token = parser.nextToken();
+		int i = 0;
+		while (!parser.isClosed()) {
+			token = parser.nextToken();
+			// tab
+			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("geometry")) {
+				token = parser.nextToken();
+				double x = 0;
+				double y = 0;
+				while (token != JsonToken.END_OBJECT) {
+					token = parser.nextToken();
+					if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("coordinates")) {
+						token = parser.nextToken();
+						token = parser.nextToken();
+						x = Double.parseDouble(parser.getText());
+						token = parser.nextToken();
+						y = Double.parseDouble(parser.getText());
+					}
+				}
+				GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
+				Point p = gf.createPoint(new Coordinate(x, y));
+
+				// FIXME doesn't work - point is not where it should be and i don't see why. Input is rightly in WCS 84 (4326) ?! Export should arrive in Lambert93
+				System.out.println(p);
+				Geometry ptLambert;
+				try {
+					ptLambert = JTS.transform(p, CRS.findMathTransform(CRS.decode("EPSG:4326"), CRS.decode("EPSG:2154")));
+				} catch (MismatchedDimensionException | TransformException | FactoryException e) {
+					ptLambert = null;
+					e.printStackTrace();
+				}
+				System.out.println(ptLambert);
+				Geom.exportGeom(ptLambert, new File("/tmp/out" + i++));
+			}
+		}
+
+		//
 	}
 }
