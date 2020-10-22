@@ -3,11 +3,13 @@ package insee;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
-import org.apache.http.Header;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -26,6 +28,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -36,43 +39,94 @@ import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Geom;
 public class SireneImport {
 	public static void main(String[] args)
 			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
-		 getSIRENEData();
-//		parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene2.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"),
-//				"WorkingPlace");
-//		parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene2.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"),
-//				"POI");
+		int nbFile = getSIRENEMultipleData(new File("/tmp/"));
+		for (int i = 0; i <= nbFile; i++) {
+			parseSireneEntry(new File("/tmp/sirene" + i + ".json"),
+					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
+		}
+		append = false;
+		for (int i = 0; i <= nbFile; i++) {
+			parseSireneEntry(new File("/tmp/sirene" + i + ".json"),
+					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+		}
+
 		// MakePointOutOfGeocode(new File("/tmp/geocodage.ign.fr.json"));
 		// convertJSONtoCSV(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.csv"));
 	}
 
-	public static void getSIRENEData() throws IOException, URISyntaxException {
-		
-		
+	static boolean append = false;
+
+	public static int getSIRENEMultipleData(File outFolder) throws IOException, URISyntaxException {
+		int i = 0;
+		String iniCursor = getSIRENEData("*", new File(outFolder, "sirene" + i++ + ".json"));
+		String cursor = iniCursor;
+		do {
+			iniCursor = cursor;
+			cursor = getSIRENEData(iniCursor, new File(outFolder, "sirene" + i++ + ".json"));
+		} while (!iniCursor.equals(cursor));
+		return i;
+	}
+
+	public static String getSIRENEData(String curseur, File outFile) throws IOException, URISyntaxException {
+
 		// FIXME not working
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		URI uri = new URIBuilder().setScheme("https").setHost("api.insee.fr").setPath("/entreprises/sirene/V3/siret")
-				.setParameter("q", "codePostalEtablissement:75005 AND etatAdministratifUniteLegale:A").setParameter("nombre", "10000").build();
+				.setParameter("q", "codePostalEtablissement:75005 AND etatAdministratifUniteLegale:A").setParameter("nombre", "10000")
+				.setParameter("curseur", curseur).build();
 		HttpPost httppost = new HttpPost(uri);
-		httppost.addHeader("Accept","application/json");
+		httppost.addHeader("Accept", "application/json");
 		httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 		httppost.addHeader("Authorization", "Bearer a2887e94-5cbe-3e9d-94da-93af59eacfcf");
 		System.out.println(httppost);
-//		for (Header h : httppost.getAllHeaders()) {
-//			System.out.println(h);
-//		}
+		// for (Header h : httppost.getAllHeaders()) {
+		// System.out.println(h);
+		// }
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
 			System.out.println(response.getStatusLine().getStatusCode());
-//			response.getEntity().
-//			for (Header e : response.getAllHeaders())
-//				System.out.println(e);
+			InputStream stream = response.getEntity().getContent();
+			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			IOUtils.closeQuietly(stream);
 		} finally {
 			response.close();
 		}
+
 		// this works on a command line : curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --header 'Authorization:
 		// Bearer a2887e94-5cbe-3e9d-94da-93af59eacfcf' -d 'q=etatAdministratifUniteLegale%3AA%20AND%20codePostalEtablissement%3A75005&nombre=100000'
 		// 'https://api.insee.fr/entreprises/sirene/V3/siret'
 		// this code should work too - returns a 404...
+		return getNextCursorJson(outFile);
+	}
+
+	public static String getNextCursorJson(File f) throws JsonParseException, IOException {
+		return getHeaderJson(f).get("curseurSuivant");
+	}
+
+	public static HashMap<String, String> getHeaderJson(File f) throws JsonParseException, IOException {
+		JsonFactory factory = new JsonFactory();
+		JsonParser parser = factory.createParser(f);
+		JsonToken token = parser.nextToken();
+		HashMap<String, String> header = new HashMap<String, String>();
+		boolean write = false;
+		try {
+			while (!parser.isClosed()) {
+				token = parser.nextToken();
+				if (token == JsonToken.START_OBJECT && parser.getCurrentName().equals("header"))
+					write = true;
+				if (token == JsonToken.END_OBJECT && parser.getCurrentName().equals("header"))
+					break;
+				if (token == JsonToken.FIELD_NAME && write) {
+					String key = parser.getCurrentName();
+					token = parser.nextToken();
+					header.put(key, parser.getText());
+				}
+			}
+		} catch (NullPointerException np) {
+			np.printStackTrace();
+			System.out.println("Invalid header");
+		}
+		return header;
 	}
 
 	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
@@ -198,7 +252,9 @@ public class SireneImport {
 				arrayStarted = false;
 			}
 		}
-		Csv.generateCsvFile(out, folderOut, "SIRENE-" + entryType + "-treated", false, fline);
+		Csv.generateCsvFile(out, folderOut, "SIRENE-" + entryType + "-treated", append, fline);
+		if (!append)
+			append = true;
 	}
 
 	// public void parse(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {

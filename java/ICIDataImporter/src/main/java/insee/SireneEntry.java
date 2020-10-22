@@ -37,7 +37,6 @@ public abstract class SireneEntry {
 		case "F":
 			return false;
 		}
-		System.out.println("etatAdministratifUniteLegale: " + etatAdministratifEtablissement);
 		return false;
 	}
 
