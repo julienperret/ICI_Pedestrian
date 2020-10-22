@@ -16,8 +16,8 @@ import org.geotools.util.URLs;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.Csv;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.io.Csv;
 
 public class ImportShops {
 	public static void main(String[] args) throws IOException {
@@ -28,18 +28,31 @@ public class ImportShops {
 		// MapDataDao map = new MapDataDao(connection);
 		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
 		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
-		Collec.setDefaultGISFileType(".geojson");
 		makeTabWithAttributesAndValues(new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/amenites.geojson"),
 				new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/"));
 	}
 
+	/**
+	 * Create a table summing up the geojson file coming from OSM with heterogenous attributes and values for those attributes. On columns, every attributes of the features, on
+	 * line, every unique value for each attribute.
+	 * 
+	 * @param geojsonFile
+	 *            input file with geojson
+	 * @param folderOut
+	 *            folder where the \{$geojson.name()\}-attr.csv file will be created
+	 * @throws IOException
+	 */
 	public static void makeTabWithAttributesAndValues(File geojsonFile, File folderOut) throws IOException {
+		// information for i/o of geocollection
+		Collec.setDefaultGISFileType(".geojson");
+		// importing geojson
 		Map<String, Object> params = new HashMap<>();
 		params.put(GeoJSONDataStoreFactory.URL_PARAM.key, URLs.fileToUrl(geojsonFile));
 		DataStore ds = DataStoreFinder.getDataStore(params);
 		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
-		HashMap<String, Object[]> data = new HashMap<String, Object[]>();
+		HashMap<String, Object[]> table = new HashMap<String, Object[]>();
 		List<String> listAttr = new ArrayList<String>();
+		// for every features
 		try (SimpleFeatureIterator it = sfc.features()) {
 			while (it.hasNext()) {
 				SimpleFeature f = it.next();
@@ -54,13 +67,11 @@ public class ImportShops {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(listAttr);
-
 		for (String attr : listAttr) {
 			List<String> list = Collec.getEachUniqueFieldFromSFC(sfc, attr, true);
 			if (list != null && list.size() > 0)
-				data.put(attr, list.toArray(String[]::new));
+				table.put(attr, list.toArray(String[]::new));
 		}
-		Csv.generateCsvFileCol(data, folderOut, geojsonFile.getName() + "-attr");
+		Csv.generateCsvFileCol(table, folderOut, geojsonFile.getName() + "-attr");
 	}
 }

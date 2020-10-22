@@ -15,7 +15,7 @@ public class SirenePOI extends SireneEntry {
 			String denominationUniteLegale, String siret, String trancheEffectifsUniteLegale) throws IOException {
 		super(nAdresse, adresse, typeVoie, codePos, codeAmenite, nomenclature, denominationUniteLegale, siret, trancheEffectifsUniteLegale);
 		makeClassement();
-		// geocodeIGN(adresseInfos);
+		 geocodeIGN(adresse);
 	}
 
 	String[] classement = new String[4];
@@ -46,16 +46,16 @@ public class SirenePOI extends SireneEntry {
 	}
 
 	public String[] getCSVFirstLine() {
-		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "codeAmenity", "nomenclature", "type", "cat", "freq",
-				"tranche Effectifs", "name" };
+		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "codeAmenity", "intituleAmenity", "nomenclature",
+				"type", "cat", "freq", "tranche Effectifs", "name" };
 		return firstCol;
 	}
 
 	public String[] getLineForCSV() {
 		if (!valid)
 			return null;
-		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, codeAmenite, nomenclature, classement[0], classement[1], classement[2],
-				trancheEffectifsEtablissement, denominationUniteLegale };
+		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, codeAmenite, classement[4], nomenclature, classement[0], classement[1],
+				classement[2], trancheEffectifsEtablissement, denominationUniteLegale };
 		return line;
 	}
 
@@ -69,7 +69,7 @@ public class SirenePOI extends SireneEntry {
 
 	public boolean equals(String[] line) {
 		if (line[1].equals(nAdresse) && line[2].equals(typeVoie) && line[3].equals(adresse) && line[4].equals(codePos)
-				&& line[8].equals(classement[1]) && line[0].equals(siret) && line[10].equals(trancheEffectifsEtablissement))
+				&& line[9].equals(classement[1]) && line[0].equals(siret) && line[11].equals(trancheEffectifsEtablissement))
 			return true;
 		return false;
 	}

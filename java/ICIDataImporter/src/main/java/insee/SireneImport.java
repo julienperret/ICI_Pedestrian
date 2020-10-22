@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -33,23 +32,19 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import au.com.bytecode.opencsv.CSVReader;
-import fr.ign.artiscales.tools.geoToolsFunctions.Csv;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Geom;
+import fr.ign.artiscales.tools.io.Csv;
+import fr.ign.artiscales.tools.io.Json;
 
 public class SireneImport {
 	public static void main(String[] args)
 			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
 		int nbFile = getSIRENEMultipleData(new File("/tmp/"));
-		for (int i = 0; i <= nbFile; i++) {
-			parseSireneEntry(new File("/tmp/sirene" + i + ".json"),
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
-		}
+		for (int i = 0; i <= nbFile; i++)
+			parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
 		append = false;
-		for (int i = 0; i <= nbFile; i++) {
-			parseSireneEntry(new File("/tmp/sirene" + i + ".json"),
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
-		}
-
+		for (int i = 0; i <= nbFile; i++)
+			parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
 		// MakePointOutOfGeocode(new File("/tmp/geocodage.ign.fr.json"));
 		// convertJSONtoCSV(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.csv"));
 	}
@@ -68,8 +63,6 @@ public class SireneImport {
 	}
 
 	public static String getSIRENEData(String curseur, File outFile) throws IOException, URISyntaxException {
-
-		// FIXME not working
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		URI uri = new URIBuilder().setScheme("https").setHost("api.insee.fr").setPath("/entreprises/sirene/V3/siret")
 				.setParameter("q", "codePostalEtablissement:75005 AND etatAdministratifUniteLegale:A").setParameter("nombre", "10000")
@@ -78,16 +71,12 @@ public class SireneImport {
 		httppost.addHeader("Accept", "application/json");
 		httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 		httppost.addHeader("Authorization", "Bearer a2887e94-5cbe-3e9d-94da-93af59eacfcf");
-		System.out.println(httppost);
-		// for (Header h : httppost.getAllHeaders()) {
-		// System.out.println(h);
-		// }
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
 			System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			IOUtils.closeQuietly(stream);
+			stream.close();
 		} finally {
 			response.close();
 		}
@@ -99,34 +88,19 @@ public class SireneImport {
 		return getNextCursorJson(outFile);
 	}
 
+	/**
+	 * Get the next cursor to download multiple parts of the data with the SIRENE API (see <a href
+	 * ="https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/templates/api/documentation/download.jag?tenant=carbon.super&resourceUrl=/registry/resource/_system/governance/apimgt/applicationdata/provider/insee/Sirene/V3/documentation/files/INSEE%20Documentation%20API%20Sirene%20Services-V3.9.pdf">doc</a>
+	 * p36/37)
+	 * 
+	 * @param f
+	 *            the answered json file
+	 * @return the next cursor value
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
 	public static String getNextCursorJson(File f) throws JsonParseException, IOException {
-		return getHeaderJson(f).get("curseurSuivant");
-	}
-
-	public static HashMap<String, String> getHeaderJson(File f) throws JsonParseException, IOException {
-		JsonFactory factory = new JsonFactory();
-		JsonParser parser = factory.createParser(f);
-		JsonToken token = parser.nextToken();
-		HashMap<String, String> header = new HashMap<String, String>();
-		boolean write = false;
-		try {
-			while (!parser.isClosed()) {
-				token = parser.nextToken();
-				if (token == JsonToken.START_OBJECT && parser.getCurrentName().equals("header"))
-					write = true;
-				if (token == JsonToken.END_OBJECT && parser.getCurrentName().equals("header"))
-					break;
-				if (token == JsonToken.FIELD_NAME && write) {
-					String key = parser.getCurrentName();
-					token = parser.nextToken();
-					header.put(key, parser.getText());
-				}
-			}
-		} catch (NullPointerException np) {
-			np.printStackTrace();
-			System.out.println("Invalid header");
-		}
-		return header;
+		return Json.getHeaderJson(f).get("curseurSuivant");
 	}
 
 	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
@@ -257,36 +231,13 @@ public class SireneImport {
 			append = true;
 	}
 
-	// public void parse(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
-	// JsonFactory factory = new JsonFactory();
-	// JsonParser parser = factory.createParser(jSON);
-	// JsonToken token = parser.nextToken();
-	// String nAdresse = "", adresse = "", typeVoie = "", codePos = "", codeAmeniteEtablissement = "", nomenclature = "", denominationEtablissement = "",
-	// siret = "", trancheEffectifsEtablissement = "", etatAdministratifEtablissement = "";
-	// int count = 0;
-	// String[] fline;
-	// switch (entryType) {
-	// case "POI":
-	// fline = (new SirenePOI()).getCSVFirstLine();
-	// break;
-	// default: // Working Place
-	// fline = (new SireneWorkingPlace()).getCSVFirstLine();
-	// break;
-	// }
-	// HashMap<String, String[]> out = new HashMap<String, String[]>();
-	// while (!parser.isClosed()) {
-	// if (token == JsonToken.START_OBJECT) {
-	// System.out.println("new_OBJECT: " + parser.getCurrentName());
-	// }
-	// if (token == JsonToken.START_ARRAY) {
-	// System.out.println("new_ARRAY: " + parser.getCurrentName());
-	// }
-	// while() {
-	//
-	// }
-	// }
-	// }
-
+	/**
+	 * 
+	 * @param jsonFile
+	 * @throws IOException
+	 * @throws NoSuchAuthorityCodeException
+	 * @throws FactoryException
+	 */
 	public static void MakePointOutOfGeocode(File jsonFile) throws IOException, NoSuchAuthorityCodeException, FactoryException {
 		JsonFactory factory = new JsonFactory();
 		JsonParser parser = factory.createParser(jsonFile);
