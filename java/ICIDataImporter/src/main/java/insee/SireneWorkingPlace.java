@@ -23,18 +23,17 @@ public class SireneWorkingPlace extends SireneEntry {
 	public void makeClassement() throws IOException {
 		switch (nomenclature) {
 		case "NAFRev2":
-			amenite = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAFRev2.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("src/main/ressources/NAFRev2.csv"))[3];
 			break;
 		case "NAF1993":
-			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false,
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAF93and03.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false, new File("src/main/ressources/NAF93and03.csv"))[3];
 			break;
 		case "NAFRev1":
-			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true, new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAF93and03.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true, new File("src/main/ressources/NAF93and03.csv"))[3];
 			break;
 		case "null":
 		case "NAP":
-			amenite = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAP.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("src/main/ressources/NAP.csv"))[3];
 			break;
 		}
 		if (amenite == null || amenite.equals("") || amenite.toLowerCase().equals("null"))

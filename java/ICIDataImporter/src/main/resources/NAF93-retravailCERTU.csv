@@ -1,0 +1,133 @@
+NAF1993,NAFRev1,nom,type,categorie,frequence
+524H,524H,Commerce de détail de meubles,Commerce,achat divers,annuelle
+524T,524T,Commerce de détail d'optique et de photographie,Commerce,achat divers,annuelle
+524U,524U,Commerce de détail de revêtements de sols et de murs,Commerce,achat divers,annuelle
+524V,524V,Commerce de détail d'horlogerie et de bijouterie,Commerce,achat divers,annuelle
+527A,527A,Réparation de chaussures et d'articles en cuir,Commerce,achat divers,annuelle
+527C,527C,Réparation de matériel électronique grand public,Commerce,achat divers,annuelle
+527D,527D,Réparation d'appareils électroménagers,Commerce,achat divers,annuelle
+527F,527F,Réparation de montres - horloges et bijoux,Commerce,achat divers,annuelle
+527H,527H,Réparation d'articles personnels et domestiques n.c.a.,Commerce,achat divers,annuelle
+633Z,633Z,Agences de voyage,Commerce,achat divers,annuelle
+524R,524R,Commerce de détail de livres - journaux et papeterie,Commerce,achat divers,bi-hebdomadaire
+524X,524X,Commerce de détail de fleurs,Commerce,achat divers,hebdomadaire
+523E,523E,Commerce de détail de parfumerie et de produits de beauté,Commerce,achat divers,mensuelle
+524A,524A,Commerce de détail de textiles,Commerce,achat divers,mensuelle
+524C,524C,Commerce de détail d'habillement,Commerce,achat divers,mensuelle
+524E,524E,Commerce de détail de la chaussure,Commerce,achat divers,mensuelle
+524F,524F,Commerce de détail de maroquinerie et d'articles de voyage,Commerce,achat divers,mensuelle
+524J,524J,Commerce de détail d'équipement du foyer,Commerce,achat divers,mensuelle
+524L,524L,Commerce de détail d'appareils électroménagers - de radio et de télévision,Commerce,achat divers,mensuelle
+524N,524N,Commerce de détail de quincaillerie,Commerce,achat divers,mensuelle
+524P,524P,Commerce de détail de bricolage,Commerce,achat divers,mensuelle
+524W,524W,Commerce de détail d'articles de sport et de loisir,Commerce,achat divers,mensuelle
+524Y,524Y,Commerce de détail de charbons et combustibles,Commerce,achat divers,mensuelle
+524Z,524Z,Commerce de détail divers en magasin spécialisé,Commerce,achat divers,mensuelle
+525Z,525Z,Commerce de détail de biens d'occasion,Commerce,achat divers,mensuelle
+521B,521B,Commerce d'alimentation générale,Commerce,alimentation,bi-hebdomadaire
+521D,521D,Supermarchés,Commerce,alimentation,bi-hebdomadaire
+522A,522A,Commerce de détail de fruits et légumes,Commerce,alimentation,bi-hebdomadaire
+521A,521A,Commerce de détail de produits surgelés,Commerce,alimentation,hebdomadaire
+521F,521F,Hypermarchés,Commerce,alimentation,hebdomadaire
+521H,521H,Grands magasins,Commerce,alimentation,hebdomadaire
+522C,522C,Commerce de détail de viandes et produits à base de viande,Commerce,alimentation,hebdomadaire
+522E,522E,Commerce de détail de poissons - crustacés et mollusques,Commerce,alimentation,hebdomadaire
+522J,522J,Commerce de détail de boissons,Commerce,alimentation,hebdomadaire
+522N,522N,Commerce de détail de produits laitiers,Commerce,alimentation,hebdomadaire
+522P,522P,Commerce de détail alimentaires spécialisés divers,Commerce,alimentation,hebdomadaire
+521J,521J,Autres Commerce de détail en magasin non spécialisé,Commerce,alimentation,mensuelle
+522G,522G,Commerce de détail de pain - pâtisserie et confiserie,Commerce,alimentation,pluri-quotidienne
+521C,521C,Supérettes,Commerce,alimentation,quotidienne
+521E,521E,Magasins populaires,Commerce,alimentation,quotidienne
+522L,522L,Commerce de détail de tabac,Commerce,alimentation,quotidienne
+501Z,501Z,Commerce de véhicules automobiles,Commerce,service automobile,annuelle
+502Z,502Z,Entretien et réparation de véhicules automobiles,Commerce,service automobile,annuelle
+503B,503B,Commerce de détail d'équipements automobiles,Commerce,service automobile,annuelle
+504Z,504Z,Commerce et réparation de motocycles,Commerce,service automobile,annuelle
+743A,743A,Contrôle technique automobile,Commerce,service automobile,annuelle
+505Z,505Z,Commerce de détail de carburants,Commerce,service automobile,hebdomadaire
+930B,930B,Blanchisserie - teinturerie de détail,Commerce,services personnels,hebdomadaire
+852Z,852Z,Activités vétérinaires,Commerce,services personnels,mensuelle
+930D,930D,Coiffure,Commerce,services personnels,mensuelle
+930E,930E,Soins de beauté,Commerce,services personnels,mensuelle
+551D,,Hôtels de préfecture,Démarche/aide à pers.,administratif,annuelle
+660C,660C,Caisses de retraite,Démarche/aide à pers.,administratif,annuelle
+751A,751A,Administration publique générale,Démarche/aide à pers.,administratif,annuelle
+751C,751C,Tutelle des activités sociales,Démarche/aide à pers.,administratif,annuelle
+752A,752A,Affaires étrangères,Démarche/aide à pers.,administratif,annuelle
+752C,752C,Défense,Démarche/aide à pers.,administratif,annuelle
+752E,752E,Justice,Démarche/aide à pers.,administratif,annuelle
+752G,752G,Police,Démarche/aide à pers.,administratif,annuelle
+752J,752J,Protection civile,Démarche/aide à pers.,administratif,annuelle
+753A,753A,Activités générales de sécurité sociale,Démarche/aide à pers.,administratif,annuelle
+753B,753B,Gestion des retraites complémentaires,Démarche/aide à pers.,administratif,annuelle
+753C,753C,Distribution sociale de revenus,Démarche/aide à pers.,administratif,annuelle
+853B,853B,Accueil des enfants en difficulté,Démarche/aide à pers.,aide,pluri-quotidienne
+853E,853E,Autres hébergements sociaux,Démarche/aide à pers.,aide,pluri-quotidienne
+853G,853G,Crèches et garderies d'enfants,Démarche/aide à pers.,aide,pluri-quotidienne
+853J,853J,Aide à domicile,Démarche/aide à pers.,aide,pluri-quotidienne
+853K,853K,Autres formes d'action sociale,Démarche/aide à pers.,aide,pluri-quotidienne
+853H,853H,Aide par le travail - ateliers protégés,Démarche/aide à pers.,aide,quotidienne
+652C,652C,Distribution de crédit,Démarche/aide à pers.,personnel,annuelle
+660A,660A,Assurance-vie et capitalisation,Démarche/aide à pers.,personnel,annuelle
+660E,660E,Assurance dommages,Démarche/aide à pers.,personnel,annuelle
+660G,660G,Assurance relevant du code de la mutualité,Démarche/aide à pers.,personnel,annuelle
+671E,671E,Autres auxiliaires financiers,Démarche/aide à pers.,personnel,annuelle
+641A,641A,Postes nationales,Démarche/aide à pers.,personnel,hebdomadaire
+641C,641C,Autres activités de courrier,Démarche/aide à pers.,personnel,hebdomadaire
+651C,651C,Banques,Démarche/aide à pers.,personnel,hebdomadaire
+651D,651D,Banques mutualistes,Démarche/aide à pers.,personnel,hebdomadaire
+651E,651E,Caisses d'épargne,Démarche/aide à pers.,personnel,hebdomadaire
+801Z,801Z,Enseignement primaire,Education,education primaire,pluri-quotidienne
+804A,804A,Ecoles de conduite,Démarche/aide à pers.,personnel,Bi-hebdomadaire
+802A,802A,Enseignement secondaire général,Education,education secondaire,pluri-quotidienne
+802C,802C,Enseignement secondaire technique ou professionnel,Education,education secondaire,pluri-quotidienne
+804D,804D,Autres enseignements,Loisir,activité culturo-sportif,hebdomadaire
+803Z,803Z,Enseignement supérieur,Education,education supérieure,pluri-quotidienne
+804C,804C,Formation des adultes et formation continue,Education,education supérieure,quotidienne
+555D,555D,Traiteurs - organisation de réceptions,Loisir,restauration,annuelle
+913A,913A,Organisations religieuses,Loisir,activité culturo-sportif,hebdomadaire
+913C,913C,Organisations politiques,Loisir,activité culturo-sportif,hebdomadaire
+913E,913E,Organisations associatives n.c.a.,Loisir,activité culturo-sportif,hebdomadaire
+923A,923A,Activités artistiques,Loisir,activité culturo-sportif,hebdomadaire
+925A,925A,Gestion des bibliothèques,Loisir,activité culturo-sportif,hebdomadaire
+926A,926A,Gestion d'installations sportives,Loisir,activité culturo-sportif,hebdomadaire
+926C,926C,Autres activités sportives,Loisir,activité culturo-sportif,hebdomadaire
+551A,551A,Hôtels touristiques avec restaurant,Loisir,hébergement,mensuelle
+,551E,Autres hôtels,Loisir,hébergement,mensuelle
+552E,552E,Autre hébergement touristique,Loisir,hébergement,mensuelle
+553B,553B,Restauration de type rapide,Loisir,restauration,Bi-hebdomadaire
+554B,554B,Débits de boissons,Loisir,restauration,Bi-hebdomadaire
+553A,553A,Restauration de type traditionnel,Loisir,restauration,hebdomadaire
+554A,554A,Cafés tabacs,Loisir,restauration,pluri-quotidienne
+930L,930L,Autres soins corporels,Loisir,services personnels,mensuelle
+930N,930N,Autres services personnels,Loisir,services personnels,mensuelle
+921J,921J,Projection de films cinématographiques,Loisir,sortie,hebdomadaire
+,554C,Discothèques,Loisir,sortie,mensuelle
+923B,923B,Services annexes aux spectacles,Loisir,sortie,mensuelle
+923D,923D,Gestion de salles de spectacles,Loisir,sortie,mensuelle
+923F,923F,Manèges forains et parcs d'attractions,Loisir,sortie,mensuelle
+923H,,Bals et discothèques,Loisir,sortie,mensuelle
+923J,,Autres spectacles,Loisir,sortie,mensuelle
+,923K,Activités diverses du spectacle,Loisir,sortie,mensuelle
+925C,925C,Gestion du patrimoine culturel,Loisir,sortie,mensuelle
+925E,925E,Gestion du patrimoine naturel,Loisir,sortie,mensuelle
+927A,927A,Jeux de hasard et d'argent,Loisir,sortie,mensuelle
+927C,927C,Autres activités récréatives,Loisir,sortie,mensuelle
+853A,853A,Accueil des enfants handicapés,Santé,assistance,quotidienne
+853C,853C,Accueil des adultes handicapés,Santé,assistance,quotidienne
+853D,853D,Accueil des personnes âgées,Santé,assistance,quotidienne
+930K,930K,Activités thermales et de thalassothérapie,Santé,bien-être,annuelle
+851H,851H,Soins hors d'un cadre réglementé,Santé,bien-être,hebdomadaire
+523C,523C,Commerce de détail d'articles médicaux et orthopédiques,Santé,bien-être,mensuelle
+851L,851L,Centres de collecte et banques d'organes,Santé,hospitalière,annuelle
+851J,851J,Ambulances,Santé,hospitalière,bi-hebdomadaire
+851A,851A,Activités hospitalières,Santé,hospitalière,hebdomadaire
+851K,851K,Laboratoires d'analyses médicales,Santé,hospitalière,hebdomadaire
+851G,851G,Activités des auxiliaires médicaux,Santé,medecine de ville,bi-hebdomadaire
+523A,523A,Commerce de détail de produits pharmaceutiques,Santé,medecine de ville,hebdomadaire
+851C,851C,Pratique médicale,Santé,medecine de ville,hebdomadaire
+851E,851E,Pratique dentaire,Santé,medecine de ville,mensuelle
+,711A,Location de courte durée de véhicules automobiles,Transport,service automobile,mensuelle
+,711B,Location de longue durée de véhicules automobiles,Transport,service automobile,mensuelle
+711Z,,Location de véhicules automobiles,Transport,service automobile,mensuelle

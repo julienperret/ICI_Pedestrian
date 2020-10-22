@@ -24,22 +24,20 @@ public class SirenePOI extends SireneEntry {
 	public void makeClassement() throws IOException {
 		switch (nomenclature) {
 		case "NAFRev2":
-			classement = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAFRev2POI.csv"));
+			classement = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("src/main/ressources/NAFRev2POI.csv"));
 			amenite = classement[3];
 			break;
 		case "NAF1993":
-			classement = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false,
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAF93-retravailCERTU.csv"));
+			classement = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false, new File("src/main/ressources/NAF93-retravailCERTU.csv"));
 			amenite = classement[3];
 			break;
 		case "NAFRev1":
-			classement = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true,
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAF93-retravailCERTU.csv"));
+			classement = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true, new File("src/main/ressources/NAF93-retravailCERTU.csv"));
 			amenite = classement[3];
 			break;
 		case "null":
 		case "NAP":
-			classement = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("/home/ubuntu/Documents/INRIA/donnees/POI/NAP-POI.csv"));
+			classement = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("src/main/ressources/NAP-POI.csv"));
 			amenite = classement[3];
 			break;
 		}
