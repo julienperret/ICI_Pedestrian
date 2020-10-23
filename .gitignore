@@ -45,3 +45,5 @@ bin/
 .project
 .history
 .classpath
+
+java/ICIDataImporter/src/main/resources/APIKeys.json

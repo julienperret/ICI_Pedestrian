@@ -35,6 +35,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Geom;
 import fr.ign.artiscales.tools.io.Csv;
 import fr.ign.artiscales.tools.io.Json;
+import util.Util;
 
 public class SireneImport {
 	public static void main(String[] args)
@@ -70,7 +71,7 @@ public class SireneImport {
 		HttpPost httppost = new HttpPost(uri);
 		httppost.addHeader("Accept", "application/json");
 		httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-		httppost.addHeader("Authorization", "Bearer a2887e94-5cbe-3e9d-94da-93af59eacfcf");
+		httppost.addHeader("Authorization", "Bearer " + Util.getToken("insee"));
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
 			System.out.println(response.getStatusLine().getStatusCode());
@@ -82,7 +83,7 @@ public class SireneImport {
 		}
 
 		// this works on a command line : curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --header 'Authorization:
-		// Bearer a2887e94-5cbe-3e9d-94da-93af59eacfcf' -d 'q=etatAdministratifUniteLegale%3AA%20AND%20codePostalEtablissement%3A75005&nombre=100000'
+		// Bearer xxx' -d 'q=etatAdministratifUniteLegale%3AA%20AND%20codePostalEtablissement%3A75005&nombre=100000'
 		// 'https://api.insee.fr/entreprises/sirene/V3/siret'
 		// this code should work too - returns a 404...
 		return getNextCursorJson(outFile);
