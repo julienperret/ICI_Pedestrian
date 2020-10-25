@@ -12,7 +12,7 @@ public class SireneWorkingPlace extends SireneEntry {
 			String denominationUniteLegale, String siret, String trancheEffectifsUniteLegale) throws IOException {
 		super(nAdresse, adresse, typeVoie, codePos, codeAmenite, nomenclature, denominationUniteLegale, siret, trancheEffectifsUniteLegale);
 		makeClassement();
-		// geocodeIGN(adresseInfos);
+//		Geocode.geocodeAdresseDataGouv(completeAdress);
 	}
 
 	public void makeClassement() throws IOException {
@@ -54,6 +54,4 @@ public class SireneWorkingPlace extends SireneEntry {
 				"tranche Effectifs" };
 		return firstCol;
 	}
-
-
 }

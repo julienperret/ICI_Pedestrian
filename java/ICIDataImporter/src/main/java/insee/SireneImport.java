@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.StandardCopyOption;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -40,27 +43,32 @@ import util.Util;
 public class SireneImport {
 	public static void main(String[] args)
 			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
-		int nbFile = getSIRENEMultipleData(new File("/tmp/"));
-		for (int i = 0; i <= nbFile; i++)
-			parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
-		append = false;
-		for (int i = 0; i <= nbFile; i++)
-			parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+		(new SireneImport()).getSIRENEData(new File("/tmp/"));
+		// for (int i = 0; i <= nbFile; i++)
+		// parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
+		// append = false;
+		// for (int i = 0; i <= nbFile; i++)
+		// parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
 		// MakePointOutOfGeocode(new File("/tmp/geocodage.ign.fr.json"));
 		// convertJSONtoCSV(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.csv"));
 	}
 
 	static boolean append = false;
+	static Timer timer = new Timer();
+	boolean finish = false;
 
-	public static int getSIRENEMultipleData(File outFolder) throws IOException, URISyntaxException {
-		int i = 0;
-		String iniCursor = getSIRENEData("*", new File(outFolder, "sirene" + i++ + ".json"));
-		String cursor = iniCursor;
-		do {
-			iniCursor = cursor;
-			cursor = getSIRENEData(iniCursor, new File(outFolder, "sirene" + i++ + ".json"));
-		} while (!iniCursor.equals(cursor));
-		return i;
+	public SireneImport() {
+	}
+
+	public void getSIRENEData(File outFolder) throws IOException, URISyntaxException {
+		String initialToken = "*";
+		TemporizeSIRENECursoredData tSI = new TemporizeSIRENECursoredData(outFolder, initialToken);
+		timer.scheduleAtFixedRate(tSI, Calendar.getInstance().getTime(), 120000);
+		// TODO fix that timer/Thread issue if we want to sync everything
+		// if (finish)
+		// return tSI.getPastNumbers();
+		// System.out.println("too early");
+		// return 0;
 	}
 
 	public static String getSIRENEData(String curseur, File outFile) throws IOException, URISyntaxException {
@@ -71,21 +79,16 @@ public class SireneImport {
 		HttpPost httppost = new HttpPost(uri);
 		httppost.addHeader("Accept", "application/json");
 		httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-		httppost.addHeader("Authorization", "Bearer " + Util.getToken("insee"));
+		httppost.addHeader("Authorization", "Bearer " + Util.getToken("insee:SIRENE"));
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
-			System.out.println(response.getStatusLine().getStatusCode());
+			// System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			stream.close();
 		} finally {
 			response.close();
 		}
-
-		// this works on a command line : curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --header 'Authorization:
-		// Bearer xxx' -d 'q=etatAdministratifUniteLegale%3AA%20AND%20codePostalEtablissement%3A75005&nombre=100000'
-		// 'https://api.insee.fr/entreprises/sirene/V3/siret'
-		// this code should work too - returns a 404...
 		return getNextCursorJson(outFile);
 	}
 
@@ -334,5 +337,62 @@ public class SireneImport {
 			}
 		listCERTU.close();
 		return classement;
+	}
+
+	class TemporizeSIRENECursoredData extends TimerTask {
+		String lastCursor, preLastCursor, iniCursor;
+		File outFolder;
+		int pastNumbers = 0;
+
+		TemporizeSIRENECursoredData(File outFolder, String iniCursor) {
+			this.outFolder = outFolder;
+			this.iniCursor = iniCursor;
+		}
+
+		public boolean isFinished() {
+			if (lastCursor.equals(preLastCursor)) {
+				timer.cancel();
+				System.out.println("finish time task");
+				return true;
+			}
+			return false;
+		}
+
+		public String getLastCursor() {
+			return lastCursor;
+		}
+
+		@Override
+		public void run() {
+			int i = 0;
+			try {
+				iniCursor = SireneImport.getSIRENEData(iniCursor, new File(outFolder, "sirene" + (i++ + pastNumbers) + ".json"));
+			} catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
+				System.out.println("If no cursor found, maybe everything's in the first request");
+				return;
+			}
+			String cursor = iniCursor;
+			do {
+				iniCursor = cursor;
+				try {
+					cursor = SireneImport.getSIRENEData(iniCursor, new File(outFolder, "sirene" + (i++ + pastNumbers) + ".json"));
+				} catch (IOException | URISyntaxException e) {
+					e.printStackTrace();
+					System.out.println("If no cursor found, maybe everything's in the first request");
+					return;
+				}
+			} while (!iniCursor.equals(cursor) && i < 30);
+			pastNumbers = pastNumbers + i;
+			lastCursor = cursor;
+			preLastCursor = iniCursor;
+			iniCursor = cursor;
+			this.isFinished();
+		}
+
+		public int getPastNumbers() {
+			return pastNumbers;
+		}
+
 	}
 }

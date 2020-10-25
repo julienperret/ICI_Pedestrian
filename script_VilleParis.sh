@@ -25,15 +25,18 @@ done
 }
 
 declare -a lType 
-lType=(plan-de-voirie-acces-pietons-metro-et-parkings troncon_voie plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees plan-de-voirie-ilots-directionnels plan-de-voirie-mobiliers-urbains-jardinieres-bancs-corbeilles-de-rue plan-de-voirie-trottoirs plan-de-voirie-passages-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-voies-privees-fermees plan-de-voirie-mobiliers-urbains-abris-voyageurs-points-darrets-bus plan-de-voirie-voies-en-escalier plan-de-voirie-trottoirs-emprises plan-de-voirie-terre-pleins)
-getData "voirie" lType
-lType=(deconfinement-pistes-cyclables-temporaires reseau-cyclable plan-de-voirie-pistes-cyclables-et-couloirs-de-bus)
-getData "cycle" lType
+lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees plan-de-voirie-terre-pleins)
+getData "voirie-voiture" lType
+lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-passages-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-voies-privees-fermees plan-de-voirie-voies-en-escalier plan-de-voirie-trottoirs-emprises)
+getData "voirie-pieton" lType
+lType=(reseau-cyclable plan-de-voirie-pistes-cyclables-et-couloirs-de-bus)
+getData "voirie-cycle" lType
 lType=(secteurs-des-bureaux-de-vote-en-2017 arrondissements)
 getData "population" lType
 lType=(espaces_verts plan-de-voirie-emprises-ferroviaires)
 getData "occupationSol" lType
-
+lType=(plan-de-voirie-acces-pietons-metro-et-parkings plan-de-voirie-mobiliers-urbains-abris-voyageurs-points-darrets-bus)
+getData "transport" lType
 # merge the different layers in a single tif
 # with all layers
 voirieFiles=(./output/voirie/*.tif)

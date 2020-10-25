@@ -17,7 +17,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class Util {
 
 	public static void main(String[] args) throws JsonParseException, IOException {
-		System.out.println(getToken("insee"));
+		System.out.println(getToken("insee:SIRENE"));
 	}
 
 	public static String getToken(String serviceKey) throws JsonParseException, IOException {
@@ -31,14 +31,14 @@ public class Util {
 					token = parser.nextToken();
 					String res = parser.getText();
 					if (!res.equals(""))
-						return parser.getText();
+						return res;
 				}
 			}
 			throw new Exception();
 		} catch (Exception e) {
 			Scanner myObj = new Scanner(System.in); // Create a Scanner object
 			System.out.println("Wrong API key for " + serviceKey
-					+ " application. Possible to store it in the /src/main/ressources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
+					+ " application. Possible to store it in the src/main/ressources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
 			System.out.println(serviceKey +" key:");
 			String key = myObj.nextLine(); // Read user input
 			myObj.close();
@@ -71,7 +71,6 @@ public class Util {
 
 		}
 		n93.close();
-
 		CSVReader n03 = new CSVReader(new FileReader(NAF03));
 		loop03: for (String[] line03 : n03.readAll()) {
 			n93 = new CSVReader(new FileReader(NAF93));

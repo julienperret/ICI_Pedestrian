@@ -15,7 +15,7 @@ public class SirenePOI extends SireneEntry {
 			String denominationUniteLegale, String siret, String trancheEffectifsUniteLegale) throws IOException {
 		super(nAdresse, adresse, typeVoie, codePos, codeAmenite, nomenclature, denominationUniteLegale, siret, trancheEffectifsUniteLegale);
 		makeClassement();
-//		 geocodeIGN(adresse);
+//		 geocodeIGN(completeAdress);
 	}
 
 	String[] classement = new String[4];

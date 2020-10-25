@@ -17,9 +17,9 @@ import org.apache.http.impl.client.HttpClients;
 
 public class Geocode {
 
-	public static void main(String[] args) throws IOException, URISyntaxException {
+	public static void main(String[] args) throws IOException {
 		String[] adresseInfos = { "18", "RUE", "DE LA SORBONNE", "75005" };
-		geocodeAdresseDataGouv(adresseInfos, new File("/tmp/out"));
+		geocodeAdresseDataGouv(adresseInfos);
 		// geocodeCSVAdresseDataGouv(new File("/home/ubuntu/Documents/INRIA/donnees/POI/SIRENE-POI-treated.csv"), new File("/tmp/out"));
 	}
 
@@ -32,23 +32,30 @@ public class Geocode {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static File geocodeAdresseDataGouv(String[] adresseInfos, File outFile) throws IOException, URISyntaxException {
+	public static File geocodeAdresseDataGouv(String[] adresseInfos) throws IOException {
 		// https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port&postcode=44380
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		URI uri = new URIBuilder().setScheme("https").setHost("api-adresse.data.gouv.fr").setPath("/search/")
-				.setParameter("q", adresseInfos[0] + "+" + adresseInfos[1] + "+" + adresseInfos[2]).setParameter("postcode", adresseInfos[3]).build();
+		URI uri;
+		try {
+			uri = new URIBuilder().setScheme("https").setHost("api-adresse.data.gouv.fr").setPath("/search/")
+					.setParameter("q", adresseInfos[0] + "+" + adresseInfos[1] + "+" + adresseInfos[2]).setParameter("postcode", adresseInfos[3])
+					.build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
 		HttpGet httppost = new HttpGet(uri);
-
+		File out = new File("/tmp/tmpAdressGeocoded");
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
 			System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
-			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			java.nio.file.Files.copy(stream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			stream.close();
 		} finally {
 			response.close();
 		}
-		return outFile;
+		return out;
 	}
 
 	/**
