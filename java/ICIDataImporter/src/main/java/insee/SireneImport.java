@@ -17,13 +17,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
+import org.geotools.data.DataStore;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -33,9 +28,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.opencsv.CSVReader;
 
-import au.com.bytecode.opencsv.CSVReader;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Geom;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.io.Csv;
 import fr.ign.artiscales.tools.io.Json;
 import util.Util;
@@ -43,14 +38,29 @@ import util.Util;
 public class SireneImport {
 	public static void main(String[] args)
 			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
-		(new SireneImport()).getSIRENEData(new File("/tmp/"));
-		// for (int i = 0; i <= nbFile; i++)
-		// parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
-		// append = false;
-		// for (int i = 0; i <= nbFile; i++)
-		// parseSireneEntry(new File("/tmp/sirene" + i + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
-		// MakePointOutOfGeocode(new File("/tmp/geocodage.ign.fr.json"));
-		// convertJSONtoCSV(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/sirene.csv"));
+		////////////////
+		// Step 1: get the SIRENE infos with the API. Timer not synchronized so we need to wait for the be finished (prompt) before starting step2
+		////////////////
+
+		// (new SireneImport()).getSIRENEData(new File("/tmp/"));
+		// parseSireneEntry(new File("/tmp/sirene" + 0 + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+
+		////////////////
+		// Step 2: Apply the pretreatments to the generated files. Put the total number of files on this next variable (last file should not contain anything)
+		////////////////
+		int nbFile = 42;
+		for (int i = 0; i <= nbFile; i++) {
+			parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sireneAPIOut/sirene" + i + ".json"),
+					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
+			System.out.println("done : " + i + " file");
+		}
+		append = false;
+		System.out.println("done working places");
+		for (int i = 0; i <= nbFile; i++) {
+			parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sireneAPIOut/sirene" + i + ".json"),
+					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+			System.out.println("done : " + i + " file");
+		}
 	}
 
 	static boolean append = false;
@@ -108,11 +118,14 @@ public class SireneImport {
 	}
 
 	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
+//		Logger logger = Logging.getLogger("org.geotools.feature.DefaultFeatureCollection");
+//		logger.setLevel(Level.SEVERE);
+		DefaultFeatureCollection result = new DefaultFeatureCollection();
 		JsonFactory factory = new JsonFactory();
 		JsonParser parser = factory.createParser(jSON);
 		JsonToken token = parser.nextToken();
 		String nAdresse = "", adresse = "", typeVoie = "", codePos = "", codeAmeniteEtablissement = "", codeAmeniteUniteLegale = "",
-				nomenclature = "", denominationEtablissement = "", siret = "", trancheEffectifsEtablissement = "",
+				nomenclature = "", denominationUniteLegale = "", denominationUsuelle1UniteLegale = "", siret = "", trancheEffectifsEtablissement = "",
 				etatAdministratifEtablissement = "", dateFin = "", nomenclatureActivitePrincipaleUniteLegale = "";
 		int count = 0;
 		boolean arrayStarted = false;
@@ -127,12 +140,6 @@ public class SireneImport {
 		}
 		HashMap<String, String[]> out = new HashMap<String, String[]>();
 		while (!parser.isClosed()) {
-			// if (token == JsonToken.START_OBJECT) {
-			// System.out.println("new_OBJECT: " + parser.getCurrentName());
-			// }
-			// if (token == JsonToken.START_ARRAY) {
-			// System.out.println("new_ARRAY: " + parser.getCurrentName());
-			// }
 			token = parser.nextToken();
 			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("numeroVoieEtablissement")) {
 				token = parser.nextToken();
@@ -158,9 +165,13 @@ public class SireneImport {
 				token = parser.nextToken();
 				siret = parser.getText();
 			}
-			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("denominationEtablissement")) {
+			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("denominationUniteLegale")) {
 				token = parser.nextToken();
-				denominationEtablissement = parser.getText().replace(",", " -");
+				denominationUniteLegale = parser.getText().replace(",", " -");
+			}
+			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("denominationUsuelle1UniteLegale")) {
+				token = parser.nextToken();
+				denominationUsuelle1UniteLegale = parser.getText().replace(",", " -");
 			}
 			// get the activity number
 			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("activitePrincipaleEtablissement")) {
@@ -187,99 +198,54 @@ public class SireneImport {
 				token = parser.nextToken();
 				dateFin = parser.getText();
 			}
-			// if (token == JsonToken.END_ARRAY) {
-			// System.out.println("END_ARRAY: " + parser.getCurrentName());
-			// }
 			if (token == JsonToken.START_ARRAY && !parser.getCurrentName().equals("etablissements")) {
 				arrayStarted = true;
 			}
 			if (token == JsonToken.END_OBJECT && arrayStarted) {
-				// System.out.println("END_OBJECT: " + parser.getCurrentName());
-				// if no code for the etablissement has been found, we get the one from the unite legale
-				if (codeAmeniteEtablissement == "") {
+				if (codeAmeniteEtablissement.equals("")) {
 					codeAmeniteEtablissement = codeAmeniteUniteLegale;
 					nomenclature = nomenclatureActivitePrincipaleUniteLegale;
 				}
+				if (denominationUniteLegale.equals("") && !denominationUsuelle1UniteLegale.equals(""))
+					denominationUniteLegale = denominationUsuelle1UniteLegale;
 				SireneEntry entry;
 				switch (entryType) {
 				case "POI":
-					entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationEtablissement,
+					entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationUniteLegale,
 							siret, trancheEffectifsEtablissement);
 					break;
 				default: // Working Place
 					entry = new SireneWorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
-							denominationEtablissement, siret, trancheEffectifsEtablissement);
+							denominationUniteLegale, siret, trancheEffectifsEtablissement);
 					break;
 				}
 				if (SireneEntry.isActive(etatAdministratifEtablissement) && (dateFin.equals("") || dateFin.equals("null")))
 					if (entry.isValid()) {
-						boolean add = true;
+						// Geopackage export
+						result.add(entry.generateSimpleFeature());
+						// CSV export
 						String[] l = entry.getLineForCSV();
-						for (String[] val : out.values())
-							if (entry.equals(val)) {
-								add = false;
-								break;
-							}
-						if (add)
-							out.put(siret + "-" + count++, l);
+						out.put(siret + "-" + count++, l);
 					}
 			}
 			if (token == JsonToken.END_ARRAY && arrayStarted) {
 				// flush
-				nAdresse = adresse = typeVoie = codePos = codeAmeniteEtablissement = codeAmeniteUniteLegale = nomenclature = nomenclatureActivitePrincipaleUniteLegale = denominationEtablissement = siret = trancheEffectifsEtablissement = etatAdministratifEtablissement = dateFin = "";
+				nAdresse = adresse = typeVoie = codePos = codeAmeniteEtablissement = codeAmeniteUniteLegale = nomenclature = nomenclatureActivitePrincipaleUniteLegale = denominationUniteLegale = siret = trancheEffectifsEtablissement = etatAdministratifEtablissement = dateFin = "";
 				arrayStarted = false;
 			}
 		}
+		// CSV export
 		Csv.generateCsvFile(out, folderOut, "SIRENE-" + entryType + "-treated", append, fline);
 		if (!append)
 			append = true;
-	}
-
-	/**
-	 * 
-	 * @param jsonFile
-	 * @throws IOException
-	 * @throws NoSuchAuthorityCodeException
-	 * @throws FactoryException
-	 */
-	public static void MakePointOutOfGeocode(File jsonFile) throws IOException, NoSuchAuthorityCodeException, FactoryException {
-		JsonFactory factory = new JsonFactory();
-		JsonParser parser = factory.createParser(jsonFile);
-		JsonToken token = parser.nextToken();
-		int i = 0;
-		while (!parser.isClosed()) {
-			token = parser.nextToken();
-			// tab
-			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("geometry")) {
-				token = parser.nextToken();
-				double x = 0;
-				double y = 0;
-				while (token != JsonToken.END_OBJECT) {
-					token = parser.nextToken();
-					if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("coordinates")) {
-						token = parser.nextToken();
-						token = parser.nextToken();
-						x = Double.parseDouble(parser.getText());
-						token = parser.nextToken();
-						y = Double.parseDouble(parser.getText());
-					}
-				}
-				GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-				Point p = gf.createPoint(new Coordinate(x, y));
-
-				// FIXME doesn't work - point is not where it should be and i don't see why. Input is rightly in WCS 84 (4326) ?! Export should arrive in Lambert93
-				System.out.println(p);
-				Geometry ptLambert;
-				try {
-					ptLambert = JTS.transform(p, CRS.findMathTransform(CRS.decode("EPSG:4326"), CRS.decode("EPSG:2154")));
-				} catch (MismatchedDimensionException | TransformException | FactoryException e) {
-					ptLambert = null;
-					e.printStackTrace();
-				}
-				System.out.println(ptLambert);
-				Geom.exportGeom(ptLambert, new File("/tmp/out" + i++));
-			}
+		// GPKG export
+		File geomFile = new File(folderOut, "SIRENE-" + entryType + ".gpkg");
+		if (geomFile.exists() && append) {
+			DataStore ds = Collec.getDataStore(geomFile);
+			result.addAll(ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures());
+			ds.dispose();
 		}
+		Collec.exportSFC(result, geomFile);
 	}
 
 	public static String[] classSIRENEEntryNAF1993(String amen, boolean revised, File modele) throws IOException {
@@ -323,17 +289,20 @@ public class SireneImport {
 
 	public static String[] classSIRENEEntryNAFRev2(String codeAmenite, File modele) throws IOException {
 		CSVReader listCERTU = new CSVReader(new FileReader(modele));
-		String[] classement = new String[4];
+		String[] classement = new String[5];
 		// codeAmenite = codeAmenite.replace(".", "");
 		for (String[] line : listCERTU.readAll())
 			if (codeAmenite.equals(line[0])) {
 				try {
-					classement[0] = line[2];
-					classement[1] = line[3];
-					classement[2] = line[4];
+					classement[0] = line[3];
+					classement[1] = line[4];
+					classement[2] = line[5];
+
 				} catch (Exception e) {
 				}
 				classement[3] = line[1];
+				if (line[2].equals("1"))
+					classement[4] = "true";
 			}
 		listCERTU.close();
 		return classement;
@@ -393,6 +362,5 @@ public class SireneImport {
 		public int getPastNumbers() {
 			return pastNumbers;
 		}
-
 	}
 }

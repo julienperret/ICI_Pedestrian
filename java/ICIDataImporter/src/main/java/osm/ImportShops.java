@@ -5,18 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.geojson.GeoJSONDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.util.URLs;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
 import fr.ign.artiscales.tools.io.Csv;
 
 public class ImportShops {
@@ -32,6 +29,12 @@ public class ImportShops {
 				new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/"));
 	}
 
+	public static void sortPOI(File geojsonFile, File folderOut) throws IOException {
+		
+	}
+		
+	
+	
 	/**
 	 * Create a table summing up the geojson file coming from OSM with heterogenous attributes and values for those attributes. On columns, every attributes of the features, on
 	 * line, every unique value for each attribute.
@@ -46,9 +49,7 @@ public class ImportShops {
 		// information for i/o of geocollection
 		Collec.setDefaultGISFileType(".geojson");
 		// importing geojson
-		Map<String, Object> params = new HashMap<>();
-		params.put(GeoJSONDataStoreFactory.URL_PARAM.key, URLs.fileToUrl(geojsonFile));
-		DataStore ds = DataStoreFinder.getDataStore(params);
+		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);;
 		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
 		HashMap<String, Object[]> table = new HashMap<String, Object[]>();
 		List<String> listAttr = new ArrayList<String>();

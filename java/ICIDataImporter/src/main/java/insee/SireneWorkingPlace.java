@@ -3,32 +3,48 @@ package insee;
 import java.io.File;
 import java.io.IOException;
 
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import util.Geocode;
+
 public class SireneWorkingPlace extends SireneEntry {
+
 	public SireneWorkingPlace() {
 		super();
 	}
 
 	public SireneWorkingPlace(String nAdresse, String adresse, String typeVoie, String codePos, String codeAmenite, String nomenclature,
-			String denominationUniteLegale, String siret, String trancheEffectifsUniteLegale) throws IOException {
-		super(nAdresse, adresse, typeVoie, codePos, codeAmenite, nomenclature, denominationUniteLegale, siret, trancheEffectifsUniteLegale);
+			String denominationUniteLegale, String siret, String trancheEffectifsEtablissement) throws IOException {
+		super(nAdresse, adresse, typeVoie, codePos, codeAmenite, nomenclature, denominationUniteLegale, siret, trancheEffectifsEtablissement);
 		makeClassement();
-//		Geocode.geocodeAdresseDataGouv(completeAdress);
 	}
 
 	public void makeClassement() throws IOException {
 		switch (nomenclature) {
 		case "NAFRev2":
-			amenite = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("src/main/ressources/NAFRev2.csv"))[3];
+			String[] classement = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("src/main/resources/NAFRev2.csv"));
+			amenite = classement[3];
+			resteOuvertArrete1403 = classement[4];
 			break;
 		case "NAF1993":
-			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false, new File("src/main/ressources/NAF93and03.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false, new File("src/main/resources/NAF93and03.csv"))[3];
 			break;
 		case "NAFRev1":
-			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true, new File("src/main/ressources/NAF93and03.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, true, new File("src/main/resources/NAF93and03.csv"))[3];
 			break;
 		case "null":
 		case "NAP":
-			amenite = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("src/main/ressources/NAP.csv"))[3];
+			amenite = SireneImport.classSIRENEEntryNAP(codeAmenite, new File("src/main/resources/NAP.csv"))[3];
 			break;
 		}
 		if (amenite == null || amenite.equals("") || amenite.toLowerCase().equals("null"))
@@ -44,14 +60,68 @@ public class SireneWorkingPlace extends SireneEntry {
 
 	@Override
 	public String[] getLineForCSV() {
-		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, amenite, codeAmenite, nomenclature, denominationUniteLegale,
-				trancheEffectifsEtablissement };
+		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, amenite, codeAmenite, nomenclature, denominationEtablissement,
+				trancheEffectifsEtablissement,resteOuvertArrete1403 };
 		return line;
 	}
 
 	public String[] getCSVFirstLine() {
 		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "amenité", "codeAmenity", "nomenclature", "name",
-				"tranche Effectifs" };
+				"tranche Effectifs","rest ouvert selon arrete du 13 03"  };
 		return firstCol;
+	}
+
+	@Override
+	public SimpleFeatureBuilder getSireneSFB() {
+		SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
+		try {
+			sfTypeBuilder.setCRS(CRS.decode("EPSG:2154"));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
+		sfTypeBuilder.setName("SireneWorkingPlace");
+		sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
+		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+		sfTypeBuilder.add("nAdresse", String.class);
+		sfTypeBuilder.add("adresse", String.class);
+		sfTypeBuilder.add("typeVoie", String.class);
+		sfTypeBuilder.add("codePos", String.class);
+		sfTypeBuilder.add("codeAmenite", String.class);
+		sfTypeBuilder.add("name", String.class);
+		sfTypeBuilder.add("siret", String.class);
+		sfTypeBuilder.add("trancheEffectifsEtablissement", String.class);
+		sfTypeBuilder.add("scoreGeocode", Double.class);
+		sfTypeBuilder.add("rstOuv1403", String.class);
+		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
+		return new SimpleFeatureBuilder(featureType);
+	}
+
+	@Override
+	public SimpleFeature generateSimpleFeature() {
+		SimpleFeatureBuilder sfb = getSireneSFB();
+		String[] geocode;
+		try {
+			geocode = Geocode.geocodeAdresseDataGouv(completeAdress);
+			try {
+				sfb.set(Collec.getDefaultGeomName(),
+						(Geometry) gf.createPoint(new Coordinate(Double.valueOf(geocode[1]), Double.valueOf(geocode[2]))));
+			} catch (NullPointerException np) {
+				sfb.set(Collec.getDefaultGeomName(), (Geometry) gf.createPoint(new Coordinate(0, 0)));
+			}
+			sfb.set("nAdresse", nAdresse);
+			sfb.set("adresse", adresse);
+			sfb.set("typeVoie", typeVoie);
+			sfb.set("codePos", codePos);
+			sfb.set("codeAmenite", codeAmenite);
+			sfb.set("name", denominationEtablissement);
+			sfb.set("siret", siret);
+			sfb.set("trancheEffectifsEtablissement", trancheEffectifsEtablissement);
+			sfb.set("scoreGeocode", Double.valueOf(geocode[0]));
+			sfb.set("rstOuv1403", resteOuvertArrete1403);
+			return sfb.buildFeature(Attribute.makeUniqueId());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return sfb.buildFeature(Attribute.makeUniqueId());
+		}
 	}
 }

@@ -1,396 +1,393 @@
-Code, Intitulés de la  NAF rév. 2 - version finale ,type,categorie,frequence
-45.1,Commerce de véhicules automobiles,Commerces,service automobile,annuelle
-45.11,Commerce de voitures et de véhicules automobiles légers,Commerces,service automobile,annuelle
-45.11Z,Commerce de voitures et de véhicules automobiles légers,Commerces,service automobile,annuelle
-45.19,Commerce d'autres véhicules automobiles,Commerces,service automobile,annuelle
-45.19Z,Commerce d'autres véhicules automobiles,Commerces,service automobile,annuelle
-45.2,Entretien et réparation de véhicules automobiles,Commerces,service automobile,annuelle
-45.20,Entretien et réparation de véhicules automobiles,Commerces,service automobile,annuelle
-45.20A,Entretien et réparation de véhicules automobiles légers,Commerces,service automobile,annuelle
-45.20B,Entretien et réparation d'autres véhicules automobiles,Commerces,service automobile,annuelle
-45.3,Commerce d'équipements automobiles,Commerces,service automobile,annuelle
-45.32,Commerce de détail d'équipements automobiles,Commerces,service automobile,annuelle
-45.32Z,Commerce de détail d'équipements automobiles,Commerces,service automobile,annuelle
-45.4,Commerce et réparation de motocycles,Commerces,service automobile,annuelle
-45.40,Commerce et réparation de motocycles,Commerces,service automobile,annuelle
-45.40Z,Commerce et réparation de motocycles,Commerces,service automobile,annuelle
-47.1,Commerce de détail en magasin non spécialisé,Commerce,achat divers,mensuelle
-47.11,Commerce de détail en magasin non spécialisé à prédominance alimentaire,Commerce,alimentation,hebdomadaire
-47.11A,Commerce de détail de produits surgelés,Commerce,alimentation,hebdomadaire
-47.11B,Commerce d'alimentation générale,Commerce,alimentation,quotidienne
-47.11C,Supérettes,Commerce,alimentation,quotidienne
-47.11D,Supermarchés,Commerce,alimentation,bi-hebdomadaire
-47.11E,Magasins multi-commerces,Commerce,alimentation,bi-hebdomadaire
-47.11F,Hypermarchés,Commerce,alimentation,hebdomadaire
-47.19,Autre commerce de détail en magasin non spécialisé,Commerce,alimentation,hebdomadaire
-47.19A,Grands magasins,Commerce,alimentation,hebdomadaire
-47.19B,Autres commerces de détail en magasin non spécialisé,Commerce,alimentation,hebdomadaire
-47.2,Commerce de détail alimentaire en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.21,Commerce de détail de fruits et légumes en magasin spécialisé,Commerce,alimentation,bi-hebdomadaire
-47.21Z,Commerce de détail de fruits et légumes en magasin spécialisé,Commerce,alimentation,bi-hebdomadaire
-47.22,Commerce de détail de viandes et de produits à base de viande en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.22Z,Commerce de détail de viandes et de produits à base de viande en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.23,Commerce de détail de poissons - crustacés et mollusques en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.23Z,Commerce de détail de poissons - crustacés et mollusques en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.24,Commerce de détail de pain - pâtisserie et confiserie en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.24Z,Commerce de détail de pain - pâtisserie et confiserie en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.25,Commerce de détail de boissons en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.25Z,Commerce de détail de boissons en magasin spécialisé,Commerce,alimentation,hebdomadaire
-47.26,Commerce de détail de produits à base de tabac en magasin spécialisé,Commerce,achat divers,quotidienne
-47.26Z,Commerce de détail de produits à base de tabac en magasin spécialisé,Commerce,achat divers,quotidienne
-47.29,Autres commerces de détail alimentaires en magasin spécialisé ,Commerce,alimentation,hebdomadaire
-47.29Z,Autres commerces de détail alimentaires en magasin spécialisé ,Commerce,alimentation,hebdomadaire
-47.3,Commerce de détail de carburants en magasin spécialisé,Commerce,service automobile,hebdomadaire
-47.30,Commerce de détail de carburants en magasin spécialisé,Commerce,service automobile,hebdomadaire
-47.30Z,Commerce de détail de carburants en magasin spécialisé,Commerce,service automobile,hebdomadaire
-47.4,Commerce de détail d'équipements de l'information et de la communication en magasin spécialisé,Commerce,achat divers,annuelle
-47.41,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,Commerce,achat divers,annuelle
-47.41Z,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,Commerce,achat divers,annuelle
-47.42,Commerce de détail de matériels de télécommunication en magasin spécialisé,Commerce,achat divers,annuelle
-47.42Z,Commerce de détail de matériels de télécommunication en magasin spécialisé,Commerce,achat divers,annuelle
-47.43,Commerce de détail de matériels audio/vidéo en magasin spécialisé,Commerce,achat divers,annuelle
-47.43Z,Commerce de détail de matériels audio et vidéo en magasin spécialisé,Commerce,achat divers,annuelle
-47.5,Commerce de détail d'autres équipements du foyer en magasin spécialisé,Commerce,achat divers,mensuelle
-47.51,Commerce de détail de textiles en magasin spécialisé,Commerce,achat divers,mensuelle
-47.51Z,Commerce de détail de textiles en magasin spécialisé,Commerce,achat divers,mensuelle
-47.52,Commerce de détail de quincaillerie - peintures et verres en magasin spécialisé,Commerce,achat divers,annuelle
-47.52A,Commerce de détail de quincaillerie - peintures et verres en petites surfaces (moins de 400 m2),Commerce,achat divers,annuelle
-47.52B,Commerce de détail de quincaillerie - peintures et verres en grandes surfaces (400 m2et plus),Commerce,achat divers,annuelle
-47.53,Commerce de détail de tapis - moquettes et revêtements de murs et de sols en magasin spécialisé,Commerce,achat divers,annuelle
-47.53Z,Commerce de détail de tapis - moquettes et revêtements de murs et de sols en magasin spécialisé,Commerce,achat divers,annuelle
-47.54,Commerce de détail d'appareils électroménagers en magasin spécialisé,Commerce,achat divers,annuelle
-47.54Z,Commerce de détail d'appareils électroménagers en magasin spécialisé,Commerce,achat divers,annuelle
-47.59,Commerce de détail de meubles - appareils d'éclairage et autres articles de ménage en magasin spécialisé,Commerce,achat divers,annuelle
-47.59A,Commerce de détail de meubles,Commerce,achat divers,annuelle
-47.59B,Commerce de détail d'autres équipements du foyer,Commerce,achat divers,annuelle
-47.6,Commerce de détail de biens culturels et de Loisir en magasin spécialisé,Commerce,achat divers,mensuelle
-47.61,Commerce de détail de livres en magasin spécialisé,Commerce,achat divers,mensuelle
-47.61Z,Commerce de détail de livres en magasin spécialisé,Commerce,achat divers,mensuelle
-47.62,Commerce de détail de journaux et papeterie en magasin spécialisé,Commerce,achat divers,Bi-hebdomadaire
-47.62Z,Commerce de détail de journaux et papeterie en magasin spécialisé,Commerce,achat divers,Bi-hebdomadaire
-47.63,Commerce de détail d'enregistrements musicaux et vidéo en magasin spécialisé,Commerce,achat divers,mensuelle
-47.63Z,Commerce de détail d'enregistrements musicaux et vidéo en magasin spécialisé,Commerce,achat divers,mensuelle
-47.64,Commerce de détail d'articles de sport en magasin spécialisé,Commerce,achat divers,mensuelle
-47.64Z,Commerce de détail d'articles de sport en magasin spécialisé,Commerce,achat divers,mensuelle
-47.65,Commerce de détail de jeux et jouets en magasin spécialisé,Commerce,achat divers,mensuelle
-47.65Z,Commerce de détail de jeux et jouets en magasin spécialisé,Commerce,achat divers,mensuelle
-47.7,Autres commerces de détail en magasin spécialisé,Commerce,achat divers,mensuelle
-47.71,Commerce de détail d'habillement en magasin spécialisé,Commerce,achat divers,mensuelle
-47.71Z,Commerce de détail d'habillement en magasin spécialisé,Commerce,achat divers,mensuelle
-47.72,Commerce de détail de chaussures et d'articles en cuir en magasin spécialisé,Commerce,achat divers,mensuelle
-47.72A,Commerce de détail de la chaussure,Commerce,achat divers,mensuelle
-47.72B,Commerce de détail de maroquinerie et d'articles de voyage,Commerce,achat divers,mensuelle
-47.73,Commerce de détail de produits pharmaceutiques en magasin spécialisé,Santé,medecine de ville,hebdomadaire
-47.73Z,Commerce de détail de produits pharmaceutiques en magasin spécialisé,Santé,medecine de ville,hebdomadaire
-47.74,Commerce de détail d'articles médicaux et orthopédiques en magasin spécialisé,Santé,bien-être,mensuelle
-47.74Z,Commerce de détail d'articles médicaux et orthopédiques en magasin spécialisé,Santé,bien-être,mensuelle
-47.75,Commerce de détail de parfumerie et de produits de beauté en magasin spécialisé,Commerce,achat divers,mensuelle
-47.75Z,Commerce de détail de parfumerie et de produits de beauté en magasin spécialisé,Commerce,achat divers,mensuelle
-47.76,Commerce de détail de fleurs - plantes - graines - engrais - animaux de compagnie et aliments pour ces animaux en magasin spécialisé,Commerce,achat divers,mensuelle
-47.76Z,Commerce de détail de fleurs - plantes - graines - engrais - animaux de compagnie et aliments pour ces animaux en magasin spécialisé,Commerce,achat divers,mensuelle
-47.77,Commerce de détail d'articles d'horlogerie et de bijouterie en magasin spécialisé,Commerce,achat divers,annuelle
-47.77Z,Commerce de détail d'articles d'horlogerie et de bijouterie en magasin spécialisé,Commerce,achat divers,annuelle
-47.78,Autre commerce de détail de biens neufs en magasin spécialisé,Commerce,achat divers,annuelle
-47.78A,Commerces de détail d'optique,Commerce,achat divers,annuelle
-47.78B,Commerces de détail de charbons et combustibles,Commerce,achat divers,mensuelle
-47.78C,Autres commerces de détail spécialisés divers,Commerce,achat divers,mensuelle
-47.79,Commerce de détail de biens d'occasion en magasin,Commerce,achat divers,mensuelle
-47.79Z,Commerce de détail de biens d'occasion en magasin,Commerce,achat divers,mensuelle
-47.8,Commerce de détail sur éventaires et marchés,Commerce,achat divers,Bi-hebdomadaire
-47.81,Commerce de détail alimentaire sur éventaires et marchés,Commerce,alimentation,Bi-hebdomadaire
-47.81Z,Commerce de détail alimentaire sur éventaires et marchés,Commerce,alimentation,Bi-hebdomadaire
-47.82,Commerce de détail de textiles - d'habillement et de chaussures sur éventaires et marchés,Commerce,achat divers,mensuelle
-47.82Z,Commerce de détail de textiles - d'habillement et de chaussures sur éventaires et marchés,Commerce,achat divers,mensuelle
-47.89,Autres commerces de détail sur éventaires et marchés,Commerce,achat divers,mensuelle
-47.89Z,Autres commerces de détail sur éventaires et marchés,Commerce,achat divers,mensuelle
-47.9,Commerce de détail hors magasin - éventaires ou marchés,Commerce,achat divers,mensuelle
-47.99B,Vente par automates et autres commerces de détail hors magasin - éventaires ou marchés n.c.a.,Commerce,achat divers,mensuelle
-49.1,Transport ferroviaire interurbain de voyageurs,Transport,infrastructure,hebdomadaire
-49.10,Transport ferroviaire interurbain de voyageurs,Transport,infrastructure,hebdomadaire
-49.10Z,Transport ferroviaire interurbain de voyageurs,Transport,infrastructure,hebdomadaire
-49.3,Autres Transport terrestres de voyageurs,Transport,infrastructure,hebdomadaire
-49.31,Transport urbains et suburbains de voyageurs,Transport,personnel,hebdomadaire
-49.31Z,Transport urbains et suburbains de voyageurs,Transport,personnel,hebdomadaire
-49.32,Transport de voyageurs par taxis,Transport,personnel,hebdomadaire
-49.32Z,Transport de voyageurs par taxis,Transport,personnel,hebdomadaire
-49.39,Autres Transport terrestres de voyageurs n.c.a.,Transport,personnel,hebdomadaire
-49.39A,Transport routiers réguliers de voyageurs,Transport,personnel,hebdomadaire
-49.39B,Autres Transport routiers de voyageurs ,Transport,personnel,hebdomadaire
-49.39C,Téléphériques et remontées mécaniques,Transport,infrastructure,mensuelle
-50.1,Transport maritimes et côtiers de passagers,Transport,infrastructure,annuelle
-50.10,Transport maritimes et côtiers de passagers,Transport,infrastructure,annuelle
-50.10Z,Transport maritimes et côtiers de passagers,Transport,infrastructure,annuelle
-50.3,Transport fluviaux de passagers,Transport,infrastructure,annuelle
-50.30,Transport fluviaux de passagers,Transport,infrastructure,annuelle
-50.30Z,Transport fluviaux de passagers,Transport,infrastructure,annuelle
-51.1,Transport aériens de passagers,Transport,infrastructure,annuelle
-51.10,Transport aériens de passagers,Transport,infrastructure,annuelle
-51.10Z,Transport aériens de passagers,Transport,infrastructure,annuelle
-53.1,Activités de poste dans le cadre d'une obligation de service universel,Démarche/aide à pers.,personnel,hebdomadaire
-53.10,Activités de poste dans le cadre d'une obligation de service universel ,Démarche/aide à pers.,personnel,hebdomadaire
-53.10Z,Activités de poste dans le cadre d'une obligation de service universel ,Démarche/aide à pers.,personnel,hebdomadaire
-53.2,Autres activités de poste et de courrier,Démarche/aide à pers.,personnel,hebdomadaire
-53.20,Autres activités de poste et de courrier,Démarche/aide à pers.,personnel,hebdomadaire
-53.20Z,Autres activités de poste et de courrier,Démarche/aide à pers.,personnel,hebdomadaire
-55.1,Hôtels et hébergement similaire,Loisir,hébergement,mensuelle
-55.10,Hôtels et hébergement similaire ,Loisir,hébergement,mensuelle
-55.10Z,Hôtels et hébergement similaire ,Loisir,hébergement,mensuelle
-55.2,Hébergement touristique et autre hébergement de courte durée ,Loisir,hébergement,mensuelle
-55.20,Hébergement touristique et autre hébergement de courte durée ,Loisir,hébergement,mensuelle
-55.20Z,Hébergement touristique et autre hébergement de courte durée ,Loisir,hébergement,mensuelle
-55.3,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,Loisir,hébergement,mensuelle
-55.30,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,Loisir,hébergement,mensuelle
-55.30Z,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,Loisir,hébergement,mensuelle
-55.9,Autres hébergements ,Loisir,hébergement,mensuelle
-55.90,Autres hébergements ,Loisir,hébergement,mensuelle
-55.90Z,Autres hébergements ,Loisir,hébergement,mensuelle
-56.1,Restaurants et services de restauration mobile,Loisir,restauration,Bi-hebdomadaire
-56.10,Restaurants et services de restauration mobile,Loisir,restauration,Bi-hebdomadaire
-56.10A,Restauration traditionnelle,Loisir,restauration,hebdomadaire
-56.10B,Cafétérias et autres libres-services,Loisir,restauration,hebdomadaire
-56.10C,Restauration de type rapide,Loisir,restauration,Bi-hebdomadaire
-56.2,Traiteurs et autres services de restauration,Loisir,restauration,annuelle
-56.21,Services des traiteurs ,Loisir,restauration,annuelle
-56.21Z,Services des traiteurs ,Loisir,restauration,annuelle
-56.29,Autres services de restauration ,Loisir,restauration,Bi-hebdomadaire
-56.29A,Restauration collective sous contrat,Loisir,restauration,Bi-hebdomadaire
-56.29B,Autres services de restauration n.c.a.,Loisir,restauration,Bi-hebdomadaire
-56.3,Débits de boissons,Loisir,restauration,Bi-hebdomadaire
-56.30,Débits de boissons,Loisir,restauration,Bi-hebdomadaire
-56.30Z,Débits de boissons,Loisir,restauration,Bi-hebdomadaire
-59.14,Projection de films cinématographiques,Loisir,sortie,hebdomadaire
-59.14Z,Projection de films cinématographiques,Loisir,sortie,hebdomadaire
-64.9,Autres activités des services financiers - hors assurance et caisses de retraite,Démarche/aide à pers.,personnel,annuelle
-64.91,Crédit-bail ,Démarche/aide à pers.,personnel,annuelle
-64.91Z,Crédit-bail ,Démarche/aide à pers.,personnel,annuelle
-64.92,Autre distribution de crédit,Démarche/aide à pers.,personnel,annuelle
-64.92Z,Autre distribution de crédit,Démarche/aide à pers.,personnel,annuelle
-64.99,Autres activités des services financiers - hors assurance et caisses de retraite - n.c.a.,Démarche/aide à pers.,personnel,annuelle
-64.99Z,Autres activités des services financiers - hors assurance et caisses de retraite - n.c.a.,Démarche/aide à pers.,personnel,annuelle
-65.1,Assurance,Démarche/aide à pers.,personnel,annuelle
-65.11,Assurance vie ,Démarche/aide à pers.,personnel,annuelle
-65.11Z,Assurance vie,Démarche/aide à pers.,personnel,annuelle
-65.12,Autres assurances,Démarche/aide à pers.,personnel,annuelle
-65.12Z,Autres assurances,Démarche/aide à pers.,personnel,annuelle
-65.3,Caisses de retraite,Démarche/aide à pers.,administratif,annuelle
-65.30,Caisses de retraite,Démarche/aide à pers.,administratif,annuelle
-65.30Z,Caisses de retraite,Démarche/aide à pers.,administratif,annuelle
-68.3,Activités immobilières pour compte de tiers,Démarche/aide à pers.,personnel,annuelle
-68.31,Agences immobilières,Démarche/aide à pers.,personnel,annuelle
-68.31Z,Agences immobilières,Démarche/aide à pers.,personnel,annuelle
-68.32,Administration de biens immobiliers,Démarche/aide à pers.,personnel,annuelle
-68.32A,Administration d'immeubles et autres biens immobiliers,Démarche/aide à pers.,personnel,annuelle
-68.32B,Supports juridiques de gestion de patrimoine immobilier,Démarche/aide à pers.,personnel,annuelle
-71.20A,Contrôle technique automobile,Commerce,service automobile,annuelle
-75.0,Activités vétérinaires,Commerce,services personnels,mensuelle
-75.00,Activités vétérinaires,Commerce,services personnels,mensuelle
-75.00Z,Activités vétérinaires,Commerce,services personnels,mensuelle
-77.1,Location et location-bail de véhicules automobiles,Transport,service automobile,mensuelle
-77.11,Location et location-bail de voitures et de véhicules automobiles légers,Transport,service automobile,mensuelle
-77.11A,Location de courte durée de voitures et de véhicules automobiles légers,Transport,service automobile,mensuelle
-77.11B,Location de longue durée de voitures et de véhicules automobiles légers,Transport,service automobile,mensuelle
-77.12,Location et location-bail de camions,Transport,service automobile,annuelle
-77.12Z,Location et location-bail de camions,Transport,service automobile,annuelle
-77.2,Location et location-bail de biens personnels et domestiques,Transport,service automobile,annuelle
-77.21,Location et location-bail d'articles de Loisir et de sport ,Transport,service automobile,annuelle
-77.21Z,Location et location-bail d'articles de Loisir et de sport ,Loisir,activité culturo-sportif,mensuelle
-77.22,Location de vidéocassettes et disques vidéo,Loisir,activité culturo-sportif,mensuelle
-77.22Z,Location de vidéocassettes et disques vidéo,Loisir,activité culturo-sportif,mensuelle
-77.29,Location et location-bail d'autres biens personnels et domestiques,Loisir,activité culturo-sportif,mensuelle
-77.29Z,Location et location-bail d'autres biens personnels et domestiques,Loisir,activité culturo-sportif,mensuelle
-79.1,Activités des agences de voyage et voyagistes,Commerce,achat divers,annuelle
-79.11,Activités des agences de voyage,Commerce,achat divers,annuelle
-79.11Z,Activités des agences de voyage,Commerce,achat divers,annuelle
-79.12,Activités des voyagistes,Commerce,achat divers,annuelle
-79.12Z,Activités des voyagistes,Commerce,achat divers,annuelle
-79.9,Autres services de réservation et activités connexes,Commerce,achat divers,annuelle
-79.90,Autres services de réservation et activités connexes,Commerce,achat divers,annuelle
-79.90Z,Autres services de réservation et activités connexes,Commerce,achat divers,annuelle
-84.1,Administration générale - économique et sociale,Démarche/aide à pers.,administratif,annuelle
-84.11,Administration publique générale,Démarche/aide à pers.,administratif,annuelle
-84.11Z,Administration publique générale,Démarche/aide à pers.,administratif,annuelle
-84.12,Administration publique (tutelle) de la santé - de la formation - de la culture et des services sociaux - autre que sécurité sociale ,Démarche/aide à pers.,administratif,annuelle
-84.12Z,Administration publique (tutelle) de la santé - de la formation - de la culture et des services sociaux - autre que sécurité sociale ,Démarche/aide à pers.,administratif,annuelle
-84.13,Administration publique (tutelle) des activités économiques,Démarche/aide à pers.,administratif,annuelle
-84.13Z,Administration publique (tutelle) des activités économiques,Démarche/aide à pers.,administratif,annuelle
-84.2,Services de prérogative publique,Démarche/aide à pers.,administratif,annuelle
-84.21,Affaires étrangères,Démarche/aide à pers.,administratif,annuelle
-84.21Z,Affaires étrangères,Démarche/aide à pers.,administratif,annuelle
-84.22,Défense,Démarche/aide à pers.,administratif,annuelle
-84.22Z,Défense,Démarche/aide à pers.,administratif,annuelle
-84.23,Justice,Démarche/aide à pers.,administratif,annuelle
-84.23Z,Justice,Démarche/aide à pers.,administratif,annuelle
-84.24,Activités d’ordre public et de sécurité,Démarche/aide à pers.,administratif,annuelle
-84.24Z,Activités d’ordre public et de sécurité,Démarche/aide à pers.,administratif,annuelle
-84.25,Services du feu et de secours,Démarche/aide à pers.,administratif,annuelle
-84.25Z,Services du feu et de secours,Démarche/aide à pers.,administratif,annuelle
-84.3,Sécurité sociale obligatoire,Démarche/aide à pers.,administratif,annuelle
-84.30,Sécurité sociale obligatoire,Démarche/aide à pers.,administratif,annuelle
-84.30A,Activités générales de sécurité sociale,Démarche/aide à pers.,administratif,annuelle
-84.30B,Gestion des retraites complémentaires,Démarche/aide à pers.,administratif,annuelle
-84.30C,Distribution sociale de revenus,Démarche/aide à pers.,administratif,annuelle
-85.1,Enseignement pré-primaire,Education,education primaire,pluri-quotidienne
-85.10,Enseignement pré-primaire,Education,education primaire,pluri-quotidienne
-85.10Z,Enseignement pré-primaire,Education,education primaire,pluri-quotidienne
-85.2,Enseignement primaire,Education,education primaire,pluri-quotidienne
-85.20,Enseignement primaire,Education,education primaire,pluri-quotidienne
-85.20Z,Enseignement primaire,Education,education primaire,pluri-quotidienne
-85.3,Enseignement secondaire,Education,education secondaire,pluri-quotidienne
-85.31,Enseignement secondaire général,Education,education secondaire,pluri-quotidienne
-85.31Z,Enseignement secondaire général,Education,education secondaire,pluri-quotidienne
-85.32,Enseignement secondaire technique ou professionnel,Education,education secondaire,pluri-quotidienne
-85.32Z,Enseignement secondaire technique ou professionnel,Education,education secondaire,pluri-quotidienne
-85.4,Enseignement supérieur et post-secondaire non supérieur,Education,education supérieure,pluri-quotidienne
-85.41,Enseignement post-secondaire non supérieur,Education,education supérieure,pluri-quotidienne
-85.41Z,Enseignement post-secondaire non supérieur,Education,education supérieure,pluri-quotidienne
-85.42,Enseignement supérieur,Education,education supérieure,pluri-quotidienne
-85.42Z,Enseignement supérieur,Education,education supérieure,pluri-quotidienne
-85.5,Autres activités d'enseignement,Loisir,activité culturo-sportif,hebdomadaire
-85.51,Enseignement de disciplines sportives et d'activités de Loisir,Loisir,activité culturo-sportif,hebdomadaire
-85.51Z,Enseignement de disciplines sportives et d'activités de Loisir,Loisir,activité culturo-sportif,hebdomadaire
-85.52,Enseignement culturel,Loisir,activité culturo-sportif,hebdomadaire
-85.52Z,Enseignement culturel,Loisir,activité culturo-sportif,hebdomadaire
-85.53,Enseignement de la conduite,Démarche/aide à pers.,personnel,Bi-hebdomadaire
-85.53Z,Enseignement de la conduite,Démarche/aide à pers.,personnel,Bi-hebdomadaire
-85.59,Enseignements divers,Loisir,activité culturo-sportif,hebdomadaire
-85.59A,Formation continue d'adultes,Education,education supérieure,pluri-quotidienne
-85.59B,Autres enseignements,Loisir,activité culturo-sportif,hebdomadaire
-85.6,Activités de soutien à l'enseignement,Education,education secondaire,hebdomadaire
-85.60,Activités de soutien à l'enseignement,Education,education secondaire,hebdomadaire
-85.60Z,Activités de soutien à l'enseignement,Education,education secondaire,hebdomadaire
-86.1,Activités hospitalières,Santé,hospitalière,hebdomadaire
-86.10,Activités hospitalières,Santé,hospitalière,hebdomadaire
-86.10Z,Activités hospitalières,Santé,hospitalière,hebdomadaire
-86.2,Activité des médecins et des dentistes,Santé,medecine de ville,hebdomadaire
-86.21,Activité des médecins généralistes,Santé,medecine de ville,hebdomadaire
-86.21Z,Activité des médecins généralistes,Santé,medecine de ville,hebdomadaire
-86.22,Activité des médecins spécialistes,Santé,medecine de ville,mensuelle
-86.22A,Activités de radiodiagnostic et de radiothérapie,Santé,hospitalière,annuelle
-86.22B,Activités chirurgicales,Santé,hospitalière,annuelle
-86.22C,Autres activités des médecins spécialistes,Santé,hospitalière,annuelle
-86.23,Pratique dentaire,Santé,medecine de ville,mensuelle
-86.23Z,Pratique dentaire,Santé,medecine de ville,mensuelle
-86.9,Autres activités pour la santé humaine,Santé,medecine de ville,bi-hebdomadaire
-86.90,Autres activités pour la santé humaine,Santé,medecine de ville,bi-hebdomadaire
-86.90A,Ambulances,Santé,hospitalière,bi-hebdomadaire
-86.90B,Laboratoires d'analyses médicales,Santé,medecine de ville,mensuelle
-86.90C,Centres de collecte et banques d'organes,Santé,hospitalière,annuelle
-86.90D,Activités des infirmiers et des sages-femmes,Santé,medecine de ville,bi-hebdomadaire
-86.90E,Activités des professionnels de la rééducation - de l’appareillage et des pédicures-podologues,Santé,medecine de ville,bi-hebdomadaire
-86.90F,Activités de santé humaine non classées ailleurs,Santé,bien-être,hebdomadaire
-87.1,Hébergement médicalisé,Santé,assistance,quotidienne
-87.10,Hébergement médicalisé,Santé,assistance,quotidienne
-87.10A,Hébergement médicalisé pour personnes âgées,Santé,assistance,quotidienne
-87.10B,Hébergement médicalisé pour enfants handicapés ,Santé,assistance,quotidienne
-87.10C,"Hébergement médicalisé pour adultes handicapés et autre hébergement médicalisé 
-",Santé,assistance,quotidienne
-87.2,Hébergement social pour personnes handicapées mentales - malades mentales et toxicomanes,Santé,assistance,quotidienne
-87.20,Hébergement social pour personnes handicapées mentales - malades mentales et toxicomanes,Santé,assistance,quotidienne
-87.20A,Hébergement social pour handicapés mentaux et malades mentaux ,Santé,assistance,quotidienne
-87.20B,Hébergement social pour toxicomanes,Santé,assistance,quotidienne
-87.3,Hébergement social pour personnes âgées ou handicapées physiques ,Santé,assistance,quotidienne
-87.30,Hébergement social pour personnes âgées ou handicapées physiques ,Santé,assistance,quotidienne
-87.30A,Hébergement social pour personnes âgées,Santé,assistance,quotidienne
-87.30B,Hébergement social pour handicapés  physiques,Santé,assistance,quotidienne
-87.9,Autres activités d’hébergement social ,Démarche/aide à pers.,aide,pluri-quotidienne
-87.90,Autres activités d’hébergement social ,Démarche/aide à pers.,aide,pluri-quotidienne
-87.90A,Hébergement social pour enfants en difficultés ,Démarche/aide à pers.,aide,pluri-quotidienne
-87.90B,Hébergement social pour adultes et familles en difficultés et autre hébergement social ,Démarche/aide à pers.,aide,pluri-quotidienne
-88.1,Action sociale sans hébergement pour personnes âgées et pour personnes handicapées ,Démarche/aide à pers.,aide,pluri-quotidienne
-88.10,Action sociale sans hébergement pour personnes âgées et pour personnes handicapées ,Démarche/aide à pers.,aide,pluri-quotidienne
-88.10A,Aide à domicile  ,Démarche/aide à pers.,aide,pluri-quotidienne
-88.10B,Accueil ou accompagnement sans hébergement d’adultes handicapés ou de  personnes âgées,Démarche/aide à pers.,aide,pluri-quotidienne
-88.10C,Aide par le travail ,Démarche/aide à pers.,aide,pluri-quotidienne
-88.9,Autre action sociale sans hébergement,Démarche/aide à pers.,aide,quotidienne
-88.91,Action sociale sans hébergement pour jeunes enfants,Démarche/aide à pers.,aide,quotidienne
-88.91A,Accueil de jeunes enfants,Démarche/aide à pers.,aide,quotidienne
-88.91B,Accueil ou accompagnement sans hébergement d’enfants handicapés,Démarche/aide à pers.,aide,quotidienne
-88.99,Autre action sociale sans hébergement n.c.a.,Démarche/aide à pers.,aide,quotidienne
-88.99A,"Autre accueil ou accompagnement sans hébergement d’enfants
- et d’adolescents
-",Démarche/aide à pers.,aide,quotidienne
-88.99B,Action sociale sans hébergement n.c.a.,Démarche/aide à pers.,aide,quotidienne
-90.0,Activités créatives - artistiques et de spectacle ,Loisir,sortie,mensuelle
-90.01,Arts du spectacle vivant,Loisir,sortie,mensuelle
-90.01Z,Arts du spectacle vivant,Loisir,sortie,mensuelle
-90.02,Activités de soutien au spectacle vivant,Loisir,sortie,mensuelle
-90.02Z,Activités de soutien au spectacle vivant,Loisir,sortie,mensuelle
-90.03,Création artistique,Loisir,sortie,mensuelle
-90.03A,Création artistique relevant des arts plastiques,Loisir,sortie,mensuelle
-90.03B,Autre création artistique,Loisir,sortie,mensuelle
-90.04,Gestion de salles de spectacles,Loisir,sortie,hebdomadaire
-90.04Z,Gestion de salles de spectacles,Loisir,sortie,hebdomadaire
-91.0,Bibliothèques - archives - musées et autres activités culturelles,Loisir,activité culturo-sportif,hebdomadaire
-91.01,Gestion des bibliothèques et des archives,Loisir,activité culturo-sportif,hebdomadaire
-91.01Z,Gestion des bibliothèques et des archives,Loisir,activité culturo-sportif,hebdomadaire
-91.02,Gestion des musées,Loisir,sortie,mensuelle
-91.02Z,Gestion des musées,Loisir,sortie,mensuelle
-91.03,Gestion des sites et monuments historiques et des attractions touristiques similaires,Loisir,sortie,mensuelle
-91.03Z,Gestion des sites et monuments historiques et des attractions touristiques similaires,Loisir,sortie,mensuelle
-91.04,Gestion des jardins botaniques et zoologiques et des réserves naturelles,Loisir,sortie,mensuelle
-91.04Z,Gestion des jardins botaniques et zoologiques et des réserves naturelles,Loisir,sortie,mensuelle
-92.0,Organisation de jeux de hasard et d'argent,Loisir,sortie,mensuelle
-92.00,Organisation de jeux de hasard et d'argent,Loisir,sortie,mensuelle
-92.00Z,Organisation de jeux de hasard et d'argent,Loisir,sortie,mensuelle
-93.1,Activités liées au sport,Loisir,activité culturo-sportif,hebdomadaire
-93.11,Gestion d'installations sportives,Loisir,activité culturo-sportif,hebdomadaire
-93.11Z,Gestion d'installations sportives,Loisir,activité culturo-sportif,hebdomadaire
-93.12,Activités de clubs de sports,Loisir,activité culturo-sportif,hebdomadaire
-93.12Z,Activités de clubs de sports,Loisir,activité culturo-sportif,hebdomadaire
-93.13,Activités des centres de culture physique,Loisir,activité culturo-sportif,hebdomadaire
-93.13Z,Activités des centres de culture physique,Loisir,activité culturo-sportif,hebdomadaire
-93.19,Autres activités liées au sport,Loisir,activité culturo-sportif,hebdomadaire
-93.19Z,Autres activités liées au sport,Loisir,activité culturo-sportif,hebdomadaire
-93.2,Activités récréatives et de Loisir,Loisir,activité culturo-sportif,annuelle
-93.21,Activités des parcs d'attractions et parcs à thèmes,Loisir,activité culturo-sportif,annuelle
-93.21Z,Activités des parcs d'attractions et parcs à thèmes,Loisir,activité culturo-sportif,annuelle
-93.29,Autres activités récréatives et de Loisir ,Loisir,activité culturo-sportif,annuelle
-93.29Z,Autres activités récréatives et de Loisir,Loisir,activité culturo-sportif,annuelle
-94.1,Activités des organisations économiques - patronales et professionnelles,Loisir,activité culturo-sportif,hebdomadaire
-94.11,Activités des organisations patronales et consulaires,Loisir,activité culturo-sportif,hebdomadaire
-94.11Z,Activités des organisations patronales et consulaires,Loisir,activité culturo-sportif,hebdomadaire
-94.12,Activités des organisations professionnelles,Loisir,activité culturo-sportif,hebdomadaire
-94.12Z,Activités des organisations professionnelles,Loisir,activité culturo-sportif,hebdomadaire
-94.2,Activités des syndicats de salariés,Loisir,activité culturo-sportif,hebdomadaire
-94.20,Activités des syndicats de salariés,Loisir,activité culturo-sportif,hebdomadaire
-94.20Z,Activités des syndicats de salariés,Loisir,activité culturo-sportif,hebdomadaire
-94.9,Activités des autres organisations associatives,Loisir,activité culturo-sportif,hebdomadaire
-94.91,Activités des organisations religieuses,Loisir,activité culturo-sportif,hebdomadaire
-94.91Z,Activités des organisations religieuses,Loisir,activité culturo-sportif,hebdomadaire
-94.92,Activités des organisations politiques,Loisir,activité culturo-sportif,hebdomadaire
-94.92Z,Activités des organisations politiques,Loisir,activité culturo-sportif,hebdomadaire
-94.99,Activités des organisations associatives n.c.a.,Loisir,activité culturo-sportif,hebdomadaire
-94.99Z,Autres organisations fonctionnant par adhésion volontaire,Loisir,activité culturo-sportif,hebdomadaire
-95.1,Réparation d'ordinateurs et d'équipements de communication ,Commerce,achat divers,annuelle
-95.11,Réparation d'ordinateurs et d'équipements périphériques,Commerce,achat divers,annuelle
-95.11Z,Réparation d'ordinateurs et d'équipements périphériques,Commerce,achat divers,annuelle
-95.12,Réparation d'équipements de communication,Commerce,achat divers,annuelle
-95.12Z,Réparation d'équipements de communication,Commerce,achat divers,annuelle
-95.2,Réparation de biens personnels et domestiques,Commerce,achat divers,annuelle
-95.21,Réparation de produits électroniques grand public,Commerce,achat divers,annuelle
-95.21Z,Réparation de produits électroniques grand public,Commerce,achat divers,annuelle
-95.22,Réparation d'appareils électroménagers et d'équipements pour la maison et le jardin,Commerce,achat divers,annuelle
-95.22Z,Réparation d'appareils électroménagers et d'équipements pour la maison et le jardin,Commerce,achat divers,annuelle
-95.23,Réparation de chaussures et d'articles en cuir,Commerce,achat divers,annuelle
-95.23Z,Réparation de chaussures et d'articles en cuir,Commerce,achat divers,annuelle
-95.24,Réparation de meubles et d'équipements du foyer,Commerce,achat divers,annuelle
-95.24Z,Réparation de meubles et d'équipements du foyer,Commerce,achat divers,annuelle
-95.25,Réparation d'articles d'horlogerie et de bijouterie,Commerce,achat divers,annuelle
-95.25Z,Réparation d'articles d'horlogerie et de bijouterie,Commerce,achat divers,annuelle
-95.29,Réparation d'autres biens personnels et domestiques,Commerce,achat divers,annuelle
-95.29Z,Réparation d'autres biens personnels et domestiques,Commerce,achat divers,annuelle
-96.0,Autres services personnels,Commerce,services personnels,mensuelle
-96.01,Blanchisserie-teinturerie,Commerce,services personnels,hebdomadaire
-96.01B,Blanchisserie-teinturerie de détail,Commerce,services personnels,hebdomadaire
-96.02,Coiffure et soins de beauté,Commerce,services personnels,mensuelle
-96.02A,Coiffure,Commerce,services personnels,mensuelle
-96.02B,Soins de beauté,Commerce,services personnels,mensuelle
-96.03,Services funéraires,Commerce,services personnels,annuelle
-96.03Z,Services funéraires,Commerce,services personnels,annuelle
-96.04,Entretien corporel,Commerce,services personnels,mensuelle
-96.04Z,Entretien corporel,Commerce,services personnels,mensuelle
-96.09,Autres services personnels n.c.a.,Commerce,services personnels,mensuelle
-96.09Z,Autres services personnels n.c.a.,Commerce,services personnels,mensuelle
-99.0,Activités des organisations et organismes extraterritoriaux,Démarche/aide à pers.,administratif,annuelle
-99.00,Activités des organisations et organismes extraterritoriaux,Démarche/aide à pers.,administratif,annuelle
-99.00Z,Activités des organisations et organismes extraterritoriaux,Démarche/aide à pers.,administratif,annuelle
+Code, Intitulés de la  NAF rév. 2 - version finale ,rstOuv1403,type,categorie,frequence
+45.1,Commerce de véhicules automobiles,,Commerce,service automobile,annuelle
+45.11,Commerce de voitures et de véhicules automobiles légers,,Commerce,service automobile,annuelle
+45.11Z,Commerce de voitures et de véhicules automobiles légers,,Commerce,service automobile,annuelle
+45.19,Commerce d'autres véhicules automobiles,,Commerce,service automobile,annuelle
+45.19Z,Commerce d'autres véhicules automobiles,,Commerce,service automobile,annuelle
+45.2,Entretien et réparation de véhicules automobiles,1,Commerce,service automobile,annuelle
+45.20,Entretien et réparation de véhicules automobiles,1,Commerce,service automobile,annuelle
+45.20A,Entretien et réparation de véhicules automobiles légers,1,Commerce,service automobile,annuelle
+45.20B,Entretien et réparation d'autres véhicules automobiles,1,Commerce,service automobile,annuelle
+45.3,Commerce d'équipements automobiles,1,Commerce,service automobile,annuelle
+45.32,Commerce de détail d'équipements automobiles,1,Commerce,service automobile,annuelle
+45.32Z,Commerce de détail d'équipements automobiles,1,Commerce,service automobile,annuelle
+45.4,Commerce et réparation de motocycles,1,Commerce,service automobile,annuelle
+45.40,Commerce et réparation de motocycles,1,Commerce,service automobile,annuelle
+45.40Z,Commerce et réparation de motocycles,1,Commerce,service automobile,annuelle
+47.1,Commerce de détail en magasin non spécialisé,,Commerce,achat divers,mensuelle
+47.11,Commerce de détail en magasin non spécialisé à prédominance alimentaire,1,Commerce,alimentation,hebdomadaire
+47.11A,Commerce de détail de produits surgelés,1,Commerce,alimentation,hebdomadaire
+47.11B,Commerce d'alimentation générale,1,Commerce,alimentation,quotidienne
+47.11C,Supérettes,1,Commerce,alimentation,quotidienne
+47.11D,Supermarchés,1,Commerce,alimentation,bi-hebdomadaire
+47.11E,Magasins multi-commerces,1,Commerce,alimentation,bi-hebdomadaire
+47.11F,Hypermarchés,1,Commerce,alimentation,hebdomadaire
+47.19,Autre commerce de détail en magasin non spécialisé,,Commerce,alimentation,hebdomadaire
+47.19A,Grands magasins,,Commerce,alimentation,hebdomadaire
+47.19B,Autres commerces de détail en magasin non spécialisé,,Commerce,alimentation,hebdomadaire
+47.2,Commerce de détail alimentaire en magasin spécialisé,,Commerce,alimentation,hebdomadaire
+47.21,Commerce de détail de fruits et légumes en magasin spécialisé,1,Commerce,alimentation,bi-hebdomadaire
+47.21Z,Commerce de détail de fruits et légumes en magasin spécialisé,1,Commerce,alimentation,bi-hebdomadaire
+47.22,Commerce de détail de viandes et de produits à base de viande en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.22Z,Commerce de détail de viandes et de produits à base de viande en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.23,Commerce de détail de poissons - crustacés et mollusques en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.23Z,Commerce de détail de poissons - crustacés et mollusques en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.24,Commerce de détail de pain - pâtisserie et confiserie en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.24Z,Commerce de détail de pain - pâtisserie et confiserie en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.25,Commerce de détail de boissons en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.25Z,Commerce de détail de boissons en magasin spécialisé,1,Commerce,alimentation,hebdomadaire
+47.26,Commerce de détail de produits à base de tabac en magasin spécialisé,,Commerce,achat divers,quotidienne
+47.26Z,Commerce de détail de produits à base de tabac en magasin spécialisé,,Commerce,achat divers,quotidienne
+47.29,Autres commerces de détail alimentaires en magasin spécialisé ,1,Commerce,alimentation,hebdomadaire
+47.29Z,Autres commerces de détail alimentaires en magasin spécialisé ,1,Commerce,alimentation,hebdomadaire
+47.3,Commerce de détail de carburants en magasin spécialisé,1,Commerce,service automobile,hebdomadaire
+47.30,Commerce de détail de carburants en magasin spécialisé,1,Commerce,service automobile,hebdomadaire
+47.30Z,Commerce de détail de carburants en magasin spécialisé,1,Commerce,service automobile,hebdomadaire
+47.4,Commerce de détail d'équipements de l'information et de la communication en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.41,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.41Z,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.42,Commerce de détail de matériels de télécommunication en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.42Z,Commerce de détail de matériels de télécommunication en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.43,Commerce de détail de matériels audio/vidéo en magasin spécialisé,,Commerce,achat divers,annuelle
+47.43Z,Commerce de détail de matériels audio et vidéo en magasin spécialisé,,Commerce,achat divers,annuelle
+47.5,Commerce de détail d'autres équipements du foyer en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.51,Commerce de détail de textiles en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.51Z,Commerce de détail de textiles en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.52,Commerce de détail de quincaillerie - peintures et verres en magasin spécialisé,1,Commerce,achat divers,annuelle
+47.52A,Commerce de détail de quincaillerie - peintures et verres en petites surfaces (moins de 400 m2),1,Commerce,achat divers,annuelle
+47.52B,Commerce de détail de quincaillerie - peintures et verres en grandes surfaces (400 m2et plus),1,Commerce,achat divers,annuelle
+47.53,Commerce de détail de tapis - moquettes et revêtements de murs et de sols en magasin spécialisé,,Commerce,achat divers,annuelle
+47.53Z,Commerce de détail de tapis - moquettes et revêtements de murs et de sols en magasin spécialisé,,Commerce,achat divers,annuelle
+47.54,Commerce de détail d'appareils électroménagers en magasin spécialisé,,Commerce,achat divers,annuelle
+47.54Z,Commerce de détail d'appareils électroménagers en magasin spécialisé,,Commerce,achat divers,annuelle
+47.59,Commerce de détail de meubles - appareils d'éclairage et autres articles de ménage en magasin spécialisé,,Commerce,achat divers,annuelle
+47.59A,Commerce de détail de meubles,,Commerce,achat divers,annuelle
+47.59B,Commerce de détail d'autres équipements du foyer,,Commerce,achat divers,annuelle
+47.6,Commerce de détail de biens culturels et de Loisir en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.61,Commerce de détail de livres en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.61Z,Commerce de détail de livres en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.62,Commerce de détail de journaux et papeterie en magasin spécialisé,1,Commerce,achat divers,Bi-hebdomadaire
+47.62Z,Commerce de détail de journaux et papeterie en magasin spécialisé,1,Commerce,achat divers,Bi-hebdomadaire
+47.63,Commerce de détail d'enregistrements musicaux et vidéo en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.63Z,Commerce de détail d'enregistrements musicaux et vidéo en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.64,Commerce de détail d'articles de sport en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.64Z,Commerce de détail d'articles de sport en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.65,Commerce de détail de jeux et jouets en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.65Z,Commerce de détail de jeux et jouets en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.7,Autres commerces de détail en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.71,Commerce de détail d'habillement en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.71Z,Commerce de détail d'habillement en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.72,Commerce de détail de chaussures et d'articles en cuir en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.72A,Commerce de détail de la chaussure,,Commerce,achat divers,mensuelle
+47.72B,Commerce de détail de maroquinerie et d'articles de voyage,,Commerce,achat divers,mensuelle
+47.73,Commerce de détail de produits pharmaceutiques en magasin spécialisé,1,Santé,commerce médical,hebdomadaire
+47.73Z,Commerce de détail de produits pharmaceutiques en magasin spécialisé,1,Santé,commerce médical,hebdomadaire
+47.74,Commerce de détail d'articles médicaux et orthopédiques en magasin spécialisé,1,Santé,commerce médical,mensuelle
+47.74Z,Commerce de détail d'articles médicaux et orthopédiques en magasin spécialisé,1,Santé,commerce médical,mensuelle
+47.75,Commerce de détail de parfumerie et de produits de beauté en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.75Z,Commerce de détail de parfumerie et de produits de beauté en magasin spécialisé,,Commerce,achat divers,mensuelle
+47.76,Commerce de détail de fleurs - plantes - graines - engrais - animaux de compagnie et aliments pour ces animaux en magasin spécialisé,1,Commerce,achat divers,mensuelle
+47.76Z,Commerce de détail de fleurs - plantes - graines - engrais - animaux de compagnie et aliments pour ces animaux en magasin spécialisé,1,Commerce,achat divers,mensuelle
+47.77,Commerce de détail d'articles d'horlogerie et de bijouterie en magasin spécialisé,,Commerce,achat divers,annuelle
+47.77Z,Commerce de détail d'articles d'horlogerie et de bijouterie en magasin spécialisé,,Commerce,achat divers,annuelle
+47.78,Autre commerce de détail de biens neufs en magasin spécialisé,,Commerce,achat divers,annuelle
+47.78A,Commerces de détail d'optique,,Commerce,achat divers,annuelle
+47.78B,Commerces de détail de charbons et combustibles,,Commerce,achat divers,mensuelle
+47.78C,Autres commerces de détail spécialisés divers,,Commerce,achat divers,mensuelle
+47.79,Commerce de détail de biens d'occasion en magasin,,Commerce,achat divers,mensuelle
+47.79Z,Commerce de détail de biens d'occasion en magasin,,Commerce,achat divers,mensuelle
+47.8,Commerce de détail sur éventaires et marchés,,Commerce,achat divers,Bi-hebdomadaire
+47.81,Commerce de détail alimentaire sur éventaires et marchés,1,Commerce,alimentation,Bi-hebdomadaire
+47.81Z,Commerce de détail alimentaire sur éventaires et marchés,1,Commerce,alimentation,Bi-hebdomadaire
+47.82,Commerce de détail de textiles - d'habillement et de chaussures sur éventaires et marchés,,Commerce,achat divers,mensuelle
+47.82Z,Commerce de détail de textiles - d'habillement et de chaussures sur éventaires et marchés,,Commerce,achat divers,mensuelle
+47.89,Autres commerces de détail sur éventaires et marchés,,Commerce,achat divers,mensuelle
+47.89Z,Autres commerces de détail sur éventaires et marchés,,Commerce,achat divers,mensuelle
+47.9,Commerce de détail hors magasin - éventaires ou marchés,,Commerce,achat divers,mensuelle
+47.99B,Vente par automates et autres commerces de détail hors magasin - éventaires ou marchés n.c.a.,1,Commerce,achat divers,mensuelle
+49.1,Transport ferroviaire interurbain de voyageurs,,Transport,infrastructure,hebdomadaire
+49.10,Transport ferroviaire interurbain de voyageurs,,Transport,infrastructure,hebdomadaire
+49.10Z,Transport ferroviaire interurbain de voyageurs,,Transport,infrastructure,hebdomadaire
+49.3,Autres Transport terrestres de voyageurs,,Transport,infrastructure,hebdomadaire
+49.31,Transport urbains et suburbains de voyageurs,,Transport,personnel,hebdomadaire
+49.31Z,Transport urbains et suburbains de voyageurs,,Transport,personnel,hebdomadaire
+49.32,Transport de voyageurs par taxis,,Transport,personnel,hebdomadaire
+49.32Z,Transport de voyageurs par taxis,,Transport,personnel,hebdomadaire
+49.39,Autres Transport terrestres de voyageurs n.c.a.,,Transport,personnel,hebdomadaire
+49.39A,Transport routiers réguliers de voyageurs,,Transport,personnel,hebdomadaire
+49.39B,Autres Transport routiers de voyageurs ,,Transport,personnel,hebdomadaire
+49.39C,Téléphériques et remontées mécaniques,,Transport,infrastructure,mensuelle
+50.1,Transport maritimes et côtiers de passagers,,Transport,infrastructure,annuelle
+50.10,Transport maritimes et côtiers de passagers,,Transport,infrastructure,annuelle
+50.10Z,Transport maritimes et côtiers de passagers,,Transport,infrastructure,annuelle
+50.3,Transport fluviaux de passagers,,Transport,infrastructure,annuelle
+50.30,Transport fluviaux de passagers,,Transport,infrastructure,annuelle
+50.30Z,Transport fluviaux de passagers,,Transport,infrastructure,annuelle
+51.1,Transport aériens de passagers,,Transport,infrastructure,annuelle
+51.10,Transport aériens de passagers,,Transport,infrastructure,annuelle
+51.10Z,Transport aériens de passagers,,Transport,infrastructure,annuelle
+53.1,Activités de poste dans le cadre d'une obligation de service universel,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+53.10,Activités de poste dans le cadre d'une obligation de service universel ,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+53.10Z,Activités de poste dans le cadre d'une obligation de service universel ,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+53.2,Autres activités de poste et de courrier,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+53.20,Autres activités de poste et de courrier,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+53.20Z,Autres activités de poste et de courrier,,Démarche/aide à pers.,affaire personnelle,hebdomadaire
+55.1,Hôtels et hébergement similaire,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.10,Hôtels et hébergement similaire ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.10Z,Hôtels et hébergement similaire ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.2,Hébergement touristique et autre hébergement de courte durée ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.20,Hébergement touristique et autre hébergement de courte durée ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.20Z,Hébergement touristique et autre hébergement de courte durée ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.3,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.30,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.30Z,Terrains de camping et parcs pour caravanes ou véhicules de Loisir,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.9,Autres hébergements ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.90,Autres hébergements ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+55.90Z,Autres hébergements ,que pour les habitants réguliers,Loisir,hébergement,mensuelle
+56.1,Restaurants et services de restauration mobile,,Loisir,restauration,Bi-hebdomadaire
+56.10,Restaurants et services de restauration mobile,,Loisir,restauration,Bi-hebdomadaire
+56.10A,Restauration traditionnelle,,Loisir,restauration,hebdomadaire
+56.10B,Cafétérias et autres libres-services,,Loisir,restauration,hebdomadaire
+56.10C,Restauration de type rapide,,Loisir,restauration,Bi-hebdomadaire
+56.2,Traiteurs et autres services de restauration,,Loisir,restauration,annuelle
+56.21,Services des traiteurs ,,Loisir,restauration,annuelle
+56.21Z,Services des traiteurs ,,Loisir,restauration,annuelle
+56.29,Autres services de restauration ,,Loisir,restauration,Bi-hebdomadaire
+56.29A,Restauration collective sous contrat,,Loisir,restauration,Bi-hebdomadaire
+56.29B,Autres services de restauration n.c.a.,,Loisir,restauration,Bi-hebdomadaire
+56.3,Débits de boissons,,Loisir,restauration,Bi-hebdomadaire
+56.30,Débits de boissons,,Loisir,restauration,Bi-hebdomadaire
+56.30Z,Débits de boissons,,Loisir,restauration,Bi-hebdomadaire
+59.14,Projection de films cinématographiques,,Loisir,sortie,hebdomadaire
+59.14Z,Projection de films cinématographiques,,Loisir,sortie,hebdomadaire
+64.9,Autres activités des services financiers - hors assurance et caisses de retraite,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.91,Crédit-bail ,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.91Z,Crédit-bail ,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.92,Autre distribution de crédit,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.92Z,Autre distribution de crédit,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.99,Autres activités des services financiers - hors assurance et caisses de retraite - n.c.a.,,Démarche/aide à pers.,affaire personnelle,annuelle
+64.99Z,Autres activités des services financiers - hors assurance et caisses de retraite - n.c.a.,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.1,Assurance,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.11,Assurance vie ,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.11Z,Assurance vie,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.12,Autres assurances,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.12Z,Autres assurances,,Démarche/aide à pers.,affaire personnelle,annuelle
+65.3,Caisses de retraite,,Démarche/aide à pers.,administratif,annuelle
+65.30,Caisses de retraite,,Démarche/aide à pers.,administratif,annuelle
+65.30Z,Caisses de retraite,,Démarche/aide à pers.,administratif,annuelle
+68.3,Activités immobilières pour compte de tiers,,Démarche/aide à pers.,affaire personnelle,annuelle
+68.31,Agences immobilières,,Démarche/aide à pers.,affaire personnelle,annuelle
+68.31Z,Agences immobilières,,Démarche/aide à pers.,affaire personnelle,annuelle
+68.32,Administration de biens immobiliers,,Démarche/aide à pers.,affaire personnelle,annuelle
+68.32A,Administration d'immeubles et autres biens immobiliers,,Démarche/aide à pers.,affaire personnelle,annuelle
+68.32B,Supports juridiques de gestion de patrimoine immobilier,,Démarche/aide à pers.,affaire personnelle,annuelle
+71.20A,Contrôle technique automobile,,Commerce,service automobile,annuelle
+75.0,Activités vétérinaires,,Commerce,service personnels,mensuelle
+75.00,Activités vétérinaires,,Commerce,service personnels,mensuelle
+75.00Z,Activités vétérinaires,,Commerce,service personnels,mensuelle
+77.1,Location et location-bail de véhicules automobiles,,Transport,service automobile,mensuelle
+77.11,Location et location-bail de voitures et de véhicules automobiles légers,,Transport,service automobile,mensuelle
+77.11A,Location de courte durée de voitures et de véhicules automobiles légers,,Transport,service automobile,mensuelle
+77.11B,Location de longue durée de voitures et de véhicules automobiles légers,,Transport,service automobile,mensuelle
+77.12,Location et location-bail de camions,,Transport,service automobile,annuelle
+77.12Z,Location et location-bail de camions,,Transport,service automobile,annuelle
+77.2,Location et location-bail de biens personnels et domestiques,,Transport,service automobile,annuelle
+77.21,Location et location-bail d'articles de Loisir et de sport ,,Transport,service automobile,annuelle
+77.21Z,Location et location-bail d'articles de Loisir et de sport ,,Loisir,activité culturo-sportif,mensuelle
+77.22,Location de vidéocassettes et disques vidéo,,Loisir,activité culturo-sportif,mensuelle
+77.22Z,Location de vidéocassettes et disques vidéo,,Loisir,activité culturo-sportif,mensuelle
+77.29,Location et location-bail d'autres biens personnels et domestiques,,Loisir,activité culturo-sportif,mensuelle
+77.29Z,Location et location-bail d'autres biens personnels et domestiques,,Loisir,activité culturo-sportif,mensuelle
+79.1,Activités des agences de voyage et voyagistes,,Commerce,achat divers,annuelle
+79.11,Activités des agences de voyage,,Commerce,achat divers,annuelle
+79.11Z,Activités des agences de voyage,,Commerce,achat divers,annuelle
+79.12,Activités des voyagistes,,Commerce,achat divers,annuelle
+79.12Z,Activités des voyagistes,,Commerce,achat divers,annuelle
+79.9,Autres services de réservation et activités connexes,,Commerce,achat divers,annuelle
+79.90,Autres services de réservation et activités connexes,,Commerce,achat divers,annuelle
+79.90Z,Autres services de réservation et activités connexes,,Commerce,achat divers,annuelle
+84.1,Administration générale - économique et sociale,,Démarche/aide à pers.,administratif,annuelle
+84.11,Administration publique générale,,Démarche/aide à pers.,administratif,annuelle
+84.11Z,Administration publique générale,,Démarche/aide à pers.,administratif,annuelle
+84.12,Administration publique (tutelle) de la santé - de la formation - de la culture et des services sociaux - autre que sécurité sociale ,,Démarche/aide à pers.,administratif,annuelle
+84.12Z,Administration publique (tutelle) de la santé - de la formation - de la culture et des services sociaux - autre que sécurité sociale ,,Démarche/aide à pers.,administratif,annuelle
+84.13,Administration publique (tutelle) des activités économiques,,Démarche/aide à pers.,administratif,annuelle
+84.13Z,Administration publique (tutelle) des activités économiques,,Démarche/aide à pers.,administratif,annuelle
+84.2,Services de prérogative publique,,Démarche/aide à pers.,administratif,annuelle
+84.21,Affaires étrangères,,Démarche/aide à pers.,administratif,annuelle
+84.21Z,Affaires étrangères,,Démarche/aide à pers.,administratif,annuelle
+84.22,Défense,,Démarche/aide à pers.,administratif,annuelle
+84.22Z,Défense,,Démarche/aide à pers.,administratif,annuelle
+84.23,Justice,,Démarche/aide à pers.,administratif,annuelle
+84.23Z,Justice,,Démarche/aide à pers.,administratif,annuelle
+84.24,Activités d’ordre public et de sécurité,,Démarche/aide à pers.,administratif,annuelle
+84.24Z,Activités d’ordre public et de sécurité,,Démarche/aide à pers.,administratif,annuelle
+84.25,Services du feu et de secours,,Démarche/aide à pers.,administratif,annuelle
+84.25Z,Services du feu et de secours,,Démarche/aide à pers.,administratif,annuelle
+84.3,Sécurité sociale obligatoire,,Démarche/aide à pers.,administratif,annuelle
+84.30,Sécurité sociale obligatoire,,Démarche/aide à pers.,administratif,annuelle
+84.30A,Activités générales de sécurité sociale,,Démarche/aide à pers.,administratif,annuelle
+84.30B,Gestion des retraites complémentaires,,Démarche/aide à pers.,administratif,annuelle
+84.30C,Distribution sociale de revenus,,Démarche/aide à pers.,administratif,annuelle
+85.1,Enseignement pré-primaire,,Education,education primaire,pluri-quotidienne
+85.10,Enseignement pré-primaire,,Education,education primaire,pluri-quotidienne
+85.10Z,Enseignement pré-primaire,,Education,education primaire,pluri-quotidienne
+85.2,Enseignement primaire,,Education,education primaire,pluri-quotidienne
+85.20,Enseignement primaire,,Education,education primaire,pluri-quotidienne
+85.20Z,Enseignement primaire,,Education,education primaire,pluri-quotidienne
+85.3,Enseignement secondaire,,Education,education secondaire,pluri-quotidienne
+85.31,Enseignement secondaire général,,Education,education secondaire,pluri-quotidienne
+85.31Z,Enseignement secondaire général,,Education,education secondaire,pluri-quotidienne
+85.32,Enseignement secondaire technique ou professionnel,,Education,education secondaire,pluri-quotidienne
+85.32Z,Enseignement secondaire technique ou professionnel,,Education,education secondaire,pluri-quotidienne
+85.4,Enseignement supérieur et post-secondaire non supérieur,,Education,education supérieure,pluri-quotidienne
+85.41,Enseignement post-secondaire non supérieur,,Education,education supérieure,pluri-quotidienne
+85.41Z,Enseignement post-secondaire non supérieur,,Education,education supérieure,pluri-quotidienne
+85.42,Enseignement supérieur,,Education,education supérieure,pluri-quotidienne
+85.42Z,Enseignement supérieur,,Education,education supérieure,pluri-quotidienne
+85.5,Autres activités d'enseignement,,Loisir,activité culturo-sportif,hebdomadaire
+85.51,Enseignement de disciplines sportives et d'activités de Loisir,,Loisir,activité culturo-sportif,hebdomadaire
+85.51Z,Enseignement de disciplines sportives et d'activités de Loisir,,Loisir,activité culturo-sportif,hebdomadaire
+85.52,Enseignement culturel,,Loisir,activité culturo-sportif,hebdomadaire
+85.52Z,Enseignement culturel,,Loisir,activité culturo-sportif,hebdomadaire
+85.53,Enseignement de la conduite,,Démarche/aide à pers.,affaire personnelle,Bi-hebdomadaire
+85.53Z,Enseignement de la conduite,,Démarche/aide à pers.,affaire personnelle,Bi-hebdomadaire
+85.59,Enseignements divers,,Loisir,activité culturo-sportif,hebdomadaire
+85.59A,Formation continue d'adultes,,Education,education supérieure,pluri-quotidienne
+85.59B,Autres enseignements,,Loisir,activité culturo-sportif,hebdomadaire
+85.6,Activités de soutien à l'enseignement,,Education,education particulière,hebdomadaire
+85.60,Activités de soutien à l'enseignement,,Education,education particulière,hebdomadaire
+85.60Z,Activités de soutien à l'enseignement,,Education,education particulière,hebdomadaire
+86.1,Activités hospitalières,,Santé,hospitalière,hebdomadaire
+86.10,Activités hospitalières,,Santé,hospitalière,hebdomadaire
+86.10Z,Activités hospitalières,,Santé,hospitalière,hebdomadaire
+86.2,Activité des médecins et des dentistes,,Santé,medecine de ville,hebdomadaire
+86.21,Activité des médecins généralistes,,Santé,medecine de ville,hebdomadaire
+86.21Z,Activité des médecins généralistes,,Santé,medecine de ville,hebdomadaire
+86.22,Activité des médecins spécialistes,,Santé,medecine de ville,mensuelle
+86.22A,Activités de radiodiagnostic et de radiothérapie,,Santé,hospitalière,annuelle
+86.22B,Activités chirurgicales,,Santé,hospitalière,annuelle
+86.22C,Autres activités des médecins spécialistes,,Santé,hospitalière,annuelle
+86.23,Pratique dentaire,,Santé,medecine de ville,mensuelle
+86.23Z,Pratique dentaire,,Santé,medecine de ville,mensuelle
+86.9,Autres activités pour la santé humaine,,Santé,medecine de ville,bi-hebdomadaire
+86.90,Autres activités pour la santé humaine,,Santé,medecine de ville,bi-hebdomadaire
+86.90A,Ambulances,,Santé,hospitalière,bi-hebdomadaire
+86.90B,Laboratoires d'analyses médicales,,Santé,medecine de ville,mensuelle
+86.90C,Centres de collecte et banques d'organes,,Santé,hospitalière,annuelle
+86.90D,Activités des infirmiers et des sages-femmes,,Santé,medecine de ville,bi-hebdomadaire
+86.90E,Activités des professionnels de la rééducation - de l’appareillage et des pédicures-podologues,,Santé,bien-être,bi-hebdomadaire
+86.90F,Activités de santé humaine non classées ailleurs,,Santé,bien-être,hebdomadaire
+87.1,Hébergement médicalisé,,Santé,assistance,quotidienne
+87.10,Hébergement médicalisé,,Santé,assistance,quotidienne
+87.10A,Hébergement médicalisé pour personnes âgées,,Santé,assistance,quotidienne
+87.10B,Hébergement médicalisé pour enfants handicapés ,,Santé,assistance,quotidienne
+87.10C,Hébergement médicalisé pour adultes handicapés et autre hébergement médicalisé ,,Santé,assistance,quotidienne
+87.2,Hébergement social pour personnes handicapées mentales - malades mentales et toxicomanes,,Santé,assistance,quotidienne
+87.20,Hébergement social pour personnes handicapées mentales - malades mentales et toxicomanes,,Santé,assistance,quotidienne
+87.20A,Hébergement social pour handicapés mentaux et malades mentaux ,,Santé,assistance,quotidienne
+87.20B,Hébergement social pour toxicomanes,,Santé,assistance,quotidienne
+87.3,Hébergement social pour personnes âgées ou handicapées physiques ,,Santé,assistance,quotidienne
+87.30,Hébergement social pour personnes âgées ou handicapées physiques ,,Santé,assistance,quotidienne
+87.30A,Hébergement social pour personnes âgées,,Santé,assistance,quotidienne
+87.30B,Hébergement social pour handicapés  physiques,,Santé,assistance,quotidienne
+87.9,Autres activités d’hébergement social ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+87.90,Autres activités d’hébergement social ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+87.90A,Hébergement social pour enfants en difficultés ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+87.90B,Hébergement social pour adultes et familles en difficultés et autre hébergement social ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.1,Action sociale sans hébergement pour personnes âgées et pour personnes handicapées ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.10,Action sociale sans hébergement pour personnes âgées et pour personnes handicapées ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.10A,Aide à domicile  ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.10B,Accueil ou accompagnement sans hébergement d’adultes handicapés ou de  personnes âgées,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.10C,Aide par le travail ,,Démarche/aide à pers.,accompagnement social,pluri-quotidienne
+88.9,Autre action sociale sans hébergement,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.91,Action sociale sans hébergement pour jeunes enfants,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.91A,Accueil de jeunes enfants,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.91B,Accueil ou accompagnement sans hébergement d’enfants handicapés,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.99,Autre action sociale sans hébergement n.c.a.,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.99A,Autre accueil ou accompagnement sans hébergement d’enfants et d’adolescents,,Démarche/aide à pers.,accompagnement social,quotidienne
+88.99B,Action sociale sans hébergement n.c.a.,,Démarche/aide à pers.,accompagnement social,quotidienne
+90.0,Activités créatives - artistiques et de spectacle ,,Loisir,sortie,mensuelle
+90.01,Arts du spectacle vivant,,Loisir,sortie,mensuelle
+90.01Z,Arts du spectacle vivant,,Loisir,sortie,mensuelle
+90.02,Activités de soutien au spectacle vivant,,Loisir,sortie,mensuelle
+90.02Z,Activités de soutien au spectacle vivant,,Loisir,sortie,mensuelle
+90.03,Création artistique,,Loisir,sortie,mensuelle
+90.03A,Création artistique relevant des arts plastiques,,Loisir,sortie,mensuelle
+90.03B,Autre création artistique,,Loisir,sortie,mensuelle
+90.04,Gestion de salles de spectacles,,Loisir,sortie,hebdomadaire
+90.04Z,Gestion de salles de spectacles,,Loisir,sortie,hebdomadaire
+91.0,Bibliothèques - archives - musées et autres activités culturelles,,Loisir,activité culturo-sportif,hebdomadaire
+91.01,Gestion des bibliothèques et des archives,,Loisir,activité culturo-sportif,hebdomadaire
+91.01Z,Gestion des bibliothèques et des archives,,Loisir,activité culturo-sportif,hebdomadaire
+91.02,Gestion des musées,,Loisir,sortie,mensuelle
+91.02Z,Gestion des musées,,Loisir,sortie,mensuelle
+91.03,Gestion des sites et monuments historiques et des attractions touristiques similaires,,Loisir,sortie,mensuelle
+91.03Z,Gestion des sites et monuments historiques et des attractions touristiques similaires,,Loisir,sortie,mensuelle
+91.04,Gestion des jardins botaniques et zoologiques et des réserves naturelles,,Loisir,sortie,mensuelle
+91.04Z,Gestion des jardins botaniques et zoologiques et des réserves naturelles,,Loisir,sortie,mensuelle
+92.0,Organisation de jeux de hasard et d'argent,,Loisir,sortie,mensuelle
+92.00,Organisation de jeux de hasard et d'argent,,Loisir,sortie,mensuelle
+92.00Z,Organisation de jeux de hasard et d'argent,,Loisir,sortie,mensuelle
+93.1,Activités liées au sport,,Loisir,activité culturo-sportif,hebdomadaire
+93.11,Gestion d'installations sportives,,Loisir,activité culturo-sportif,hebdomadaire
+93.11Z,Gestion d'installations sportives,,Loisir,activité culturo-sportif,hebdomadaire
+93.12,Activités de clubs de sports,,Loisir,activité culturo-sportif,hebdomadaire
+93.12Z,Activités de clubs de sports,,Loisir,activité culturo-sportif,hebdomadaire
+93.13,Activités des centres de culture physique,,Loisir,activité culturo-sportif,hebdomadaire
+93.13Z,Activités des centres de culture physique,,Loisir,activité culturo-sportif,hebdomadaire
+93.19,Autres activités liées au sport,,Loisir,activité culturo-sportif,hebdomadaire
+93.19Z,Autres activités liées au sport,,Loisir,activité culturo-sportif,hebdomadaire
+93.2,Activités récréatives et de Loisir,,Loisir,activité culturo-sportif,annuelle
+93.21,Activités des parcs d'attractions et parcs à thèmes,,Loisir,activité culturo-sportif,annuelle
+93.21Z,Activités des parcs d'attractions et parcs à thèmes,,Loisir,activité culturo-sportif,annuelle
+93.29,Autres activités récréatives et de Loisir ,,Loisir,activité culturo-sportif,annuelle
+93.29Z,Autres activités récréatives et de Loisir,,Loisir,activité culturo-sportif,annuelle
+94.1,Activités des organisations économiques - patronales et professionnelles,,Loisir,activité culturo-sportif,hebdomadaire
+94.11,Activités des organisations patronales et consulaires,,Loisir,activité culturo-sportif,hebdomadaire
+94.11Z,Activités des organisations patronales et consulaires,,Loisir,activité culturo-sportif,hebdomadaire
+94.12,Activités des organisations professionnelles,,Loisir,activité culturo-sportif,hebdomadaire
+94.12Z,Activités des organisations professionnelles,,Loisir,activité culturo-sportif,hebdomadaire
+94.2,Activités des syndicats de salariés,,Loisir,activité culturo-sportif,hebdomadaire
+94.20,Activités des syndicats de salariés,,Loisir,activité culturo-sportif,hebdomadaire
+94.20Z,Activités des syndicats de salariés,,Loisir,activité culturo-sportif,hebdomadaire
+94.9,Activités des autres organisations associatives,,Loisir,activité culturo-sportif,hebdomadaire
+94.91,Activités des organisations religieuses,,Loisir,activité culturo-sportif,hebdomadaire
+94.91Z,Activités des organisations religieuses,,Loisir,activité culturo-sportif,hebdomadaire
+94.92,Activités des organisations politiques,,Loisir,activité culturo-sportif,hebdomadaire
+94.92Z,Activités des organisations politiques,,Loisir,activité culturo-sportif,hebdomadaire
+94.99,Activités des organisations associatives n.c.a.,,Loisir,activité culturo-sportif,hebdomadaire
+94.99Z,Autres organisations fonctionnant par adhésion volontaire,,Loisir,activité culturo-sportif,hebdomadaire
+95.1,Réparation d'ordinateurs et d'équipements de communication ,1,Commerce,achat divers,annuelle
+95.11,Réparation d'ordinateurs et d'équipements périphériques,1,Commerce,achat divers,annuelle
+95.11Z,Réparation d'ordinateurs et d'équipements périphériques,1,Commerce,achat divers,annuelle
+95.12,Réparation d'équipements de communication,1,Commerce,achat divers,annuelle
+95.12Z,Réparation d'équipements de communication,1,Commerce,achat divers,annuelle
+95.2,Réparation de biens personnels et domestiques,,Commerce,achat divers,annuelle
+95.21,Réparation de produits électroniques grand public,,Commerce,achat divers,annuelle
+95.21Z,Réparation de produits électroniques grand public,,Commerce,achat divers,annuelle
+95.22,Réparation d'appareils électroménagers et d'équipements pour la maison et le jardin,,Commerce,achat divers,annuelle
+95.22Z,Réparation d'appareils électroménagers et d'équipements pour la maison et le jardin,,Commerce,achat divers,annuelle
+95.23,Réparation de chaussures et d'articles en cuir,,Commerce,achat divers,annuelle
+95.23Z,Réparation de chaussures et d'articles en cuir,,Commerce,achat divers,annuelle
+95.24,Réparation de meubles et d'équipements du foyer,,Commerce,achat divers,annuelle
+95.24Z,Réparation de meubles et d'équipements du foyer,,Commerce,achat divers,annuelle
+95.25,Réparation d'articles d'horlogerie et de bijouterie,,Commerce,achat divers,annuelle
+95.25Z,Réparation d'articles d'horlogerie et de bijouterie,,Commerce,achat divers,annuelle
+95.29,Réparation d'autres biens personnels et domestiques,,Commerce,achat divers,annuelle
+95.29Z,Réparation d'autres biens personnels et domestiques,,Commerce,achat divers,annuelle
+96.0,Autres services personnels,,Commerce,service personnels,mensuelle
+96.01,Blanchisserie-teinturerie,1,Commerce,service personnels,hebdomadaire
+96.01B,Blanchisserie-teinturerie de détail,,Commerce,service personnels,hebdomadaire
+96.02,Coiffure et soins de beauté,,Commerce,service personnels,mensuelle
+96.02A,Coiffure,,Commerce,service personnels,mensuelle
+96.02B,Soins de beauté,,Commerce,service personnels,mensuelle
+96.03,Services funéraires,1,Commerce,service personnels,annuelle
+96.03Z,Services funéraires,1,Commerce,service personnels,annuelle
+96.04,Entretien corporel,,Commerce,service personnels,mensuelle
+96.04Z,Entretien corporel,,Commerce,service personnels,mensuelle
+96.09,Autres services personnels n.c.a.,,Commerce,service personnels,mensuelle
+96.09Z,Autres services personnels n.c.a.,,Commerce,service personnels,mensuelle
+99.0,Activités des organisations et organismes extraterritoriaux,,Démarche/aide à pers.,administratif,annuelle
+99.00,Activités des organisations et organismes extraterritoriaux,,Démarche/aide à pers.,administratif,annuelle
+99.00Z,Activités des organisations et organismes extraterritoriaux,,Démarche/aide à pers.,administratif,annuelle

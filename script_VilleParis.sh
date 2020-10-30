@@ -39,10 +39,10 @@ lType=(plan-de-voirie-acces-pietons-metro-et-parkings plan-de-voirie-mobiliers-u
 getData "transport" lType
 # merge the different layers in a single tif
 # with all layers
-voirieFiles=(./output/voirie/*.tif)
+voirieFiles=(./output/voirie-pieton/*.tif)
 gdal_merge.py -o all_layers_voirie.tif $voirieFiles
 
-voirieFilesNoGreen=(./output/voirie/*.tif --ignore={*verts*})
+voirieFilesNoGreen=(./output/voirie-pieton/*.tif --ignore={*verts*})
 # without green spaces
 gdal_merge.py -o all_except_green.tif $voirieFilesNoGreen
 

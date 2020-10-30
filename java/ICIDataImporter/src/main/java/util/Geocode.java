@@ -1,4 +1,4 @@
-package insee;
+package util;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,16 +16,19 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import fr.ign.artiscales.tools.io.Json;
+
 public class Geocode {
 
 	public static void main(String[] args) throws IOException {
-		String[] adresseInfos = { "18", "RUE", "DE LA SORBONNE", "75005" };
-		geocodeAdresseDataGouv(adresseInfos);
+		String[] adresseInfos = { null, "MAR", "MONGE", "75005" };
+		String[] geocode = geocodeAdresseDataGouv(adresseInfos);
+		System.out.println("score:" + geocode[0] + " x:" + geocode[1] + " y:" + geocode[2]);
 		// geocodeCSVAdresseDataGouv(new File("/home/ubuntu/Documents/INRIA/donnees/POI/SIRENE-POI-treated.csv"), new File("/tmp/out"));
 	}
 
 	/**
-	 * https://geo.api.gouv.fr/adresse Utilise la BAN
+	 * https://geo.api.gouv.fr/adresse Utilise la BAN. Return [0] : score ; [1] long and [2] lat in WGS84 format
 	 * 
 	 * @param adresseInfos
 	 * @param outFile
@@ -32,9 +36,15 @@ public class Geocode {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static File geocodeAdresseDataGouv(String[] adresseInfos) throws IOException {
+	public static String[] geocodeAdresseDataGouv(String[] adresseInfos) throws IOException {
 		// https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port&postcode=44380
+		// make "" instead of null
+		for (int i = 0; i < adresseInfos.length; i++)
+			if (adresseInfos[i] == null || adresseInfos[i].equals("null"))
+				adresseInfos[i] = "";
+
 		CloseableHttpClient httpclient = HttpClients.createDefault();
+		String[] geoloc = new String[3];
 		URI uri;
 		try {
 			uri = new URIBuilder().setScheme("https").setHost("api-adresse.data.gouv.fr").setPath("/search/")
@@ -42,24 +52,29 @@ public class Geocode {
 					.build();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
-			return null;
+			return geoloc;
 		}
 		HttpGet httppost = new HttpGet(uri);
 		File out = new File("/tmp/tmpAdressGeocoded");
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
-			System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			HashMap<String, Object> answer = Json.getFirstObject(out);
+			geoloc[0] = (String) answer.get("score") != null ? (String) answer.get("score") : "0";
+			geoloc[1] = (String) answer.get("x") != null ? (String) answer.get("x") : "0";
+			geoloc[2] = (String) answer.get("y") != null ? (String) answer.get("y") : "0";
 			stream.close();
 		} finally {
 			response.close();
 		}
-		return out;
+		return geoloc;
 	}
 
 	/**
-	 * https://geo.api.gouv.fr/adresse . Utilise la BAN. \\FIXME not working (yet?)
+	 * https://geo.api.gouv.fr/adresse . Utilise la BAN. \\FIXME not working (yet?). La requete suivante marche //curl -X POST -F data=@inFile -F columns=adresse -F columns=typeRue
+	 * -F columns=numAdresse -F postcode=codPostal https://api-adresse.data.gouv.fr/search/csv/ > outFile
+	 * 
 	 * 
 	 * @param adresseInfos
 	 * @param outFile
@@ -67,16 +82,19 @@ public class Geocode {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static String geocodeCSVAdresseDataGouv(File inFile, File outFile) throws IOException, URISyntaxException {
-
-		// curl -X POST -F data=@search.csv -F columns=adresse -F columns=postcode -F result_columns=result_id -F result_columns=score https://api-adresse.data.gouv.fr/search/csv/
-
+	public static String geocodeCSVAdresseDataGouv(File inFile, File outFile) throws IOException {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		URI uri = new URIBuilder().setScheme("https").setHost("api-adresse.data.gouv.fr").setPath("/search/csv/")
-				.setParameter("data", "@" + inFile.getAbsolutePath()).setParameter("columns", "numAdresse").setParameter("columns", "typeRue")
-				.setParameter("columns", "adresse").setParameter("postcode", "codPostal").build();
+		URI uri;
+		try {
+			uri = new URIBuilder().setScheme("https").setHost("api-adresse.data.gouv.fr").setPath("/search/csv/")
+					.setParameter("data", "@" + inFile.getAbsolutePath()).setParameter("columns", "numAdresse").setParameter("columns", "typeRue")
+					.setParameter("columns", "adresse").setParameter("postcode", "codPostal").build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
 		HttpPost httppost = new HttpPost(uri);
-
+		System.out.println(uri);
 		CloseableHttpResponse response = httpclient.execute(httppost);
 		try {
 			System.out.println(response.getStatusLine().getStatusCode());

@@ -75,11 +75,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-geojsondatastore</artifactId>
-			<version>23.3</version>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.11.1</version>
@@ -110,9 +105,9 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.ign</groupId>
-			<artifactId>mupcity-openMole</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<groupId>fr.ign.artiscales.tools</groupId>
+			<artifactId>ArtiScales-tools</artifactId>
+			<version>0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<repositories>

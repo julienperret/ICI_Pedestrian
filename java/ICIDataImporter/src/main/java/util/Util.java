@@ -10,9 +10,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class Util {
 
@@ -38,7 +38,7 @@ public class Util {
 		} catch (Exception e) {
 			Scanner myObj = new Scanner(System.in); // Create a Scanner object
 			System.out.println("Wrong API key for " + serviceKey
-					+ " application. Possible to store it in the src/main/ressources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
+					+ " application. Possible to store it in the src/main/resources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
 			System.out.println(serviceKey +" key:");
 			String key = myObj.nextLine(); // Read user input
 			myObj.close();

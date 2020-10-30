@@ -2,11 +2,18 @@ package insee;
 
 import java.io.IOException;
 
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.opengis.feature.simple.SimpleFeature;
+
 public abstract class SireneEntry {
 
-	String nAdresse, adresse, typeVoie, siret, codePos, codeAmenite, amenite, nomenclature, denominationUniteLegale, trancheEffectifsEtablissement;
+	String nAdresse, adresse, typeVoie, siret, codePos, codeAmenite, amenite, nomenclature, denominationEtablissement, trancheEffectifsEtablissement,
+			resteOuvertArrete1403;
 	String[] completeAdress = new String[4];
 	boolean valid = true;
+	static GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
 
 	public SireneEntry() {
 	}
@@ -23,10 +30,14 @@ public abstract class SireneEntry {
 		completeAdress[3] = codePos;
 		this.codeAmenite = codeAmenite;
 		this.nomenclature = nomenclature;
-		this.denominationUniteLegale = denominationUniteLegale;
+		this.denominationEtablissement = denominationUniteLegale;
 		this.siret = siret;
 		this.trancheEffectifsEtablissement = transformEffectif(trancheEffectifsEtablissement);
 	}
+
+	public abstract SimpleFeatureBuilder getSireneSFB();
+
+	public abstract SimpleFeature generateSimpleFeature();
 
 	public abstract String[] getLineForCSV();
 
