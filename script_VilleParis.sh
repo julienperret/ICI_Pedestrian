@@ -35,6 +35,8 @@ lType=(secteurs-des-bureaux-de-vote-en-2017 arrondissements)
 getData "population" lType
 lType=(espaces_verts plan-de-voirie-emprises-ferroviaires)
 getData "occupationSol" lType
+lType=(secteurs-scolaires-ecoles-elementaires secteurs-scolaires-maternelles secteurs-scolaires-colleges)
+getData "ecole" lType
 lType=(plan-de-voirie-acces-pietons-metro-et-parkings plan-de-voirie-mobiliers-urbains-abris-voyageurs-points-darrets-bus)
 getData "transport" lType
 # merge the different layers in a single tif

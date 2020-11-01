@@ -34,7 +34,8 @@ public class SireneWorkingPlace extends SireneEntry {
 		case "NAFRev2":
 			String[] classement = SireneImport.classSIRENEEntryNAFRev2(codeAmenite, new File("src/main/resources/NAFRev2.csv"));
 			amenite = classement[3];
-			resteOuvertArrete1403 = classement[4];
+			resteOuvertArrete0314 = classement[4];
+			resteOuvertArrete1030 = classement[5];
 			break;
 		case "NAF1993":
 			amenite = SireneImport.classSIRENEEntryNAF1993(codeAmenite, false, new File("src/main/resources/NAF93and03.csv"))[3];
@@ -61,13 +62,13 @@ public class SireneWorkingPlace extends SireneEntry {
 	@Override
 	public String[] getLineForCSV() {
 		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, amenite, codeAmenite, nomenclature, denominationEtablissement,
-				trancheEffectifsEtablissement,resteOuvertArrete1403 };
+				trancheEffectifsEtablissement, resteOuvertArrete0314, resteOuvertArrete1030 };
 		return line;
 	}
 
 	public String[] getCSVFirstLine() {
-		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "amenité", "codeAmenity", "nomenclature", "name",
-				"tranche Effectifs","rest ouvert selon arrete du 13 03"  };
+		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "amenite", "codeAmenity", "nomenclature", "name",
+				"tranche Effectifs", "reste ouvert selon arrete du 13 03", "reste ouvert selon arrete du 30 10" };
 		return firstCol;
 	}
 
@@ -86,12 +87,14 @@ public class SireneWorkingPlace extends SireneEntry {
 		sfTypeBuilder.add("adresse", String.class);
 		sfTypeBuilder.add("typeVoie", String.class);
 		sfTypeBuilder.add("codePos", String.class);
+		sfTypeBuilder.add("amenite", String.class);
 		sfTypeBuilder.add("codeAmenite", String.class);
 		sfTypeBuilder.add("name", String.class);
 		sfTypeBuilder.add("siret", String.class);
 		sfTypeBuilder.add("trancheEffectifsEtablissement", String.class);
 		sfTypeBuilder.add("scoreGeocode", Double.class);
-		sfTypeBuilder.add("rstOuv1403", String.class);
+		sfTypeBuilder.add("rstOuv0314", String.class);
+		sfTypeBuilder.add("rstOuv1030", String.class);
 		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
 		return new SimpleFeatureBuilder(featureType);
 	}
@@ -112,12 +115,14 @@ public class SireneWorkingPlace extends SireneEntry {
 			sfb.set("adresse", adresse);
 			sfb.set("typeVoie", typeVoie);
 			sfb.set("codePos", codePos);
+			sfb.set("amenite", amenite);
 			sfb.set("codeAmenite", codeAmenite);
 			sfb.set("name", denominationEtablissement);
 			sfb.set("siret", siret);
 			sfb.set("trancheEffectifsEtablissement", trancheEffectifsEtablissement);
 			sfb.set("scoreGeocode", Double.valueOf(geocode[0]));
-			sfb.set("rstOuv1403", resteOuvertArrete1403);
+			sfb.set("rstOuv0314", resteOuvertArrete0314);
+			sfb.set("rstOuv1030", resteOuvertArrete0314);
 			return sfb.buildFeature(Attribute.makeUniqueId());
 		} catch (IOException e) {
 			e.printStackTrace();

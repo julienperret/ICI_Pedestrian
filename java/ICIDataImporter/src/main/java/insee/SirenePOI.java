@@ -64,17 +64,18 @@ public class SirenePOI extends SireneEntry {
 		sfTypeBuilder.add("adresse", String.class);
 		sfTypeBuilder.add("typeVoie", String.class);
 		sfTypeBuilder.add("codePos", String.class);
-		sfTypeBuilder.add("codeAmenite", String.class);
-		sfTypeBuilder.add("nomenclature", String.class);
-		sfTypeBuilder.add("denominationUniteLegale", String.class);
+		sfTypeBuilder.add("codeAmenit", String.class);
+		sfTypeBuilder.add("amenite", String.class);
+		sfTypeBuilder.add("nomenclatr", String.class);
+		sfTypeBuilder.add("name", String.class);
 		sfTypeBuilder.add("siret", String.class);
-		sfTypeBuilder.add("trancheEffectifsEtablissement", String.class);
+		sfTypeBuilder.add("effectifs", String.class);
 		sfTypeBuilder.add("type", String.class);
 		sfTypeBuilder.add("categorie", String.class);
 		sfTypeBuilder.add("frequence", String.class);
-		sfTypeBuilder.add("intituleAm", String.class);
-		sfTypeBuilder.add("scoreGeocode", Double.class);
-		sfTypeBuilder.add("rstOuv1403", String.class);
+		sfTypeBuilder.add("scoreGeocd", Double.class);
+		sfTypeBuilder.add("rstOuv0314", String.class);
+		sfTypeBuilder.add("rstOuv1030", String.class);
 		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
 		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
 		return new SimpleFeatureBuilder(featureType);
@@ -94,23 +95,24 @@ public class SirenePOI extends SireneEntry {
 		sfb.set("adresse", adresse);
 		sfb.set("typeVoie", typeVoie);
 		sfb.set("codePos", codePos);
-		sfb.set("codeAmenite", codeAmenite);
-		sfb.set("nomenclature", nomenclature);
-		sfb.set("denominationUniteLegale", denominationEtablissement);
+		sfb.set("codeAmenit", codeAmenite);
+		sfb.set("amenite", classement[3]);
+		sfb.set("nomenclatr", nomenclature);
+		sfb.set("name", denominationEtablissement);
 		sfb.set("siret", siret);
-		sfb.set("trancheEffectifsEtablissement", trancheEffectifsEtablissement);
+		sfb.set("effectifs", trancheEffectifsEtablissement);
 		sfb.set("type", classement[0]);
 		sfb.set("categorie", classement[1]);
 		sfb.set("frequence", classement[2]);
-		sfb.set("intituleAm", classement[3]);
-		sfb.set("scoreGeocode", Double.valueOf(geocode[0]));
-		sfb.set("rstOuv1403", classement[4]);
+		sfb.set("scoreGeocd", Double.valueOf(geocode[0]));
+		sfb.set("rstOuv0314", classement[4]);
+		sfb.set("rstOuv1030", classement[5]);
 		return sfb.buildFeature(Attribute.makeUniqueId());
 	}
 
 	public String[] getCSVFirstLine() {
 		String[] firstCol = { "id", "siret", "numAdresse", "typeRue", "adresse", "codPostal", "codeAmenity", "intituleAmenity", "nomenclature",
-				"type", "cat", "freq", "tranche Effectifs", "name", "reste ouvert selon arrete du 13 03" };
+				"type", "cat", "freq", "tranche Effectifs", "name", "reste ouvert selon arrete du 13 03", "reste ouvert selon arrete du 30 10" };
 		return firstCol;
 	}
 
@@ -118,7 +120,7 @@ public class SirenePOI extends SireneEntry {
 		if (!valid)
 			return null;
 		String[] line = { siret, nAdresse, typeVoie, adresse, codePos, codeAmenite, classement[3], nomenclature, classement[0], classement[1],
-				classement[2], trancheEffectifsEtablissement, denominationEtablissement, classement[4] };
+				classement[2], trancheEffectifsEtablissement, denominationEtablissement, classement[4], classement[5] };
 		return line;
 	}
 

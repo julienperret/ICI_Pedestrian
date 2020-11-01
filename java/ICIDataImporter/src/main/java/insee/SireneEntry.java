@@ -10,7 +10,7 @@ import org.opengis.feature.simple.SimpleFeature;
 public abstract class SireneEntry {
 
 	String nAdresse, adresse, typeVoie, siret, codePos, codeAmenite, amenite, nomenclature, denominationEtablissement, trancheEffectifsEtablissement,
-			resteOuvertArrete1403;
+			resteOuvertArrete0314, resteOuvertArrete1030;
 	String[] completeAdress = new String[4];
 	boolean valid = true;
 	static GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);

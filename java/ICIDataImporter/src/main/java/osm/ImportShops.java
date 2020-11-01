@@ -25,16 +25,13 @@ public class ImportShops {
 		// MapDataDao map = new MapDataDao(connection);
 		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
 		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
-		makeTabWithAttributesAndValues(new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/amenites.geojson"),
-				new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/"));
+		makeTabWithAttributesAndValues(new File("../../osm/amenites.geojson"), new File("../../osm/"));
 	}
 
 	public static void sortPOI(File geojsonFile, File folderOut) throws IOException {
-		
+
 	}
-		
-	
-	
+
 	/**
 	 * Create a table summing up the geojson file coming from OSM with heterogenous attributes and values for those attributes. On columns, every attributes of the features, on
 	 * line, every unique value for each attribute.
@@ -49,7 +46,7 @@ public class ImportShops {
 		// information for i/o of geocollection
 		Collec.setDefaultGISFileType(".geojson");
 		// importing geojson
-		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);;
+		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);
 		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
 		HashMap<String, Object[]> table = new HashMap<String, Object[]>();
 		List<String> listAttr = new ArrayList<String>();

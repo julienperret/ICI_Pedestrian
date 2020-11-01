@@ -23,7 +23,7 @@ import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
 
 public class ImportCommonTransportation {
 	public static void main(String[] args) throws IOException {
-		new ImportCommonTransportation(new File("/home/ubuntu/workspace/ICI_Pedestrian/osm/voirie.geojson"), new File("/tmp/"));
+		new ImportCommonTransportation(new File("../../osm/voirie.geojson"), new File("/tmp/"));
 	}
 
 	public static SimpleFeatureBuilder getBusStopSFB() {

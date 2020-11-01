@@ -8,6 +8,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
+import util.Util;
 
 public class ImportAndCrop {
 
@@ -22,8 +23,8 @@ public class ImportAndCrop {
 		// System.out.println(line);
 		// }
 		// FIXME lot of bugs (coming from geojson I guess)
-		File folderOut = new File("/home/ubuntu/Documents/INRIA/donnees/paris/parisOut");
-		File cropGeometryFile = new File("/home/ubuntu/Documents/INRIA/donnees/5eme.shp");
+		File folderOut = new File(Util.getRootFolder(), "paris/parisOut");
+		File cropGeometryFile = new File(Util.getRootFolder(), "5eme.shp");
 		DataStore cropDS = Collec.getDataStore(cropGeometryFile);
 		SimpleFeatureCollection crop = cropDS.getFeatureSource(cropDS.getTypeNames()[0]).getFeatures();
 		for (File f : new File("../../input_l93").listFiles()) {

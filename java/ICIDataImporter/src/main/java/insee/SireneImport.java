@@ -38,27 +38,27 @@ import util.Util;
 public class SireneImport {
 	public static void main(String[] args)
 			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+		File rootFolder = Util.getRootFolder();
+
 		////////////////
 		// Step 1: get the SIRENE infos with the API. Timer not synchronized so we need to wait for the be finished (prompt) before starting step2
 		////////////////
 
 		// (new SireneImport()).getSIRENEData(new File("/tmp/"));
-		// parseSireneEntry(new File("/tmp/sirene" + 0 + ".json"), new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+		// parseSireneEntry(new File("/tmp/sirene" + 0 + ".json"), new File(rootFolder,"POI/"), "POI");
 
 		////////////////
 		// Step 2: Apply the pretreatments to the generated files. Put the total number of files on this next variable (last file should not contain anything)
 		////////////////
 		int nbFile = 42;
 		for (int i = 0; i <= nbFile; i++) {
-			parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sireneAPIOut/sirene" + i + ".json"),
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "WorkingPlace");
+			parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "POI/"), "WorkingPlace");
 			System.out.println("done : " + i + " file");
 		}
 		append = false;
 		System.out.println("done working places");
 		for (int i = 0; i <= nbFile; i++) {
-			parseSireneEntry(new File("/home/ubuntu/Documents/INRIA/donnees/POI/sireneAPIOut/sirene" + i + ".json"),
-					new File("/home/ubuntu/Documents/INRIA/donnees/POI/"), "POI");
+			parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "POI/"), "POI");
 			System.out.println("done : " + i + " file");
 		}
 	}
@@ -118,8 +118,8 @@ public class SireneImport {
 	}
 
 	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
-//		Logger logger = Logging.getLogger("org.geotools.feature.DefaultFeatureCollection");
-//		logger.setLevel(Level.SEVERE);
+		// Logger logger = Logging.getLogger("org.geotools.feature.DefaultFeatureCollection");
+		// logger.setLevel(Level.SEVERE);
 		DefaultFeatureCollection result = new DefaultFeatureCollection();
 		JsonFactory factory = new JsonFactory();
 		JsonParser parser = factory.createParser(jSON);
@@ -236,8 +236,7 @@ public class SireneImport {
 		}
 		// CSV export
 		Csv.generateCsvFile(out, folderOut, "SIRENE-" + entryType + "-treated", append, fline);
-		if (!append)
-			append = true;
+
 		// GPKG export
 		File geomFile = new File(folderOut, "SIRENE-" + entryType + ".gpkg");
 		if (geomFile.exists() && append) {
@@ -245,6 +244,8 @@ public class SireneImport {
 			result.addAll(ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures());
 			ds.dispose();
 		}
+		if (!append)
+			append = true;
 		Collec.exportSFC(result, geomFile);
 	}
 
@@ -288,23 +289,25 @@ public class SireneImport {
 	}
 
 	public static String[] classSIRENEEntryNAFRev2(String codeAmenite, File modele) throws IOException {
-		CSVReader listCERTU = new CSVReader(new FileReader(modele));
-		String[] classement = new String[5];
+		CSVReader listNavRef2 = new CSVReader(new FileReader(modele));
+		String[] classement = new String[6];
 		// codeAmenite = codeAmenite.replace(".", "");
-		for (String[] line : listCERTU.readAll())
+		for (String[] line : listNavRef2.readAll())
 			if (codeAmenite.equals(line[0])) {
 				try {
-					classement[0] = line[3];
-					classement[1] = line[4];
-					classement[2] = line[5];
+					classement[0] = line[4];
+					classement[1] = line[5];
+					classement[2] = line[6];
 
 				} catch (Exception e) {
 				}
 				classement[3] = line[1];
 				if (line[2].equals("1"))
 					classement[4] = "true";
+				if (line[3].equals("1"))
+					classement[5] = "true";
 			}
-		listCERTU.close();
+		listNavRef2.close();
 		return classement;
 	}
 

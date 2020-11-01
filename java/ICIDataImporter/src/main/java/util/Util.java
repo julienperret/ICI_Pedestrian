@@ -13,11 +13,25 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-
 public class Util {
 
-	public static void main(String[] args) throws JsonParseException, IOException {
-		System.out.println(getToken("insee:SIRENE"));
+//	public static void main(String[] args) throws JsonParseException, IOException {
+//		for (File f : getRootFolder().listFiles())
+//			System.out.println(f);
+//	}
+
+	public static File getRootFolder() throws JsonParseException, IOException {
+		File result = new File("rootFolder/");
+		if (!result.exists()) {
+			Scanner myObj = new Scanner(System.in); // Create a Scanner object
+			System.out.println(
+					"No symbolic link pointing to your root folder. Please create one using 'ln -s {$/targetFolder/} rootFolder'. Meanwhile, you can type one right here in the console please");
+			System.out.println("Path to root folder :");
+			String key = myObj.nextLine(); // Read user input
+			myObj.close();
+			return new File(key);
+		}
+		return result;
 	}
 
 	public static String getToken(String serviceKey) throws JsonParseException, IOException {
@@ -39,13 +53,13 @@ public class Util {
 			Scanner myObj = new Scanner(System.in); // Create a Scanner object
 			System.out.println("Wrong API key for " + serviceKey
 					+ " application. Possible to store it in the src/main/resources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
-			System.out.println(serviceKey +" key:");
+			System.out.println(serviceKey + " key:");
 			String key = myObj.nextLine(); // Read user input
 			myObj.close();
 			return key;
 		}
 	}
-	
+
 	public static void mergeNAF93andNAF03(File NAF93, File NAF03, File outFolder) throws IOException {
 		CSVReader n93 = new CSVReader(new FileReader(NAF93));
 		CSVWriter w = new CSVWriter(new FileWriter(new File(outFolder, "NAF93and03.csv")));

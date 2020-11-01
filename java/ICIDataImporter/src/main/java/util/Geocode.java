@@ -22,9 +22,49 @@ public class Geocode {
 
 	public static void main(String[] args) throws IOException {
 		String[] adresseInfos = { null, "MAR", "MONGE", "75005" };
-		String[] geocode = geocodeAdresseDataGouv(adresseInfos);
+		String[] geocode = geocodePelias(adresseInfos);
 		System.out.println("score:" + geocode[0] + " x:" + geocode[1] + " y:" + geocode[2]);
-		// geocodeCSVAdresseDataGouv(new File("/home/ubuntu/Documents/INRIA/donnees/POI/SIRENE-POI-treated.csv"), new File("/tmp/out"));
+		// geocodeCSVAdresseDataGouv(new File(rootFolder,"POI/SIRENE-POI-treated.csv"), new File("/tmp/out"));
+	}
+
+	/**
+	 * Trouver un service de démo car search.mapzen.com n'est plus dispo
+	 * 
+	 * @param adresseInfos
+	 * @return
+	 * @throws IOException
+	 */
+	public static String[] geocodePelias(String[] adresseInfos) throws IOException {
+		for (int i = 0; i < adresseInfos.length; i++)
+			if (adresseInfos[i] == null || adresseInfos[i].equals("null"))
+				adresseInfos[i] = "";
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		String[] geoloc = new String[3];
+		URI uri;
+		try {
+			uri = new URIBuilder().setScheme("https").setHost("search.mapzen.com").setPath("/v1/search/")
+					.setParameter("texte", adresseInfos[0] + "+" + adresseInfos[1] + "+" + adresseInfos[2])
+					.setParameter("boundary.gid", "whosonfirst:region:12652969").build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return geoloc;
+		}
+		HttpGet httppost = new HttpGet(uri);
+		File out = new File("/tmp/tmpAdressGeocoded");
+		CloseableHttpResponse response = httpclient.execute(httppost);
+		try {
+			// FIXME adapt to the answer
+			// InputStream stream = response.getEntity().getContent();
+			// java.nio.file.Files.copy(stream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			// HashMap<String, Object> answer = Json.getFirstObject(out);
+			// geoloc[0] = (String) answer.get("score") != null ? (String) answer.get("score") : "0";
+			// geoloc[1] = (String) answer.get("x") != null ? (String) answer.get("x") : "0";
+			// geoloc[2] = (String) answer.get("y") != null ? (String) answer.get("y") : "0";
+			// stream.close();
+		} finally {
+			response.close();
+		}
+		return geoloc;
 	}
 
 	/**
@@ -72,8 +112,9 @@ public class Geocode {
 	}
 
 	/**
-	 * https://geo.api.gouv.fr/adresse . Utilise la BAN. \\FIXME not working (yet?). La requete suivante marche //curl -X POST -F data=@inFile -F columns=adresse -F columns=typeRue
-	 * -F columns=numAdresse -F postcode=codPostal https://api-adresse.data.gouv.fr/search/csv/ > outFile
+	 * https://geo.api.gouv.fr/adresse . Géocode entièrement un fichier .csv. Plus rapide que le géocodage 1 by 1. Utilise la base adresse locale. \\FIXME not working (yet?). La
+	 * requete suivante marche //curl -X POST -F data=@inFile -F columns=adresse -F columns=typeRue -F columns=numAdresse -F postcode=codPostal
+	 * https://api-adresse.data.gouv.fr/search/csv/ > outFile
 	 * 
 	 * 
 	 * @param adresseInfos
