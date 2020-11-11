@@ -30,9 +30,9 @@ import util.Util;
 public abstract class Station {
 	List<String> lineNames = new ArrayList<String>();
 	boolean wheelchair;
-	File dailyProfiles = new File(Util.getRootFolder(), "paris/mobilite/validations-sur-le-reseau-ferre-profils-horaires-par-jour-type-1er-sem.csv"),
+	File dailyProfiles = new File(Util.getRootFolder(), "paris/mobilite/validations-sur-le-reseau-ferre-profils-horaires-par-jour-type-2e-sem.csv"),
 			dailyValidation = new File(Util.getRootFolder(),
-					"paris/mobilite/validations-sur-le-reseau-ferre-nombre-de-validations-par-jour-1er-sem.csv"),
+					"paris/mobilite/validations-sur-le-reseau-ferre-nombre-de-validations-par-jour-2e-sem.csv"),
 			folderOut = new File(Util.getRootFolder(), "paris/transport");
 	String name;
 	List<String[]> idsSTIF;

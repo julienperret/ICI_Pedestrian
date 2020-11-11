@@ -58,6 +58,7 @@ public class CreatePublicTransportation {
 		try (SimpleFeatureIterator it = sfcSTIF.features()) {
 			while (it.hasNext()) {
 				SimpleFeature stif = it.next();
+				System.out.println("================= "+ stif.getAttribute("nomlong") + " =================");
 				String[] idSTIF = { transformExploitantToCode(String.valueOf(stif.getAttribute("exploitant"))),
 						String.valueOf(stif.getAttribute("res_stif")).split("\\.")[0],
 						String.valueOf(stif.getAttribute("gares_id")).split("\\.")[0] };
