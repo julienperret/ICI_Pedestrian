@@ -2,19 +2,23 @@ package osm;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
 
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
-import fr.ign.artiscales.tools.io.Csv;
+import util.Util;
 
 public class ImportShops {
 	public static void main(String[] args) throws IOException {
@@ -25,51 +29,56 @@ public class ImportShops {
 		// MapDataDao map = new MapDataDao(connection);
 		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
 		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
-		makeTabWithAttributesAndValues(new File("../../osm/amenites.geojson"), new File("../../osm/"));
+		File rootFolder = Util.getRootFolder();
+		importCyclePark(new File(rootFolder, "OSM/OSMamenities.gpkg"), new File(rootFolder, "OSM/"));
+	}
+
+	public static SimpleFeatureBuilder getCycleParkSFB() {
+		SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
+		try {
+			sfTypeBuilder.setCRS(CRS.decode("EPSG:2154"));
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
+		sfTypeBuilder.setName("bicycleParkOSM");
+		sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
+		sfTypeBuilder.add("type", String.class);
+		sfTypeBuilder.add("capacity", String.class);
+		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
+		return new SimpleFeatureBuilder(featureType);
+	}
+
+	public static void importCyclePark(File geoFile, File folderOut) throws IOException {
+		// information for i/o of geocollection
+		Collec.setDefaultGISFileType(".geojson");
+		// importing geojson
+		DefaultFeatureCollection cyclePark = new DefaultFeatureCollection();
+		DataStore ds = Collec.getDataStore(geoFile);
+		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
+		SimpleFeatureBuilder sfbBicyclePark = getCycleParkSFB();
+		try (SimpleFeatureIterator it = sfc.features()) {
+			while (it.hasNext()) {
+				SimpleFeature feat = it.next();
+				if ((((String) feat.getAttribute("amenity")) != null && ((String) feat.getAttribute("amenity")).equals("bicycle_parking"))
+						|| (((String) feat.getAttribute("bicycle")) != null && ((String) feat.getAttribute("bicycle")).equals("yes"))
+						|| (((String) feat.getAttribute("official_amenity")) != null
+								&& ((String) feat.getAttribute("official_amenity")).equals("bicycle_parking"))
+						|| ((String) feat.getAttribute("bicycle_parking")) != null) {
+					sfbBicyclePark.set("type", "cyclePark");
+					sfbBicyclePark.set("capacity", feat.getAttribute("capacity"));
+					sfbBicyclePark.set(Collec.getDefaultGeomName(), (Geometry) feat.getDefaultGeometry());
+					cyclePark.add(sfbBicyclePark.buildFeature(Attribute.makeUniqueId()));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Collec.exportSFC(cyclePark, new File(folderOut, "bicyclePark.gpkg"));
 	}
 
 	public static void sortPOI(File geojsonFile, File folderOut) throws IOException {
 
 	}
 
-	/**
-	 * Create a table summing up the geojson file coming from OSM with heterogenous attributes and values for those attributes. On columns, every attributes of the features, on
-	 * line, every unique value for each attribute.
-	 * 
-	 * @param geojsonFile
-	 *            input file with geojson
-	 * @param folderOut
-	 *            folder where the \{$geojson.name()\}-attr.csv file will be created
-	 * @throws IOException
-	 */
-	public static void makeTabWithAttributesAndValues(File geojsonFile, File folderOut) throws IOException {
-		// information for i/o of geocollection
-		Collec.setDefaultGISFileType(".geojson");
-		// importing geojson
-		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);
-		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
-		HashMap<String, Object[]> table = new HashMap<String, Object[]>();
-		List<String> listAttr = new ArrayList<String>();
-		// for every features
-		try (SimpleFeatureIterator it = sfc.features()) {
-			while (it.hasNext()) {
-				SimpleFeature f = it.next();
-				for (AttributeDescriptor attr : f.getFeatureType().getAttributeDescriptors()) {
-					String sAttr = attr.getLocalName();
-					if (sAttr.equals(Collec.getDefaultGeomName()) || sAttr.equals("id"))
-						continue;
-					if (!listAttr.contains(sAttr))
-						listAttr.add(sAttr);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		for (String attr : listAttr) {
-			List<String> list = Collec.getEachUniqueFieldFromSFC(sfc, attr, true);
-			if (list != null && list.size() > 0)
-				table.put(attr, list.toArray(String[]::new));
-		}
-		Csv.generateCsvFileCol(table, folderOut, geojsonFile.getName() + "-attr");
-	}
 }

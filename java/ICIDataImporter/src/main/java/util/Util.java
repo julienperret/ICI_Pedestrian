@@ -20,7 +20,7 @@ public class Util {
 //			System.out.println(f);
 //	}
 
-	public static File getRootFolder() throws JsonParseException, IOException {
+	public static File getRootFolder() {
 		File result = new File("rootFolder/");
 		if (!result.exists()) {
 			Scanner myObj = new Scanner(System.in); // Create a Scanner object

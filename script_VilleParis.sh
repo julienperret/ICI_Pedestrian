@@ -29,7 +29,7 @@ lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees
 getData "voirie-voiture" lType
 lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-passages-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-voies-privees-fermees plan-de-voirie-voies-en-escalier plan-de-voirie-trottoirs-emprises)
 getData "voirie-pieton" lType
-lType=(reseau-cyclable plan-de-voirie-pistes-cyclables-et-couloirs-de-bus)
+lType=(reseau-cyclable plan-de-voirie-pistes-cyclables-et-couloirs-de-bus  velib-emplacement-des-stations)
 getData "voirie-cycle" lType
 lType=(secteurs-des-bureaux-de-vote-en-2017 arrondissements)
 getData "population" lType

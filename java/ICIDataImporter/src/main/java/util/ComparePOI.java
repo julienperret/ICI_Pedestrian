@@ -26,10 +26,10 @@ public class ComparePOI {
 	public static void main(String[] args) throws IOException {
 		File rootFolder = Util.getRootFolder();
 		DataStore buildingDS = Collec.getDataStore(new File(rootFolder, "IGN/batVeme.gpkg"));
-		DataStore wpDS = Collec.getDataStore(new File(rootFolder, "POI/SIRENE-WorkingPlace.gpkg"));
-		DataStore sireneDS = Collec.getDataStore(new File(rootFolder, "POI/SIRENE-POI.gpkg"));
-		DataStore bPEDS = Collec.getDataStore(new File(rootFolder, "POI/bpe19Coded-Veme.gpkg"));
-		DataStore oSMDS = Collec.getDataStore(new File(rootFolder, "POI/OSMamenities.gpkg"));
+		DataStore wpDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-WorkingPlace.gpkg"));
+		DataStore sireneDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg"));
+		DataStore bPEDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg"));
+		DataStore oSMDS = Collec.getDataStore(new File(rootFolder, "OSM/OSMamenities.gpkg"));
 
 		ComparePOIInBuilding(buildingDS.getFeatureSource(buildingDS.getTypeNames()[0]).getFeatures(),
 				wpDS.getFeatureSource(wpDS.getTypeNames()[0]).getFeatures(), sireneDS.getFeatureSource(sireneDS.getTypeNames()[0]).getFeatures(),
