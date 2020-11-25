@@ -78,10 +78,10 @@ public class ImportCommonTransportation {
 				String building = (String) feat.getAttribute("building");
 				if (building != null && !building.equals("") && building.equals("train_station")) {
 					// get entrance points
-					SimpleFeatureCollection entrances = Collec.selectIntersection(sfc, (Geometry) feat.getDefaultGeometry(), 1)
-							// .subCollection(ff.like(ff.property("entrance"), "main"));
+					SimpleFeatureCollection entrances = Collec.selectIntersection(sfc, (Geometry) feat.getDefaultGeometry())
 							.subCollection(ff.or(Arrays.asList(ff.like(ff.property("entrance"), "main"), ff.like(ff.property("entrance"), "yes"),
 									ff.like(ff.property("entrance"), "exit"))));
+					System.out.println(entrances.size());
 					try (SimpleFeatureIterator itEntrances = entrances.features()) {
 						while (itEntrances.hasNext()) {
 							SimpleFeature f = itEntrances.next();

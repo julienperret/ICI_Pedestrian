@@ -58,14 +58,15 @@ public class CreatePublicTransportation {
 		try (SimpleFeatureIterator it = sfcSTIF.features()) {
 			while (it.hasNext()) {
 				SimpleFeature stif = it.next();
-				System.out.println("================= "+ stif.getAttribute("nomlong") + " =================");
 				String[] idSTIF = { transformExploitantToCode(String.valueOf(stif.getAttribute("exploitant"))),
 						String.valueOf(stif.getAttribute("res_stif")).split("\\.")[0],
 						String.valueOf(stif.getAttribute("gares_id")).split("\\.")[0] };
 				listSubwayStation = SubwayStation.add(
-						gf.createMultiPoint(Arrays.stream(sfcOSM.subCollection(ff.like(ff.property("type"), "subway_entrance"))
+						gf.createMultiPoint(Arrays.stream(sfcOSM
+								.subCollection(ff.or(Arrays.asList(ff.like(ff.property("type"), "subway_entrance"),
+										ff.like(ff.property("type"), "train_station_entrance"))))
 								.subCollection(ff.dwithin(ff.property(sfcOSM.getSchema().getGeometryDescriptor().getLocalName()),
-										ff.literal((Geometry) stif.getDefaultGeometry()), 100, SI.METRE.toString()))
+										ff.literal((Geometry) stif.getDefaultGeometry()), 150, SI.METRE.toString()))
 								.toArray(new SimpleFeature[0])).map(x -> (Point) x.getDefaultGeometry()).toArray(Point[]::new)),
 						idSTIF, (String) stif.getAttribute("nomlong"), (String) stif.getAttribute("res_com"), listSubwayStation);
 			}

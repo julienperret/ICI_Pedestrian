@@ -156,4 +156,5 @@ public class ComparePOI {
 		Csv.generateCsvFile(data, folderOut, "statBuilding", false, fLine);
 		Collec.exportSFC(export, new File(folderOut, "buildingPOIappareillement"));
 	}
+
 }

@@ -1,19 +1,23 @@
 Code, Intitulés de la  NAF rév. 2 - version finale ,rstOuv0314,rstOuv1030,type,categorie,frequence
-45.1,Commerce de véhicules automobiles,,,Commerce,service automobile,annuelle
-45.11,Commerce de voitures et de véhicules automobiles légers,,,Commerce,service automobile,annuelle
-45.11Z,Commerce de voitures et de véhicules automobiles légers,,,Commerce,service automobile,annuelle
-45.19,Commerce d'autres véhicules automobiles,,,Commerce,service automobile,annuelle
-45.19Z,Commerce d'autres véhicules automobiles,,,Commerce,service automobile,annuelle
-45.2,Entretien et réparation de véhicules automobiles,1,1,Commerce,service automobile,annuelle
-45.20,Entretien et réparation de véhicules automobiles,1,1,Commerce,service automobile,annuelle
-45.20A,Entretien et réparation de véhicules automobiles légers,1,1,Commerce,service automobile,annuelle
-45.20B,Entretien et réparation d'autres véhicules automobiles,1,1,Commerce,service automobile,annuelle
-45.3,Commerce d'équipements automobiles,1,1,Commerce,service automobile,annuelle
-45.32,Commerce de détail d'équipements automobiles,1,1,Commerce,service automobile,annuelle
-45.32Z,Commerce de détail d'équipements automobiles,1,1,Commerce,service automobile,annuelle
-45.4,Commerce et réparation de motocycles,1,1,Commerce,service automobile,annuelle
-45.40,Commerce et réparation de motocycles,1,1,Commerce,service automobile,annuelle
-45.40Z,Commerce et réparation de motocycles,1,1,Commerce,service automobile,annuelle
+10.13B,Charcuterie,1,1,Commerce,alimentation,hebdomadaire
+10.71B,Cuisson de produits de boulangerie,1,1,Commerce,alimentation,quotidienne
+10.71C,Boulangerie et boulangerie-pâtisserie,1,1,Commerce,alimentation,quotidienne
+10.71D,Pâtisserie,1,1,Commerce,alimentation,hebdomadaire
+45.1,Commerce de véhicules automobiles,,,Commerce,service deplacement individuel,annuelle
+45.11,Commerce de voitures et de véhicules automobiles légers,,,Commerce,service deplacement individuel,annuelle
+45.11Z,Commerce de voitures et de véhicules automobiles légers,,,Commerce,service deplacement individuel,annuelle
+45.19,Commerce d'autres véhicules automobiles,,,Commerce,service deplacement individuel,annuelle
+45.19Z,Commerce d'autres véhicules automobiles,,,Commerce,service deplacement individuel,annuelle
+45.2,Entretien et réparation de véhicules automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.20,Entretien et réparation de véhicules automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.20A,Entretien et réparation de véhicules automobiles légers,1,1,Commerce,service deplacement individuel,annuelle
+45.20B,Entretien et réparation d'autres véhicules automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.3,Commerce d'équipements automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.32,Commerce de détail d'équipements automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.32Z,Commerce de détail d'équipements automobiles,1,1,Commerce,service deplacement individuel,annuelle
+45.4,Commerce et réparation de motocycles,1,1,Commerce,service deplacement individuel,annuelle
+45.40,Commerce et réparation de motocycles,1,1,Commerce,service deplacement individuel,annuelle
+45.40Z,Commerce et réparation de motocycles,1,1,Commerce,service deplacement individuel,annuelle
 47.1,Commerce de détail en magasin non spécialisé,,,Commerce,achat divers,mensuelle
 47.11,Commerce de détail en magasin non spécialisé à prédominance alimentaire,1,1,Commerce,alimentation,hebdomadaire
 47.11A,Commerce de détail de produits surgelés,1,1,Commerce,alimentation,hebdomadaire
@@ -40,9 +44,9 @@ Code, Intitulés de la  NAF rév. 2 - version finale ,rstOuv0314,rstOuv1030,type
 47.26Z,Commerce de détail de produits à base de tabac en magasin spécialisé,,1,Commerce,achat divers,quotidienne
 47.29,Autres commerces de détail alimentaires en magasin spécialisé ,1,1,Commerce,alimentation,hebdomadaire
 47.29Z,Autres commerces de détail alimentaires en magasin spécialisé ,1,1,Commerce,alimentation,hebdomadaire
-47.3,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service automobile,hebdomadaire
-47.30,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service automobile,hebdomadaire
-47.30Z,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service automobile,hebdomadaire
+47.3,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service deplacement individuel,hebdomadaire
+47.30,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service deplacement individuel,hebdomadaire
+47.30Z,Commerce de détail de carburants en magasin spécialisé,1,1,Commerce,service deplacement individuel,hebdomadaire
 47.4,Commerce de détail d'équipements de l'information et de la communication en magasin spécialisé,1,1,Commerce,achat divers,annuelle
 47.41,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,1,1,Commerce,achat divers,annuelle
 47.41Z,Commerce de détail d'ordinateurs - d'unités périphériques et de logiciels en magasin spécialisé,1,1,Commerce,achat divers,annuelle
@@ -181,18 +185,18 @@ Code, Intitulés de la  NAF rév. 2 - version finale ,rstOuv0314,rstOuv1030,type
 68.32,Administration de biens immobiliers,,,Démarche/aide à pers.,affaire personnelle,annuelle
 68.32A,Administration d'immeubles et autres biens immobiliers,,,Démarche/aide à pers.,affaire personnelle,annuelle
 68.32B,Supports juridiques de gestion de patrimoine immobilier,,,Démarche/aide à pers.,affaire personnelle,annuelle
-71.20A,Contrôle technique automobile,,,Commerce,service automobile,annuelle
+71.20A,Contrôle technique automobile,,,Commerce,service deplacement individuel,annuelle
 75.0,Activités vétérinaires,,,Commerce,service personnels,mensuelle
 75.00,Activités vétérinaires,,,Commerce,service personnels,mensuelle
 75.00Z,Activités vétérinaires,,,Commerce,service personnels,mensuelle
-77.1,Location et location-bail de véhicules automobiles,,1,Transport,service automobile,mensuelle
-77.11,Location et location-bail de voitures et de véhicules automobiles légers,,1,Transport,service automobile,mensuelle
-77.11A,Location de courte durée de voitures et de véhicules automobiles légers,,1,Transport,service automobile,mensuelle
-77.11B,Location de longue durée de voitures et de véhicules automobiles légers,,1,Transport,service automobile,mensuelle
-77.12,Location et location-bail de camions,,1,Transport,service automobile,annuelle
-77.12Z,Location et location-bail de camions,,1,Transport,service automobile,annuelle
-77.2,Location et location-bail de biens personnels et domestiques,,,Transport,service automobile,annuelle
-77.21,Location et location-bail d'articles de Loisir et de sport ,,,Transport,service automobile,annuelle
+77.1,Location et location-bail de véhicules automobiles,,1,Transport,service deplacement individuel,mensuelle
+77.11,Location et location-bail de voitures et de véhicules automobiles légers,,1,Transport,service deplacement individuel,mensuelle
+77.11A,Location de courte durée de voitures et de véhicules automobiles légers,,1,Transport,service deplacement individuel,mensuelle
+77.11B,Location de longue durée de voitures et de véhicules automobiles légers,,1,Transport,service deplacement individuel,mensuelle
+77.12,Location et location-bail de camions,,1,Transport,service deplacement individuel,annuelle
+77.12Z,Location et location-bail de camions,,1,Transport,service deplacement individuel,annuelle
+77.2,Location et location-bail de biens personnels et domestiques,,,Transport,service deplacement individuel,annuelle
+77.21,Location et location-bail d'articles de Loisir et de sport ,,,Transport,service deplacement individuel,annuelle
 77.21Z,Location et location-bail d'articles de Loisir et de sport ,,,Loisir,activité culturo-sportif,mensuelle
 77.22,Location de vidéocassettes et disques vidéo,,,Loisir,activité culturo-sportif,mensuelle
 77.22Z,Location de vidéocassettes et disques vidéo,,,Loisir,activité culturo-sportif,mensuelle

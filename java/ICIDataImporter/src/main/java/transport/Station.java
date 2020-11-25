@@ -60,6 +60,7 @@ public abstract class Station {
 	 * @throws IOException
 	 */
 	public Pair<String, Double> getMaxFrequency(String[] typeProfileDay) {
+		System.out.println("================= " + this.name + " =================");
 		if (frequentation == null || frequentation.isEmpty())
 			calculateFrequency();
 		// look for the biggest frequentation per selected day

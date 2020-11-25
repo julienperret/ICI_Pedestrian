@@ -8,9 +8,9 @@ conservation_status <- c(
   DIJFP = "Dimanche et jour feriée",
   SAVS = "Samedi vacances scolaires"
 )
-path_to_Data_dir <-  "./paris/transport/stat/"
+path_to_Data_dir <-  "../java/ICIDataImporter/rootFolder/paris/transport/stat/"
 
-subdirs <-  list.files(path_to_Data_dir, full.names = F)[-1]
+subdirs <-  list.files(path_to_Data_dir, full.names = F)
 for (current_file in subdirs){
   filename = basename(paste0(current_file,".png"))
   tab <- read.csv(paste0(path_to_Data_dir,current_file))
