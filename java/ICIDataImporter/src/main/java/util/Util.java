@@ -1,17 +1,16 @@
 package util;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
 
 public class Util {
 
@@ -25,8 +24,6 @@ public class Util {
   /**
    * Code found here https://www.geeksforgeeks.org/jaro-and-jaro-winkler-similarity/
    * This code is contributed by PrinciRaj1992
-   * @param s1
-   * @param s2
    * @return
    */
 // Function to calculate the 
@@ -34,7 +31,7 @@ public class Util {
 public static double jaro_distance(String s1, String s2) 
 { 
     // If the Strings are equal 
-    if (s1 == s2) 
+    if (s1.equals(s2))
         return 1.0; 
   
     // Length of two Strings 
@@ -49,8 +46,8 @@ public static double jaro_distance(String s1, String s2)
     int match = 0; 
   
     // Hash for matches 
-    int hash_s1[] = new int[s1.length()]; 
-    int hash_s2[] = new int[s2.length()]; 
+    int[] hash_s1 = new int[s1.length()];
+    int[] hash_s2 = new int[s2.length()];
   
     // Traverse through the first String 
     for (int i = 0; i < len1; i++)  
@@ -121,7 +118,7 @@ public static double jaro_distance(String s1, String s2)
 		return result;
 	}
 
-	public static String getToken(String serviceKey) throws JsonParseException, IOException {
+	public static String getToken(String serviceKey)  {
 		try {
 			JsonFactory factory = new JsonFactory();
 			JsonParser parser = factory.createParser(new File("src/main/resources/APIKeys.json"));
@@ -198,7 +195,7 @@ public static double jaro_distance(String s1, String s2)
 	 */
 	public static int LevenshteinDistance(String source, String target) {
 		// degenerate cases
-		if (source == target)
+		if (source.equals(target))
 			return 0;
 		if (source.length() == 0)
 			return target.length();
@@ -229,8 +226,7 @@ public static double jaro_distance(String s1, String s2)
 			}
 
 			// copy v1 (current row) to v0 (previous row) for next iteration
-			for (int j = 0; j < v0.length; j++)
-				v0[j] = v1[j];
+			System.arraycopy(v1, 0, v0, 0, v0.length);
 		}
 
 		return v1[target.length()];

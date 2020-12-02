@@ -1,4 +1,8 @@
-package poi;
+package iciObjects;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import util.Util;
 
 import java.io.File;
 import java.io.FileReader;
@@ -7,28 +11,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
-
-import util.Util;
-
 public class MakeCommonNomenclature {
-	List<String> codeBPEUsed = new ArrayList<String>();
-	List<String> codeOSMUsed = new ArrayList<String>();
-	List<String> codeAPURUsed = new ArrayList<String>();
+	List<String> codeBPEUsed = new ArrayList<>();
+	List<String> codeOSMUsed = new ArrayList<>();
+	List<String> codeAPURUsed = new ArrayList<>();
 
 	public static void main(String[] args) throws IOException {
 		File rootFolder = Util.getRootFolder();
 		File SireneNomenclature = new File("src/main/resources/NAFRev2POI.csv");
-		File SireneSortedNomenclature = new File("src/main/resources/NAFRev2.csv");
 		File OsmNomenclature = new File(rootFolder, "OSM/nomenclatureOSM.csv");
 		File ApurNomenclature = new File(rootFolder, "paris/APUR/APURNomenclature.csv");
 		File BPENomenclature = new File(rootFolder, "INSEE/descriptif/BPE/BPE-varTYPEQU.csv");
 		File outFile = new File(rootFolder, "ICI/nomenclatureCommune.csv");
-		new MakeCommonNomenclature(SireneNomenclature, SireneSortedNomenclature, OsmNomenclature, ApurNomenclature, BPENomenclature, outFile);
+		new MakeCommonNomenclature(SireneNomenclature, OsmNomenclature, ApurNomenclature, BPENomenclature, outFile);
+		System.out.println(isSireneRealCategorie(new File("src/main/resources/NAFRev2POI.csv"), 0));
 	}
 
-	public MakeCommonNomenclature(File SireneNomenclature, File SireneSortedNomenclature, File OsmNomenclature, File ApurNomenclature,
+	public static long isSireneRealCategorie(File f, int iAttr) throws IOException {
+		CSVReader r = new CSVReader(new FileReader(f));
+		r.readNext();
+		long result = r.readAll().stream().filter(x -> (x[iAttr] == null || x[iAttr].equals("") || x[iAttr].length() == 0) ? false : !x[iAttr].startsWith("SECTION ") && Character.isAlphabetic(x[iAttr].charAt(x[iAttr].length() - 1))).count();
+		r.close();
+		return result;
+	}
+
+	public MakeCommonNomenclature(File SireneNomenclature, File OsmNomenclature, File ApurNomenclature,
 			File BPENomenclature, File outFile) throws IOException {
 		String[] fLineOut = { "NomenclatureICI", "codeNAF", "NameNAF", "freq", "NameAmenityOSM", "codeBPE", "NameBPE", "codeAPUR", "NameAPUR" };
 		CSVWriter w = new CSVWriter(new FileWriter(outFile));
@@ -44,9 +51,9 @@ public class MakeCommonNomenclature {
 			line[2] = naf[1];
 			line[3] = naf[6];
 			// BPE
-			line = checkIfCorrespondances(line, codeBPEUsed, BPENomenclature, naf[1].toLowerCase(), 1, 0, 6, 5);
+			line = checkIfCorrespondances(line, codeBPEUsed, BPENomenclature, naf[1].toLowerCase(), 1, 6, 5);
 			// APUR
-			line = checkIfCorrespondances(line, codeAPURUsed, ApurNomenclature, naf[1].toLowerCase(), 2, 0, 8, 7);
+			line = checkIfCorrespondances(line, codeAPURUsed, ApurNomenclature, naf[1].toLowerCase(), 2, 8, 7);
 			// OSM
 			line = checkIfCorrespondances(line, codeOSMUsed, OsmNomenclature, naf[1].toLowerCase(), 0, 0, 4, 4, true);
 			w.writeNext(line);
@@ -62,7 +69,7 @@ public class MakeCommonNomenclature {
 				line[5] = bpe[0];
 				line[6] = bpe[1];
 				// APUR
-				line = checkIfCorrespondances(line, codeAPURUsed, ApurNomenclature, bpe[1].toLowerCase(), 2, 0, 7, 8);
+				line = checkIfCorrespondances(line, codeAPURUsed, ApurNomenclature, bpe[1].toLowerCase(), 2, 7, 8);
 				// OSM
 				line = checkIfCorrespondances(line, codeOSMUsed, OsmNomenclature, bpe[1].toLowerCase(), 0, 0, 4, 4, true);
 				w.writeNext(line);
@@ -99,8 +106,8 @@ public class MakeCommonNomenclature {
 	}
 
 	private static String[] checkIfCorrespondances(String[] inputArray, List<String> usedTerms, File f, String nameNAF, int indiceNameComp,
-			int indiceCodeComp, int indiceNameOut, int indiceCodeOut) throws IOException {
-		return checkIfCorrespondances(inputArray, usedTerms, f, nameNAF, indiceNameComp, indiceCodeComp, indiceNameOut, indiceCodeOut, false);
+												   int indiceNameOut, int indiceCodeOut) throws IOException {
+		return checkIfCorrespondances(inputArray, usedTerms, f, nameNAF, indiceNameComp, 0, indiceNameOut, indiceCodeOut, false);
 	}
 
 	private static String[] checkIfCorrespondances(String[] inputArray, List<String> usedTerms, File f, String nameNAF, int indiceNameComp,

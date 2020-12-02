@@ -46,8 +46,8 @@ public class OSMUtil {
 		// importing geojson
 		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);
 		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
-		HashMap<String, Object[]> table = new HashMap<String, Object[]>();
-		List<String> listAttr = new ArrayList<String>();
+		HashMap<String, Object[]> table = new HashMap<>();
+		List<String> listAttr = new ArrayList<>();
 		// for every features
 		try (SimpleFeatureIterator it = sfc.features()) {
 			while (it.hasNext()) {
@@ -65,7 +65,7 @@ public class OSMUtil {
 		}
 		for (String attr : listAttr) {
 			List<String> list = Collec.getEachUniqueFieldFromSFC(sfc, attr, true);
-			if (list != null && list.size() > 0)
+			if (list.size() > 0)
 				table.put(attr, list.toArray(String[]::new));
 		}
 		Csv.generateCsvFileCol(table, folderOut, geojsonFile.getName() + "-attr");

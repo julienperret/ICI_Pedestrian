@@ -51,8 +51,7 @@ public class Geocode {
 		}
 		HttpGet httppost = new HttpGet(uri);
 		File out = new File("/tmp/tmpAdressGeocoded");
-		CloseableHttpResponse response = httpclient.execute(httppost);
-		try {
+		try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 			// FIXME adapt to the answer
 			// InputStream stream = response.getEntity().getContent();
 			// java.nio.file.Files.copy(stream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -61,8 +60,6 @@ public class Geocode {
 			// geoloc[1] = (String) answer.get("x") != null ? (String) answer.get("x") : "0";
 			// geoloc[2] = (String) answer.get("y") != null ? (String) answer.get("y") : "0";
 			// stream.close();
-		} finally {
-			response.close();
 		}
 		return geoloc;
 	}
@@ -71,10 +68,8 @@ public class Geocode {
 	 * https://geo.api.gouv.fr/adresse Utilise la BAN. Return [0] : score ; [1] long and [2] lat in WGS84 format
 	 * 
 	 * @param adresseInfos
-	 * @param outFile
 	 * @return the geojson file with point/infos about the geocoding
 	 * @throws IOException
-	 * @throws URISyntaxException
 	 */
 	public static String[] geocodeAdresseDataGouv(String[] adresseInfos) throws IOException {
 		// https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port&postcode=44380
@@ -96,17 +91,14 @@ public class Geocode {
 		}
 		HttpGet httppost = new HttpGet(uri);
 		File out = new File("/tmp/tmpAdressGeocoded");
-		CloseableHttpResponse response = httpclient.execute(httppost);
-		try {
+		try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, out.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			HashMap<String, Object> answer = Json.getFirstObject(out);
-			geoloc[0] = (String) answer.get("score") != null ? (String) answer.get("score") : "0";
-			geoloc[1] = (String) answer.get("x") != null ? (String) answer.get("x") : "0";
-			geoloc[2] = (String) answer.get("y") != null ? (String) answer.get("y") : "0";
+			geoloc[0] = answer.get("score") != null ? (String) answer.get("score") : "0";
+			geoloc[1] = answer.get("x") != null ? (String) answer.get("x") : "0";
+			geoloc[2] = answer.get("y") != null ? (String) answer.get("y") : "0";
 			stream.close();
-		} finally {
-			response.close();
 		}
 		return geoloc;
 	}
@@ -117,11 +109,9 @@ public class Geocode {
 	 * https://api-adresse.data.gouv.fr/search/csv/ > outFile
 	 * 
 	 * 
-	 * @param adresseInfos
 	 * @param outFile
 	 * @return
 	 * @throws IOException
-	 * @throws URISyntaxException
 	 */
 	public static String geocodeCSVAdresseDataGouv(File inFile, File outFile) throws IOException {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -136,14 +126,11 @@ public class Geocode {
 		}
 		HttpPost httppost = new HttpPost(uri);
 		System.out.println(uri);
-		CloseableHttpResponse response = httpclient.execute(httppost);
-		try {
+		try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 			System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			stream.close();
-		} finally {
-			response.close();
 		}
 		return null;
 	}
@@ -166,17 +153,14 @@ public class Geocode {
 		URI uri = new URIBuilder().setScheme("https").setHost("geocodage.ign.fr").setPath("/look4/address/search/")
 				.setParameter("q", adress + "?returnTrueGeometry=true").build();
 		HttpPost httppost = new HttpPost(uri);
-		CloseableHttpResponse response = httpclient.execute(httppost);
-		try {
+		try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 			System.out.println(response.getStatusLine().getStatusCode());
 			// for (Header e : response.getAllHeaders())
 			// System.out.println(e); // https://geocodage.ign.fr/look4/location/search%3Fq=38%20RUE%20GAY%20LUSSAC%2075005%20Paris%3FreturnTrueGeometry=true/search/
-		} finally {
-			response.close();
 		}
 		return null;
 	}
 
-	public static void geocodeBANO(String[] adresseInfos) throws IOException, URISyntaxException {
+	public static void geocodeBANO(String[] adresseInfos) {
 	}
 }

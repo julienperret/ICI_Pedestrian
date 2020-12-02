@@ -1,34 +1,25 @@
 package transport;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
+import fr.ign.artiscales.tools.io.Csv;
 import org.apache.commons.collections.map.LinkedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.opengis.feature.simple.SimpleFeature;
-
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-
-import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.io.Csv;
 import util.Util;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
 public abstract class Station {
-	List<String> lineNames = new ArrayList<String>();
+	List<String> lineNames = new ArrayList<>();
 	boolean wheelchair;
 	File dailyProfiles = new File(Util.getRootFolder(), "paris/mobilite/validations-sur-le-reseau-ferre-profils-horaires-par-jour-type-2e-sem.csv"),
 			dailyValidation = new File(Util.getRootFolder(),
@@ -46,7 +37,7 @@ public abstract class Station {
 
 	public abstract SimpleFeature generateFeature() throws IOException;
 
-	public Station() throws IOException {
+	public Station() {
 
 	}
 
@@ -57,7 +48,6 @@ public abstract class Station {
 	 *            types of day (see {@link #getEveryTypeProfileDay()} for every possible types and
 	 *            <a href="https://data.iledefrance-mobilites.fr/explore/dataset/validations-sur-le-reseau-de-surface-profils-horaires-par-jour-type-1er-sem/information/">IdF
 	 *            website</a> for its explainaiton
-	 * @throws IOException
 	 */
 	public Pair<String, Double> getMaxFrequency(String[] typeProfileDay) {
 		System.out.println("================= " + this.name + " =================");
@@ -76,7 +66,7 @@ public abstract class Station {
 					break iniLoop;
 				}
 		}
-		return new ImmutablePair<String, Double>(maxFreqPeriod, maxFreq);
+		return new ImmutablePair<>(maxFreqPeriod, maxFreq);
 	}
 
 	public void calculateFrequency() {
@@ -91,13 +81,11 @@ public abstract class Station {
 	}
 
 	public static String[] getEveryTypeProfileDay() {
-		String[] result = { "JOHV", "SAHV", "JOVS", "SAVS", "DIJFP" };
-		return result;
+		return new String[]{ "JOHV", "SAHV", "JOVS", "SAVS", "DIJFP" };
 	}
 
 	public static String[] getProfileDayWithoutWorkDay() {
-		String[] result = { "SAHV", "JOVS", "SAVS", "DIJFP" };
-		return result;
+		return new String[]{ "SAHV", "JOVS", "SAVS", "DIJFP" };
 	}
 
 	public double getMorningWeekdayAffluence() throws IOException {
@@ -113,7 +101,7 @@ public abstract class Station {
 	public static Pair<String, Double> getBestAffluence(File dailyProfiles, File dailyValidation, File folderOut, List<String[]> stationsIDSTIF,
 			String[] profilesDay) throws IOException {
 		LinkedMap affluence = getAffluence(dailyProfiles, dailyValidation, folderOut, "", stationsIDSTIF, profilesDay);
-		return new ImmutablePair<String, Double>((String) affluence.lastKey(), (Double) affluence.get(affluence.lastKey()));
+		return new ImmutablePair<>((String) affluence.lastKey(), (Double) affluence.get(affluence.lastKey()));
 	}
 
 	public static LinkedMap getAffluence(File dailyProfiles, File dailyValidation, File folderOut, String stationName, List<String[]> stationsIDSTIF,
@@ -123,25 +111,21 @@ public abstract class Station {
 
 	public static LinkedMap getAffluence(File dailyProfiles, File dailyValidation, File folderOut, String stationName, List<String[]> stationsIDSTIF,
 			String[] profilesDay, int hoursSlices) throws IOException {
-		HashMap<String, Double> h = new HashMap<String, Double>();
+		HashMap<String, Double> h = new HashMap<>();
 		for (String profileDay : profilesDay) {
 			System.out.println("+++++++++" + profileDay + "+++++++++");
 			for (int i = 0; i < 24; i++) {
-				List<String> hours = Arrays.asList(i + "H-" + (createTime(i + 1) + "H"));
+				List<String> hours = new ArrayList<>(Collections.singletonList(i + "H-" + (createTime(i + 1) + "H")));
 				for (int j = 1; j < hoursSlices; j++)
 					hours.add((i + j) + "H-" + (createTime(i + j + 1)) + "H");
 				h.put(profileDay + "," + hours.toString() + "," + i, getAffluence(dailyProfiles, dailyValidation, stationsIDSTIF, hours, profileDay));
 			}
 		}
 		LinkedMap sortedMap = new LinkedMap();
-		List<Map.Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(h.entrySet());
+		List<Map.Entry<String, Double>> list = new ArrayList<>(h.entrySet());
 
 		// sort the entries based on the value by custom Comparator
-		Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
-			public int compare(Entry<String, Double> entry1, Entry<String, Double> entry2) {
-				return entry2.getValue().compareTo(entry1.getValue());
-			}
-		});
+		list.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 		// put all sorted entries in LinkedHashMap
 		for (Map.Entry<String, Double> entry : list)
 			sortedMap.put(entry.getKey(), entry.getValue());
@@ -174,7 +158,7 @@ public abstract class Station {
 				if (line[iCatJour].equals(dayType) && line[iIDCODE_STIF_TRNS].equals(stationIDsSTIF[0])
 						&& line[iIDCODE_STIF_RES].equals(stationIDsSTIF[1]) && line[iIDCODE_STIF_ARRET].equals(stationIDsSTIF[2])
 						&& hours.contains(line[iHours])) {
-					percentage = percentage + Double.valueOf(line[ipourc_validations]);
+					percentage = percentage + Double.parseDouble(line[ipourc_validations]);
 				}
 			}
 			System.out.println("hours: " + hours);
@@ -195,7 +179,7 @@ public abstract class Station {
 						&& line[iIDCODE_STIF_ARRET].equals(stationIDsSTIF[2])) {
 					double nb = 2;
 					if (!line[iNbValidation].equals("Moins de 5"))
-						nb = Double.valueOf(line[iNbValidation]);
+						nb = Double.parseDouble(line[iNbValidation]);
 					validations.addValue(nb);
 				}
 			csvDailyValidation.close();
@@ -212,9 +196,9 @@ public abstract class Station {
 	}
 
 	private static String hoursToString(List<String> hours) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (String h : hours)
-			result = result + "/" + h;
+			result.append("/").append(h);
 		return result.substring(1, result.length() - 1);
 	}
 

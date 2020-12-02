@@ -1,11 +1,7 @@
 package transport;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import org.apache.commons.lang3.tuple.Pair;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -17,16 +13,17 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-
-import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class SubwayStation extends Station {
 	MultiPoint entrances;
 
-	public SubwayStation(MultiPoint entrances, List<String[]> idsSTIF, String nameStation, List<String> lineName)
-			throws JsonParseException, IOException {
+	public SubwayStation(MultiPoint entrances, List<String[]> idsSTIF, String nameStation, List<String> lineName) {
 		super();
 		this.entrances = entrances;
 		this.idsSTIF = idsSTIF;
@@ -39,7 +36,7 @@ public class SubwayStation extends Station {
 	}
 
 	/**
-	 * This compares a soon to be created subway station with other created subway station. ID is unique for the couple station/line. As we want to calculate the frequentation per
+	 * This compares a soon to be created subway station with other created subway station. ID is unique for the couple station/line. As we want to calculate the attendance per
 	 * stations, not necessarily per lines, we add the ids regarding to their names (which are also uniques).
 	 * 
 	 * @param mp
@@ -47,30 +44,27 @@ public class SubwayStation extends Station {
 	 * @param nameStation
 	 * @param alreadyProceededSubwayStation
 	 * @return
-	 * @throws JsonParseException
-	 * @throws IOException
 	 */
-	public static List<SubwayStation> add(MultiPoint mp, String[] codeSTIF, String nameStation, String lineName,
-			List<SubwayStation> alreadyProceededSubwayStation) throws JsonParseException, IOException {
+	public static List<SubwayStation> add(MultiPoint mp, String[] codeSTIF, String nameStation, String lineName, List<SubwayStation> alreadyProceededSubwayStation) {
 		SubwayStation subwayStation = null;
-		List<String[]> idsStif = new ArrayList<String[]>();
+		List<String[]> idsStif = new ArrayList<>();
 		idsStif.add(codeSTIF);
 		for (int i = 0; i < alreadyProceededSubwayStation.size(); i++) {
 			if (alreadyProceededSubwayStation.get(i).getName().equals(nameStation)) 
 				subwayStation = mergeSubwayStations(
-						Arrays.asList(alreadyProceededSubwayStation.remove(i), new SubwayStation(mp, idsStif, nameStation, Arrays.asList(lineName))));
+						Arrays.asList(alreadyProceededSubwayStation.remove(i), new SubwayStation(mp, idsStif, nameStation, Collections.singletonList(lineName))));
 		}
 		if (subwayStation == null)
-			subwayStation = new SubwayStation(mp, idsStif, nameStation, Arrays.asList(lineName));
+			subwayStation = new SubwayStation(mp, idsStif, nameStation, Collections.singletonList(lineName));
 		alreadyProceededSubwayStation.add(subwayStation);
 		return alreadyProceededSubwayStation;
 	}
 
-	private static SubwayStation mergeSubwayStations(List<SubwayStation> subwayStationList) throws JsonParseException, IOException {
+	private static SubwayStation mergeSubwayStations(List<SubwayStation> subwayStationList) {
 		// merge points
-		List<Point> lP = new ArrayList<Point>();
-		List<String[]> codesSTIF = new ArrayList<String[]>();
-		List<String> lineNames = new ArrayList<String>();
+		List<Point> lP = new ArrayList<>();
+		List<String[]> codesSTIF = new ArrayList<>();
+		List<String> lineNames = new ArrayList<>();
 		for (SubwayStation ss : subwayStationList) {
 			for (int i = 0; i < ss.getEntrances().getNumGeometries(); i++)
 				lP.add((Point) ss.getEntrances().getGeometryN(i));
@@ -111,11 +105,11 @@ public class SubwayStation extends Station {
 	}
 
 	private static String iDsToId(List<String[]> idss) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (String[] ids : idss) {
 			for (String id : ids)
-				result = result + "-" + id;
-			result = result + "/";
+				result.append("-").append(id);
+			result.append("/");
 		}
 		return result.substring(1, result.length() - 1);
 	}

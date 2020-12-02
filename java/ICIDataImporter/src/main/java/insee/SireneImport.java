@@ -1,5 +1,23 @@
 package insee;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.opencsv.CSVReader;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.io.Csv;
+import fr.ign.artiscales.tools.io.Json;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.geotools.data.DataStore;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.opengis.geometry.MismatchedDimensionException;
+import util.Util;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,32 +30,9 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.geotools.data.DataStore;
-import org.geotools.feature.DefaultFeatureCollection;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.operation.TransformException;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.opencsv.CSVReader;
-
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
-import fr.ign.artiscales.tools.io.Csv;
-import fr.ign.artiscales.tools.io.Json;
-import util.Util;
-
 public class SireneImport {
 	public static void main(String[] args)
-			throws IOException, URISyntaxException, MismatchedDimensionException, NoSuchAuthorityCodeException, FactoryException, TransformException {
+			throws IOException, MismatchedDimensionException {
 		File rootFolder = Util.getRootFolder();
 
 		////////////////
@@ -65,12 +60,11 @@ public class SireneImport {
 
 	static boolean append = false;
 	static Timer timer = new Timer();
-	boolean finish = false;
 
 	public SireneImport() {
 	}
 
-	public void getSIRENEData(File outFolder) throws IOException, URISyntaxException {
+	public void getSIRENEData(File outFolder) {
 		String initialToken = "*";
 		TemporizeSIRENECursoredData tSI = new TemporizeSIRENECursoredData(outFolder, initialToken);
 		timer.scheduleAtFixedRate(tSI, Calendar.getInstance().getTime(), 120000);
@@ -90,14 +84,11 @@ public class SireneImport {
 		httppost.addHeader("Accept", "application/json");
 		httppost.addHeader("Content-Type", "application/x-www-form-urlencoded");
 		httppost.addHeader("Authorization", "Bearer " + Util.getToken("insee:SIRENE"));
-		CloseableHttpResponse response = httpclient.execute(httppost);
-		try {
+		try (CloseableHttpResponse response = httpclient.execute(httppost)) {
 			// System.out.println(response.getStatusLine().getStatusCode());
 			InputStream stream = response.getEntity().getContent();
 			java.nio.file.Files.copy(stream, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			stream.close();
-		} finally {
-			response.close();
 		}
 		return getNextCursorJson(outFile);
 	}
@@ -117,7 +108,7 @@ public class SireneImport {
 		return Json.getHeaderJson(f).get("curseurSuivant");
 	}
 
-	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException, URISyntaxException {
+	public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException {
 		// Logger logger = Logging.getLogger("org.geotools.feature.DefaultFeatureCollection");
 		// logger.setLevel(Level.SEVERE);
 		DefaultFeatureCollection result = new DefaultFeatureCollection();
@@ -130,15 +121,12 @@ public class SireneImport {
 		int count = 0;
 		boolean arrayStarted = false;
 		String[] fline;
-		switch (entryType) {
-		case "POI":
+		if ("POI".equals(entryType)) {
 			fline = (new SirenePOI()).getCSVFirstLine();
-			break;
-		default: // Working Place
+		} else { // Working place
 			fline = (new SireneWorkingPlace()).getCSVFirstLine();
-			break;
 		}
-		HashMap<String, String[]> out = new HashMap<String, String[]>();
+		HashMap<String, String[]> out = new HashMap<>();
 		while (!parser.isClosed()) {
 			token = parser.nextToken();
 			if (token == JsonToken.FIELD_NAME && parser.getCurrentName().equals("numeroVoieEtablissement")) {
@@ -209,15 +197,12 @@ public class SireneImport {
 				if (denominationUniteLegale.equals("") && !denominationUsuelle1UniteLegale.equals(""))
 					denominationUniteLegale = denominationUsuelle1UniteLegale;
 				SireneEntry entry;
-				switch (entryType) {
-				case "POI":
+				if ("POI".equals(entryType)) {
 					entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationUniteLegale,
 							siret, trancheEffectifsEtablissement);
-					break;
-				default: // Working Place
+				} else { //Working place
 					entry = new SireneWorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
 							denominationUniteLegale, siret, trancheEffectifsEtablissement);
-					break;
 				}
 				if (SireneEntry.isActive(etatAdministratifEtablissement) && (dateFin.equals("") || dateFin.equals("null")))
 					if (entry.isValid()) {
@@ -262,7 +247,7 @@ public class SireneImport {
 					classement[0] = line[3];
 					classement[1] = line[4];
 					classement[2] = line[5];
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 				classement[3] = line[2];
 			}
@@ -280,7 +265,7 @@ public class SireneImport {
 					classement[0] = line[6];
 					classement[1] = line[7];
 					classement[2] = line[8];
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 				classement[3] = line[4];
 			}
@@ -299,7 +284,7 @@ public class SireneImport {
 					classement[1] = line[5];
 					classement[2] = line[6];
 
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 				classement[3] = line[1];
 				if (line[2].equals("1"))
@@ -311,7 +296,7 @@ public class SireneImport {
 		return classement;
 	}
 
-	class TemporizeSIRENECursoredData extends TimerTask {
+	static class TemporizeSIRENECursoredData extends TimerTask {
 		String lastCursor, preLastCursor, iniCursor;
 		File outFolder;
 		int pastNumbers = 0;

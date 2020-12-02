@@ -1,10 +1,8 @@
 package pop;
 
 import fr.ign.artiscales.tools.carto.CountPointInPolygon;
-import fr.ign.artiscales.tools.geoToolsFunctions.StatisticOperation;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import org.geotools.data.DataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import util.Util;
 
 import java.io.File;
