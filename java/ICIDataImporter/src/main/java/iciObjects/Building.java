@@ -119,5 +119,4 @@ public class Building {
         sfb.set("idsEntrances", idEntrances);
         return sfb.buildFeature(Attribute.makeUniqueId());
     }
-
 }

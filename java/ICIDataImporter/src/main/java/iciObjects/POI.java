@@ -2,6 +2,7 @@ package iciObjects;
 
 import com.opencsv.CSVReader;
 import insee.SireneEntry;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import util.Util;
 
@@ -10,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class POI {
     public String nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciName, nomenclature, name;
@@ -91,10 +93,34 @@ public class POI {
         }
     }
 
-    public static void delDouble(List<POI> lPOI) {
-//TODO
+    public static void delDouble(List<POI> lPOI, List<Building> lBuilding) {
+        List<POI> result = new ArrayList<>();
+        for (Building b : lBuilding) {
+            List<POI> buildingPOI = selectIntersection(lPOI, b.geom);
+            //look at names
+            List<String> names = new ArrayList<>();
+            for (POI poi1 : buildingPOI) {
+                for (POI poi2 : buildingPOI) {
+                    if (!(poi1 == poi2) && poi1.name != null && poi2.name != null) {
+                        if (Util.LevenshteinDistance(poi1.name.toLowerCase(),poi2.name.toLowerCase())< 7) {
+                            System.out.println(poi1.name +" and " + poi2 + " are the same !");
 
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+//public static POI mergePOI(POI poi1, POI poi2){
+//        //case
+//        if (poi1 instanceof SireneEntry || poi2 instanceof SireneEntry ){
+//
+//        }
+//}
+
+    public static List<POI> selectIntersection(List<POI> lPOI, Geometry g) {
+        return lPOI.stream().filter(b -> g.intersects(b.p)).collect(Collectors.toList());
     }
 
     public static void main(String[] args) throws IOException {
@@ -106,7 +132,7 @@ public class POI {
         lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
         lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
         lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
-
+        delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
     }
 
 }
