@@ -5,18 +5,25 @@ import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
+import util.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
+/**
+ * OpenStreetMap point of interest. TODO add leisure objects
+ */
 public class OsmPOI extends POI {
-    public String capacity;
+    public static File nomenclatureFile = new File(Util.getRootFolder(), "OSM/nomenclatureOSM.csv");
+    public String capacity, outdoor;
 
-    public OsmPOI(String nAddress, String address, String typeRoad, String postCode, String amenityName, String name, Point p, String capacity) {
-        super(nAddress, address, typeRoad, postCode, amenityName, amenityName, getIciAmenity(amenityName, "OSM"), "OSM", name, p);
+    public OsmPOI(String nAddress, String address, String typeRoad, String postCode, String amenityName, String name, Point p, String capacity, String openingHour, String outdoor) throws InvalidPropertiesFormatException {
+        super(nAddress, address, typeRoad, postCode, amenityName, amenityName, getIciAmenity(amenityName, "OSM"), "OSM", name,openingHour, p);
         this.capacity = capacity;
+        this.outdoor = outdoor;
     }
 
     public static List<OsmPOI> importOsmPOI(File osmPOIFile) throws IOException {
@@ -27,13 +34,15 @@ public class OsmPOI extends POI {
                 SimpleFeature feat = fIt.next();
                 OsmPOI ap = new OsmPOI(feat.getAttribute("addr:housenumber") != null ? (String) feat.getAttribute("addr:housenumber") : "",
                         feat.getAttribute("addr:street") != null ? ((String) feat.getAttribute("addr:street")).split("\\s")[0] : "",
-                        feat.getAttribute("addr:street") != null ? ((String) feat.getAttribute("addr:street")).replace(((String) feat.getAttribute("addr:street")).split("\\s")[0],"") : "",
+                        feat.getAttribute("addr:street") != null ? ((String) feat.getAttribute("addr:street")).replace(((String) feat.getAttribute("addr:street")).split("\\s")[0], "") : "",
                         feat.getAttribute("addr:postcode") != null ? (String) feat.getAttribute("addr:postcode") : "",
                         feat.getAttribute("amenity") != null ? (String) feat.getAttribute("amenity") : "",
                         feat.getAttribute("name") != null ? (String) feat.getAttribute("name") : "",
                         (Point) feat.getDefaultGeometry(),
-                        feat.getAttribute("capacity") != null ? (String) feat.getAttribute("capacity") : ""
-                        );
+                        feat.getAttribute("capacity") != null ? (String) feat.getAttribute("capacity") : "",
+                        feat.getAttribute("opening_hours") != null ? (String) feat.getAttribute("opening_hours") : "",
+                        isOutdoor(feat)
+                );
                 lB.add(ap);
             }
         } catch (Exception problem) {
@@ -43,4 +52,7 @@ public class OsmPOI extends POI {
         return lB;
     }
 
+    private static String isOutdoor(SimpleFeature feat){
+        return feat.getAttribute("outdoor_seating") != null ? (String) feat.getAttribute("outdoor_seating") : "";
+    }
 }

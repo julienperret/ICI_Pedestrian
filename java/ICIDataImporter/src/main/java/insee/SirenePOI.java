@@ -2,6 +2,9 @@ package insee;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.io.Csv;
+import org.geotools.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
@@ -14,11 +17,14 @@ import util.Geocode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 
 public class SirenePOI extends SireneEntry {
 
     String[] classement = new String[5];
-
+public static File nomenclatureFile = new File("src/main/resources/NAFRev2POI.csv");
     public SirenePOI() {
         super();
     }
@@ -27,6 +33,99 @@ public class SirenePOI extends SireneEntry {
                      String name, String siret, String trancheEffectifsUniteLegale) throws IOException {
         super(nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, name, siret, trancheEffectifsUniteLegale);
         makeClassement();
+        this.attendance = generateAttendance(trancheEffectifsUniteLegale,amenityCode);
+    }
+
+    public SirenePOI(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode,String amenityName, String nomenclature,
+                     String name, String siret, String trancheEffectifsUniteLegale, Point p) throws IOException {
+        super(nAdresse, adresse, typeVoie, codePos, amenityCode, amenityName, nomenclature, name, siret, trancheEffectifsUniteLegale,p);
+        this.attendance = generateAttendance(trancheEffectifsUniteLegale,amenityCode);
+    }
+
+    public static List<SireneEntry> importSirenePOIEntry(File apurSireneEntryFile) throws IOException {
+        DataStore ds = Collec.getDataStore(apurSireneEntryFile);
+        List<SireneEntry> lS = new ArrayList<>();
+        try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
+            while (fIt.hasNext()) {
+                SimpleFeature feat = fIt.next();
+                SirenePOI ap = new SirenePOI((String) feat.getAttribute("nAdresse"), (String) feat.getAttribute("adresse"),
+                        (String) feat.getAttribute("typeVoie"), (String) feat.getAttribute("codePos"),
+                        (String) feat.getAttribute("codeAmenit"), (String) feat.getAttribute("amenite"),
+                        (String) feat.getAttribute("nomenclatr"), (String) feat.getAttribute("name"), (String) feat.getAttribute("siret"),
+                        feat.getAttribute("effectifs") == null ? "" : (String) feat.getAttribute("effectifs"), (Point) feat.getDefaultGeometry());
+                lS.add(ap);
+            }
+        } catch (Exception problem) {
+            problem.printStackTrace();
+        }
+        ds.dispose();
+        return lS;
+    }
+
+    public static String generateAttendance(String trancheEffectifs,String amenityCode) throws IOException {
+        String ratio = Csv.getCell(nomenclatureFile, "Code", amenityCode, "rapportClient/NbEmployes");
+        switch (trancheEffectifs) {
+            case "":
+            case "null":
+            case "NULL":
+            case "NN":
+            case "00":
+            case "0":
+                return "0";
+            case "1-2":
+                switch (ratio) {
+                    case "faible":
+                    case "moyen":
+                        return "veryLow";
+                    case "fort":
+                        return "low";
+                }
+            case "3-5":
+                switch (ratio) {
+                    case "faible":
+                        return "veryLow";
+                    case "moyen":
+                        return "low";
+                    case "fort":
+                        return "moderate";
+                }
+            case "6-9":
+                switch (ratio) {
+                    case "faible":
+                    case "moyen":
+                        return "low";
+                    case "fort":
+                        return "high";
+                }
+            case "10-19":
+                switch (ratio) {
+                    case "faible":
+                        return "low";
+                    case "moyen":
+                        return "high";
+                    case "fort":
+                        return "veryHigh";
+                }
+            case "20-49":
+                switch (ratio) {
+                    case "faible":
+                        return "high";
+                    case "moyen":
+                    case "fort":
+                        return "veryHigh";
+                }
+            case "50-99":
+            case "100-199":
+            case "200 -249":
+            case "250-499":
+            case "500-999":
+            case "1000-1999":
+            case "2000-4999":
+            case "5000-9999":
+            case "10000+":
+                return "veryHigh";
+        }
+        throw new InvalidPropertiesFormatException("SirenePOI.generateAttendance: haven't found correspondences for "+amenityCode + " and ratio "+ ratio + " and tranche effectif " + trancheEffectifs);
     }
 
     public static String getAmenitySourceName(String amenityCode, String nomenclature) throws IOException {

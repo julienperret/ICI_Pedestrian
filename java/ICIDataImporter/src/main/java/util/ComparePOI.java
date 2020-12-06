@@ -30,7 +30,7 @@ public class ComparePOI {
 		DataStore sireneDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg"));
 		DataStore bPEDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg"));
 		DataStore oSMDS = Collec.getDataStore(new File(rootFolder, "OSM/OSMamenities.gpkg"));
-		DataStore apurDS = Collec.getDataStore(new File(rootFolder, "paris/APUR/commercesVeme.gpkg"));
+//		DataStore apurDS = Collec.getDataStore(new File(rootFolder, "paris/APUR/commercesVeme.gpkg"));
 		ComparePOIInBuilding(buildingDS.getFeatureSource(buildingDS.getTypeNames()[0]).getFeatures(),
 				wpDS.getFeatureSource(wpDS.getTypeNames()[0]).getFeatures(), sireneDS.getFeatureSource(sireneDS.getTypeNames()[0]).getFeatures(),
 				bPEDS.getFeatureSource(bPEDS.getTypeNames()[0]).getFeatures(), oSMDS.getFeatureSource(oSMDS.getTypeNames()[0]).getFeatures(),

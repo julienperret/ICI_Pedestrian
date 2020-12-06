@@ -56,18 +56,18 @@ public class Building {
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {
                 SimpleFeature feat = fIt.next();
-                Building b = new Building((String) feat.getAttribute("ID"), (String) feat.getAttribute("NATURE"),
+                lB.add(new Building((String) feat.getAttribute("ID"), (String) feat.getAttribute("NATURE"),
                         (String) feat.getAttribute("USAGE1"), (String) feat.getAttribute("USAGE2"),
                         feat.getAttribute("LEGER").equals("OUI"), (double) feat.getAttribute("HAUTEUR"),
                         ((Geometry) feat.getDefaultGeometry()).getArea(),
                         feat.getAttribute("NB_ETAGES") == null ? 0 : (Integer) feat.getAttribute("NB_ETAGES"),
                         feat.getAttribute("NB_LGTS") == null ? 0 : (Integer) feat.getAttribute("NB_LGTS"),
-                        Polygons.getPolygon((Geometry) feat.getDefaultGeometry()));
-                lB.add(b);
+                        Polygons.getPolygon((Geometry) feat.getDefaultGeometry())));
             }
         } catch (Exception problem) {
             problem.printStackTrace();
         }
+        ds.dispose();
         return lB;
     }
 

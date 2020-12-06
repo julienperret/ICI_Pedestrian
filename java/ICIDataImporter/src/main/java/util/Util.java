@@ -19,8 +19,6 @@ public class Util {
 	}
 
 
-
-
   /**
    * Code found here https://www.geeksforgeeks.org/jaro-and-jaro-winkler-similarity/
    * This code is contributed by PrinciRaj1992

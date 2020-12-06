@@ -13,23 +13,22 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
-import util.Util;
 
 import java.io.File;
 import java.io.IOException;
 
 public class ImportShops {
-	public static void main(String[] args) throws IOException {
-		// // FIXME doesn't work (do we need that api of send straight HTTP requests?)
-		// OverpassStatus result = new OverpassStatus();
-		// OsmConnection connection = new OsmConnection("https://overpass-api.de/api/", "ICI");
-		// OverpassMapDataDao overpass = new OverpassMapDataDao(connection);
-		// MapDataDao map = new MapDataDao(connection);
-		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
-		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
-		File rootFolder = Util.getRootFolder();
-		importCyclePark(new File(rootFolder, "OSM/OSMamenities.gpkg"), new File(rootFolder, "OSM/"));
-	}
+//	public static void main(String[] args) throws IOException {
+//		// // FIXME doesn't work (do we need that api of send straight HTTP requests?)
+//		// OverpassStatus result = new OverpassStatus();
+//		// OsmConnection connection = new OsmConnection("https://overpass-api.de/api/", "ICI");
+//		// OverpassMapDataDao overpass = new OverpassMapDataDao(connection);
+//		// MapDataDao map = new MapDataDao(connection);
+//		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
+//		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
+//		File rootFolder = Util.getRootFolder();
+//		importCyclePark(new File(rootFolder, "OSM/OSMamenities.gpkg"), new File(rootFolder, "OSM/"));
+//	}
 
 	public static SimpleFeatureBuilder getCycleParkSFB() {
 		SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();

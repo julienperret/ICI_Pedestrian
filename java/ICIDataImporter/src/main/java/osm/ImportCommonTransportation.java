@@ -1,9 +1,8 @@
 package osm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -15,18 +14,17 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.FilterFactory2;
-
-import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
 import transport.BusStation;
-import util.Util;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class ImportCommonTransportation {
-	public static void main(String[] args) throws IOException {
-		new ImportCommonTransportation(new File("../../osm/voirie.geojson"), new File(Util.getRootFolder(), "./OSM/"),
-				new File(Util.getRootFolder(), "5eme.shp"));
-	}
+//	public static void main(String[] args) throws IOException {
+//		new ImportCommonTransportation(new File("../../osm/voirie.geojson"), new File(Util.getRootFolder(), "./OSM/"),
+//				new File(Util.getRootFolder(), "5eme.shp"));
+//	}
 
 	public ImportCommonTransportation(File geojsonFile, File folderOut, File empriseFile) throws IOException {
 

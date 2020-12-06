@@ -13,12 +13,12 @@ public class AffectSyntheticPop {
 
     public static void main(String[] args) throws IOException {
         File rootFolder = Util.getRootFolder();
-        File syntheticPopFile = new File(rootFolder, "pop/populationInBuildingsSampledVeme.gpkg");
+        File syntheticPopFile = new File("/home/mc/workspace/h24/results/populationInBuildings2.gpkg");
         File buildingFile = new File(rootFolder, "IGN/batVeme.gpkg");
-        DataStore bDS = Collec.getDataStore(buildingFile);
         DataStore spDS = Collec.getDataStore(syntheticPopFile);
-        Collec.exportSFC(CountPointInPolygon.countPointInPolygon(spDS.getFeatureSource(spDS.getTypeNames()[0]).getFeatures(),
-                bDS.getFeatureSource(bDS.getTypeNames()[0]).getFeatures(), true, null, Arrays.asList("ageCat", "sex", "education"),null
+        DataStore bDS = Collec.getDataStore(buildingFile);
+        Collec.exportSFC(CountPointInPolygon.countPointInPolygon(Collec.selectIntersection(spDS.getFeatureSource(spDS.getTypeNames()[0]).getFeatures(),bDS.getFeatureSource(bDS.getTypeNames()[0]).getFeatures()),
+                bDS.getFeatureSource(bDS.getTypeNames()[0]).getFeatures(), true, null, Arrays.asList("age", "sex", "education"),null
                 ), new File(rootFolder, "ICI/BuildingSyntheticPop.gpkg"));
         bDS.dispose();
         spDS.dispose();

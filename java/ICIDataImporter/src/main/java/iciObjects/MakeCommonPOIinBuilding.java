@@ -3,7 +3,6 @@ package iciObjects;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.io.Csv;
-import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -15,22 +14,15 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
-import util.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 public class MakeCommonPOIinBuilding {
-    public static void main(String[] args) throws IOException {
-
-    }
-
-    public static List<POI> checkIfPOIIsDoubled(List<POI> inpuiListPOI){
-
-        return null;
-    }
+//    public static void main(String[] args) throws IOException {
+//
+//    }
 
     public static SimpleFeatureBuilder getSFB() {
         SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
@@ -58,7 +50,7 @@ public class MakeCommonPOIinBuilding {
     public static void ComparePOIInBuilding(SimpleFeatureCollection buildingSFC, SimpleFeatureCollection workingPlaceSFC,
                                             SimpleFeatureCollection poiSirereSFC, SimpleFeatureCollection poiBPESFC, SimpleFeatureCollection poiOSMSFC, File folderOut)
             throws IOException {
-        HashMap<String, String[]> data = new HashMap<String, String[]>();
+        HashMap<String, String[]> data = new HashMap<>();
         String[] fLine = {"buildingID", "nbWorkingPlace", "nbPOISirene", "nbPOI_BPE", "nbPOI_OSM", "typesWorkingPlace", "typesPOISirene",
                 "typesPOI_BPE", "typesPOI_OSM"};
         int moreBPE = 0;
@@ -91,38 +83,38 @@ public class MakeCommonPOIinBuilding {
                 else if (poiOSMInDaBuilding.size() > poiBPEInDaBuilding.size() && poiOSMInDaBuilding.size() > poiSInDaBuilding.size())
                     moreOSM++;
                 // Count single point types
-                String amenites = "";
+                StringBuilder amenites = new StringBuilder();
                 try (SimpleFeatureIterator wpInDaBuildingIt = wpInDaBuilding.features()) {
                     while (wpInDaBuildingIt.hasNext())
-                        amenites = amenites + ((String) wpInDaBuildingIt.next().getAttribute("amenite")).replace(",", " -") + "--";
+                        amenites.append(((String) wpInDaBuildingIt.next().getAttribute("amenite")).replace(",", " -")).append("--");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                line[4] = amenites;
-                amenites = "";
+                line[4] = amenites.toString();
+                amenites = new StringBuilder();
                 try (SimpleFeatureIterator poiSInDaBuildingIt = poiSInDaBuilding.features()) {
                     while (poiSInDaBuildingIt.hasNext())
-                        amenites = amenites + ((String) poiSInDaBuildingIt.next().getAttribute("amenite")).replace(",", " -") + "--";
+                        amenites.append(((String) poiSInDaBuildingIt.next().getAttribute("amenite")).replace(",", " -")).append("--");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                line[5] = amenites;
-                amenites = "";
+                line[5] = amenites.toString();
+                amenites = new StringBuilder();
                 try (SimpleFeatureIterator poiBPEInDaBuildingIt = poiBPEInDaBuilding.features()) {
                     while (poiBPEInDaBuildingIt.hasNext())
-                        amenites = amenites + ((String) poiBPEInDaBuildingIt.next().getAttribute("Type")).replace(",", " -") + "--";
+                        amenites.append(((String) poiBPEInDaBuildingIt.next().getAttribute("Type")).replace(",", " -")).append("--");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                line[6] = amenites;
-                amenites = "";
+                line[6] = amenites.toString();
+                amenites = new StringBuilder();
                 try (SimpleFeatureIterator poiOSMInDaBuildingIt = poiOSMInDaBuilding.features()) {
                     while (poiOSMInDaBuildingIt.hasNext())
-                        amenites = amenites + ((String) poiOSMInDaBuildingIt.next().getAttribute("amenity")).replace(",", " -") + "--";
+                        amenites.append(((String) poiOSMInDaBuildingIt.next().getAttribute("amenity")).replace(",", " -")).append("--");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                line[7] = amenites;
+                line[7] = amenites.toString();
                 data.put((String) building.getAttribute("ID"), line);
 
                 sfb.set(Collec.getDefaultGeomName(), building.getDefaultGeometry());

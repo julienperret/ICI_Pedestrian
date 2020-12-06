@@ -1,34 +1,32 @@
 package osm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
+import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
-import fr.ign.artiscales.tools.io.Csv;
-import util.Util;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class OSMUtil {
 	
-	public static void main(String[] args) throws IOException {
-		// // FIXME doesn't work (do we need that api of send straight HTTP requests?)
-		// OverpassStatus result = new OverpassStatus();
-		// OsmConnection connection = new OsmConnection("https://overpass-api.de/api/", "ICI");
-		// OverpassMapDataDao overpass = new OverpassMapDataDao(connection);
-		// MapDataDao map = new MapDataDao(connection);
-		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
-		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
-		makeTabWithAttributesAndValues(new File("../../osm/voirie.geojson"), new File(Util.getRootFolder(),"OSM"));
-	}
+//	public static void main(String[] args) throws IOException {
+//		// // FIXME doesn't work (do we need that api of send straight HTTP requests?)
+//		// OverpassStatus result = new OverpassStatus();
+//		// OsmConnection connection = new OsmConnection("https://overpass-api.de/api/", "ICI");
+//		// OverpassMapDataDao overpass = new OverpassMapDataDao(connection);
+//		// MapDataDao map = new MapDataDao(connection);
+//		// System.out.println(overpass.queryCount("[out:csv(name)];\n" + "node[amenity](bbox:2.3367,88.8375,2.3674,88.8553);\n"
+//		// + "for (t[\"amenity\"])\n" + "{\n" + " make ex name=_.val;\n" + " out;\n" + "}"));
+//		makeTabWithAttributesAndValues(new File("../../osm/voirie.geojson"), new File(Util.getRootFolder(),"OSM"));
+//	}
 	
 	/**
 	 * Create a table summing up the geojson file coming from OSM with heterogenous attributes and values for those attributes. On columns, every attributes of the features, on

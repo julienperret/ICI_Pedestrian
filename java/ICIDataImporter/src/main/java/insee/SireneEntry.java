@@ -1,18 +1,13 @@
 package insee;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import iciObjects.POI;
-import org.geotools.data.DataStore;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.opengis.feature.simple.SimpleFeature;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.InvalidPropertiesFormatException;
 
 public abstract class SireneEntry extends POI {
 
@@ -21,8 +16,24 @@ public abstract class SireneEntry extends POI {
     boolean valid = true;
 
     public SireneEntry(String nAddress, String address, String typeRoad, String codePos, String amenityCode,
-                       String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement) {
+                       String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement) throws InvalidPropertiesFormatException {
         super(nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityName, "SIRENE"), nomenclature, name);
+        this.nAddress = nAddress;
+        completeAddress[0] = nAddress;
+        this.address = address;
+        completeAddress[2] = address;
+        this.typeRoad = typeRoad;
+        completeAddress[1] = typeRoad;
+        this.codePos = codePos;
+        completeAddress[3] = codePos;
+        this.siret = siret;
+        this.trancheEffectifsEtablissement = transformEffectif(trancheEffectifsEtablissement);
+    }
+
+    public SireneEntry(String nAddress, String address, String typeRoad, String codePos, String amenityCode,
+                       String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement, Point p) throws InvalidPropertiesFormatException {
+        super(nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
+        this.p = p;
         this.nAddress = nAddress;
         completeAddress[0] = nAddress;
         this.address = address;
@@ -37,51 +48,6 @@ public abstract class SireneEntry extends POI {
 
     public SireneEntry() {
         super();
-    }
-
-    public static List<SireneEntry> importSireneEntry(File apurSireneEntryFile) throws IOException {
-        DataStore ds = Collec.getDataStore(apurSireneEntryFile);
-        List<SireneEntry> lS = new ArrayList<>();
-        try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
-            while (fIt.hasNext()) {
-                SimpleFeature feat = fIt.next();
-                SireneEntry ap = new SireneEntry((String) feat.getAttribute("nAdresse"), (String) feat.getAttribute("adresse"),
-                        (String) feat.getAttribute("typeVoie"), (String) feat.getAttribute("codePos"),
-                        (String) feat.getAttribute("codeAmenit"), (String) feat.getAttribute("amenite"),
-                        (String) feat.getAttribute("nomenclatr"), (String) feat.getAttribute("name"), (String) feat.getAttribute("siret"),
-                        feat.getAttribute("effectifs") == null ? "" : (String) feat.getAttribute("effectifs")) {
-                    @Override
-                    public SimpleFeatureBuilder getSireneSFB() {
-                        return null;
-                    }
-
-                    @Override
-                    public SimpleFeature generateSimpleFeature() {
-                        return null;
-                    }
-
-                    @Override
-                    public String[] getLineForCSV() {
-                        return new String[0];
-                    }
-
-                    @Override
-                    public boolean equals(String[] line) {
-                        return false;
-                    }
-
-                    @Override
-                    public String[] getCSVFirstLine() {
-                        return new String[0];
-                    }
-                };
-                lS.add(ap);
-            }
-        } catch (Exception problem) {
-            problem.printStackTrace();
-        }
-        ds.dispose();
-        return lS;
     }
 
     public static boolean isActive(String etatAdministratifEtablissement) {

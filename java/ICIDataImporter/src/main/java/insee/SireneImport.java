@@ -207,7 +207,7 @@ public class SireneImport {
 				if (SireneEntry.isActive(etatAdministratifEtablissement) && (dateFin.equals("") || dateFin.equals("null")))
 					if (entry.isValid()) {
 						// Geopackage export
-						result.add(entry.generateSimpleFeature());
+						result.add(entry.generateSF());
 						// CSV export
 						String[] l = entry.getLineForCSV();
 						out.put(siret + "-" + count++, l);
