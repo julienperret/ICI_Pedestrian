@@ -26,6 +26,7 @@ object Partition extends App {
   val inputDir = File("../input_l93")
   def path(name: String) = (inputDir / (name + ".shp")).path
 
+  // get the geometry of the target area (5th arrondissement)
   val arrondissement = Utils.getShapefile(path("arrondissements")).filter(_.getAttribute("c_ar").toString.toInt == 5).head.getDefaultGeometry.asInstanceOf[Geometry]
   val arrondissementGeom = reduce(arrondissement)
 
@@ -37,6 +38,7 @@ object Partition extends App {
   val chaussee = get(path("plan-de-voirie-chaussees"))
   val chausseeGeom = reduce(arrondissementGeom.getFactory.createGeometryCollection(chaussee.toArray).union())
 
+  // check that a geometry does not intersect the street (remove the 'quais de seine')
   def notOnStreet(g: Geometry) = !g.intersects(chausseeGeom) || g.intersection(chausseeGeom).getArea < 0.1
 
   val trottoirs = get(path("plan-de-voirie-trottoirs-emprises")).filter(notOnStreet)
