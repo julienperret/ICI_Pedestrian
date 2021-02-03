@@ -4,6 +4,8 @@ import com.opencsv.CSVReader;
 import fr.ici.dataImporter.insee.SirenePOI;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -26,14 +28,22 @@ import java.util.stream.Collectors;
  */
 public class POI {
     public String openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciName, nomenclature, name;
+    public int  attendanceIndice;
     public String[] completeAddress = new String[4];
     public String[] idBuilding;
     public Point p;
 
-//    public POI(Geometry geom, String amenityCode, String nomenclature, String name) {
-//        this.amenityCode = amenityCode;
-//        this.nomenclature = nomenclature;
-//        this.name = name;
+
+//    public static void main(String[] args) throws IOException {
+//        File rootFolder = Util.getRootFolder();
+//        List<POI> lPOI = new ArrayList<>();
+//        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
+//        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
+//        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
+//        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
+//        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
+//        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
+//        exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
 //    }
 
     public POI(String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
@@ -100,6 +110,7 @@ public class POI {
         this.nomenclature = nomenclature;
         this.name = name;
         this.attendance = attendance;
+        this.attendanceIndice = SirenePOI.generateAttendanceCode(attendance);
         this.openingHour = openingHour;
         this.p = pt;
     }
@@ -296,16 +307,19 @@ public class POI {
         Collec.exportSFC(result, fileOut);
     }
 
-    public static void main(String[] args) throws IOException {
-        File rootFolder = Util.getRootFolder();
-        List<POI> lPOI = new ArrayList<>();
-        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
-        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
-        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
-        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "fr/ici/dataImporter/paris/APUR/commercesVeme.gpkg")));
-        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
-        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
-        exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
+    public static SimpleFeatureCollection getRestaurant(SimpleFeatureCollection poi) throws IOException {
+        DefaultFeatureCollection result = new DefaultFeatureCollection();
+        try (SimpleFeatureIterator it = poi.features()) {
+            while (it.hasNext()) {
+                SimpleFeature feat = it.next();
+                if (feat.getAttribute("amenityIciName").equals("loisir.restauration") || feat.getAttribute("amenityIciName").equals("restauration"))
+                    result.add(feat);
+            }
+        } catch (Error e) {
+            e.printStackTrace();
+            return result.collection();
+        }
+        return result.collection();
     }
 
     @Override
@@ -313,6 +327,7 @@ public class POI {
         return "POI{" +
                 "openingHour='" + openingHour + '\'' +
                 ", attendance='" + attendance + '\'' +
+                ", attendanceIndice='" + attendanceIndice + '\'' +
                 ", nAddress='" + nAddress + '\'' +
                 ", address='" + address + '\'' +
                 ", typeRoad='" + typeRoad + '\'' +
@@ -341,6 +356,7 @@ public class POI {
         sfb.set("nomenclature", nomenclature);
         sfb.set("name", name);
         sfb.set("attendance", attendance);
+        sfb.set("attendanceIndice", attendanceIndice);
         sfb.set("openingHour", openingHour);
         return sfb.buildFeature(Attribute.makeUniqueId());
     }
@@ -364,6 +380,7 @@ public class POI {
         sfTypeBuilder.add("nomenclature", String.class);
         sfTypeBuilder.add("name", String.class);
         sfTypeBuilder.add("attendance", String.class);
+        sfTypeBuilder.add("attendanceIndice", Integer.class);
         sfTypeBuilder.add("openingHour", String.class);
         sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();

@@ -5,6 +5,7 @@ import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -36,26 +37,29 @@ public class SirenePOI extends SireneEntry {
         makeClassement();
         if (this.isValid())
             this.attendance = generateAttendance(trancheEffectifsUniteLegale, amenityCode);
+            this.attendanceIndice = SirenePOI.generateAttendanceCode(this.attendance);
     }
 
     public SirenePOI(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String amenityName, String nomenclature,
-                     String name, String siret, String trancheEffectifsUniteLegale, Point p) throws IOException {
-        super(nAdresse, adresse, typeVoie, codePos, amenityCode, amenityName, nomenclature, name, siret, trancheEffectifsUniteLegale, p);
+                     String name, String siret, String workforceNormalized, Point p) throws IOException {
+        super(nAdresse, adresse, typeVoie, codePos, amenityCode, amenityName, nomenclature, name, siret, workforceNormalized, p);
         if (this.isValid())
-            this.attendance = generateAttendance(trancheEffectifsUniteLegale, amenityCode);
+            this.attendance = generateAttendance(workforceNormalized, amenityCode);
+            this.attendanceIndice = SirenePOI.generateAttendanceCode(this.attendance);
     }
 
-    public static List<SireneEntry> importSirenePOIEntry(File apurSireneEntryFile) throws IOException {
-        DataStore ds = Collec.getDataStore(apurSireneEntryFile);
+    public static List<SireneEntry> importSirenePOIEntry(File sireneEntryFile) throws IOException {
+        DataStore ds = Collec.getDataStore(sireneEntryFile);
         List<SireneEntry> lS = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {
                 SimpleFeature feat = fIt.next();
                 SirenePOI ap = new SirenePOI((String) feat.getAttribute("nAdresse"), (String) feat.getAttribute("adresse"),
                         (String) feat.getAttribute("typeVoie"), (String) feat.getAttribute("codePos"),
+//                        (String) feat.getAttribute("amenityCode"), (String) feat.getAttribute("amenity"),
                         (String) feat.getAttribute("codeAmenit"), (String) feat.getAttribute("amenite"),
                         (String) feat.getAttribute("nomenclatr"), (String) feat.getAttribute("name"), (String) feat.getAttribute("siret"),
-                        feat.getAttribute("effectifs") == null ? "" : (String) feat.getAttribute("effectifs"), (Point) feat.getDefaultGeometry());
+                        feat.getAttribute("workforceNormalized") == null ? "" : (String) feat.getAttribute("workforceNormalized"), (Point) feat.getDefaultGeometry());
                 lS.add(ap);
             }
         } catch (Exception problem) {
@@ -65,7 +69,7 @@ public class SirenePOI extends SireneEntry {
         return lS;
     }
 
-    public static int gererateAttendanceCode(String attendance) {
+    public static int generateAttendanceCode(String attendance) {
         switch (attendance) {
             case "veryLow":
                 return 1;
@@ -161,6 +165,26 @@ public class SirenePOI extends SireneEntry {
         }
     }
 
+    /**
+     * Get the maximum of the importance of the POI. Used to have an idea on the POI's importances when rasterization
+     *
+     * @param poiSFC
+     * @return
+     */
+    public static int maxAffluenceIndicator(SimpleFeatureCollection poiSFC) {
+        int level = 0;
+        try (SimpleFeatureIterator wpIt = poiSFC.features()) {
+            while (wpIt.hasNext()) {
+                int levelSF = (int) wpIt.next().getAttribute("attendanceIndice");
+                if (levelSF > level)
+                    level = levelSF;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return level;
+    }
+
     public void makeClassement() throws IOException {
         switch (nomenclature) {
             case "NAFRev2":
@@ -239,7 +263,7 @@ public class SirenePOI extends SireneEntry {
         sfb.set("type", classement[0]);
         sfb.set("categorie", classement[1]);
         sfb.set("frequence", classement[2]);
-        sfb.set("frequenceCode", gererateAttendanceCode(classement[2]));
+        sfb.set("frequenceCode", generateAttendanceCode(classement[2]));
         sfb.set("scoreGeocd", Double.valueOf(geocode[0]));
         sfb.set("rstOuv0314", classement[4]);
         sfb.set("rstOuv1030", classement[5]);

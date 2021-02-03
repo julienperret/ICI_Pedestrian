@@ -1,5 +1,6 @@
 package fr.ici.dataImporter.iciObjects;
 
+import fr.ici.dataImporter.insee.SirenePOI;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
@@ -15,7 +16,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 public class ApurPOI extends POI {
-    public static File nomenclatureFile = new File(Util.getRootFolder(), "fr/ici/dataImporter/paris/APUR/APURNomenclature.csv");
+    public static File nomenclatureFile = new File(Util.getRootFolder(), "paris/APUR/APURNomenclature.csv");
     public String areaBound;
 
     public ApurPOI(int nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenityName, int areaBound, Point p) throws InvalidPropertiesFormatException {
@@ -23,6 +24,7 @@ public class ApurPOI extends POI {
         this.areaBound = getAreaBound(areaBound);
         try {
             this.attendance = generateAttendance(areaBound, amenityCode);
+            this.attendanceIndice = SirenePOI.generateAttendanceCode(this.attendance);
         } catch (IOException e) {
             e.printStackTrace();
         }
