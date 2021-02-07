@@ -50,5 +50,6 @@ java/ICIDataImporter/node_modules/*
 java/ICIDataImporter/node_modules
 java/ICIDataImporter/src/main/resources/APIKeys.json
 java/ICIDataImporter/src/main/resources/dbinfo.json
+java/ICIDataImporter/.settings/*
 
 java/ICIDataImporter/rootFolder

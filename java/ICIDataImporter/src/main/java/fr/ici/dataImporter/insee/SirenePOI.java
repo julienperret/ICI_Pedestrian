@@ -2,7 +2,7 @@ package fr.ici.dataImporter.insee;
 
 import fr.ici.dataImporter.util.Geocode;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -49,7 +49,7 @@ public class SirenePOI extends SireneEntry {
     }
 
     public static List<SireneEntry> importSirenePOIEntry(File sireneEntryFile) throws IOException {
-        DataStore ds = Collec.getDataStore(sireneEntryFile);
+        DataStore ds = CollecMgmt.getDataStore(sireneEntryFile);
         List<SireneEntry> lS = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {
@@ -213,7 +213,7 @@ public class SirenePOI extends SireneEntry {
             e.printStackTrace();
         }
         sfTypeBuilder.setName("SirenePOI");
-        sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
         sfTypeBuilder.add("nAdresse", String.class);
         sfTypeBuilder.add("adresse", String.class);
         sfTypeBuilder.add("typeVoie", String.class);
@@ -233,7 +233,7 @@ public class SirenePOI extends SireneEntry {
         sfTypeBuilder.add("scoreGeocd", Double.class);
         sfTypeBuilder.add("rstOuv0314", String.class);
         sfTypeBuilder.add("rstOuv1030", String.class);
-        sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         return new SimpleFeatureBuilder(featureType);
     }
@@ -247,7 +247,7 @@ public class SirenePOI extends SireneEntry {
             return null;
         }
         SimpleFeatureBuilder sfb = getSireneSFB();
-        sfb.set(Collec.getDefaultGeomName(), gf.createPoint(new Coordinate(Double.parseDouble(geocode[1]), Double.parseDouble(geocode[2]))));
+        sfb.set(CollecMgmt.getDefaultGeomName(), gf.createPoint(new Coordinate(Double.parseDouble(geocode[1]), Double.parseDouble(geocode[2]))));
         sfb.set("nAdresse", nAddress);
         sfb.set("adresse", address);
         sfb.set("typeVoie", typeRoad);

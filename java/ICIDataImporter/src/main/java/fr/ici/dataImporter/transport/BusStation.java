@@ -3,6 +3,7 @@ package fr.ici.dataImporter.transport;
 import java.io.File;
 import java.io.IOException;
 
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
@@ -12,7 +13,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ici.dataImporter.util.Util;
 
 public class BusStation extends Station {
@@ -52,7 +52,7 @@ public class BusStation extends Station {
 			e.printStackTrace();
 		}
 		sfTypeBuilder.setName("transportationOSM");
-		sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
+		sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
 		sfTypeBuilder.add("type", String.class);
 		sfTypeBuilder.add("name", String.class);
 		sfTypeBuilder.add("pub_trans", String.class);
@@ -63,7 +63,7 @@ public class BusStation extends Station {
 		sfTypeBuilder.add("6-9HJoursOuvre", String.class);
 		sfTypeBuilder.add("17-20HJoursOuvre", String.class);
 		sfTypeBuilder.add("PlusGrosseAffluenceHorsJoursOuvre", String.class);
-		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+		sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
 		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
 		return new SimpleFeatureBuilder(featureType);
 	}

@@ -116,10 +116,17 @@ public static double jaro_distance(String s1, String s2)
 		return result;
 	}
 
-	public static String getToken(String serviceKey)  {
+	public static String getToken(String serviceKey) {
+		return getInfoFromResourceJSON("APIKeys.json", serviceKey, "API key");
+}
+	public static String getDBUser(String serviceKey) {
+		return getInfoFromResourceJSON("dbinfo.json", serviceKey, "Database "+serviceKey);
+	}
+
+	public static String getInfoFromResourceJSON(String nameFile, String serviceKey, String descriptiveName){
 		try {
 			JsonFactory factory = new JsonFactory();
-			JsonParser parser = factory.createParser(new File("src/main/resources/APIKeys.json"));
+			JsonParser parser = factory.createParser(new File("src/main/resources/"+nameFile));
 			JsonToken token = parser.nextToken();
 			while (!parser.isClosed()) {
 				token = parser.nextToken();
@@ -133,9 +140,9 @@ public static double jaro_distance(String s1, String s2)
 			throw new Exception();
 		} catch (Exception e) {
 			Scanner myObj = new Scanner(System.in); // Create a Scanner object
-			System.out.println("Wrong API key for " + serviceKey
-					+ " application. Possible to store it in the src/main/resources/APIKeys.json file. Meanwhile, you can type it right here in the console please");
-			System.out.println(serviceKey + " key:");
+			System.out.println("Wrong "+ descriptiveName +" for " + serviceKey
+					+ " application. Possible to store it in the src/main/resources/" + nameFile+" file. Meanwhile, you can type it right here in the console please");
+			System.out.println(descriptiveName + ": "+ serviceKey + " is:");
 			String key = myObj.nextLine(); // Read user input
 			myObj.close();
 			return key;

@@ -1,7 +1,7 @@
 package fr.ici.dataImporter.iciObjects;
 
 import fr.ici.dataImporter.insee.SirenePOI;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -84,7 +84,7 @@ public class ApurPOI extends POI {
     }
 
     public static List<ApurPOI> importApurPOI(File apurPOIFile) throws IOException {
-        DataStore ds = Collec.getDataStore(apurPOIFile);
+        DataStore ds = CollecMgmt.getDataStore(apurPOIFile);
         List<ApurPOI> lB = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {

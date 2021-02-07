@@ -1,6 +1,6 @@
 package fr.ici.dataImporter.iciObjects;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.locationtech.jts.geom.Point;
@@ -22,7 +22,7 @@ public class BpePOI extends POI {
     }
 
     public static List<BpePOI> importBpePOI(File bpePOIFile) throws IOException {
-        DataStore ds = Collec.getDataStore(bpePOIFile);
+        DataStore ds = CollecMgmt.getDataStore(bpePOIFile);
         List<BpePOI> lB = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {

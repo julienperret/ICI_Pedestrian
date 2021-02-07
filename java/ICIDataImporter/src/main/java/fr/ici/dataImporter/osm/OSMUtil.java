@@ -1,7 +1,7 @@
 package fr.ici.dataImporter.osm;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -40,7 +40,7 @@ public class OSMUtil {
 	 */
 	public static void makeTabWithAttributesAndValues(File geojsonFile, File folderOut) throws IOException {
 		// information for i/o of geocollection
-		Collec.setDefaultGISFileType(".geojson");
+		CollecMgmt.setDefaultGISFileType(".geojson");
 		// importing geojson
 		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);
 		SimpleFeatureCollection sfc = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures();
@@ -52,7 +52,7 @@ public class OSMUtil {
 				SimpleFeature f = it.next();
 				for (AttributeDescriptor attr : f.getFeatureType().getAttributeDescriptors()) {
 					String sAttr = attr.getLocalName();
-					if (sAttr.equals(Collec.getDefaultGeomName()) || sAttr.equals("id"))
+					if (sAttr.equals(CollecMgmt.getDefaultGeomName()) || sAttr.equals("id"))
 						continue;
 					if (!listAttr.contains(sAttr))
 						listAttr.add(sAttr);
@@ -62,7 +62,7 @@ public class OSMUtil {
 			e.printStackTrace();
 		}
 		for (String attr : listAttr) {
-			List<String> list = Collec.getEachUniqueFieldFromSFC(sfc, attr, true);
+			List<String> list = CollecMgmt.getEachUniqueFieldFromSFC(sfc, attr, true);
 			if (list.size() > 0)
 				table.put(attr, list.toArray(String[]::new));
 		}

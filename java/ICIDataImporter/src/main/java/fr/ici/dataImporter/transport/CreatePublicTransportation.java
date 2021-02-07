@@ -1,6 +1,6 @@
 package fr.ici.dataImporter.transport;
 
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.apache.commons.math3.exception.NullArgumentException;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -44,8 +44,8 @@ public class CreatePublicTransportation {
     }
 
     public static void createSubwayStation(File transportGeoFileOSM, File transportGeoFileSTIF, File outFolder) throws IOException {
-        DataStore dsOSM = Collec.getDataStore(transportGeoFileOSM);
-        DataStore dsSTIF = Collec.getDataStore(transportGeoFileSTIF);
+        DataStore dsOSM = CollecMgmt.getDataStore(transportGeoFileOSM);
+        DataStore dsSTIF = CollecMgmt.getDataStore(transportGeoFileSTIF);
         SimpleFeatureCollection sfcOSM = dsOSM.getFeatureSource(dsOSM.getTypeNames()[0]).getFeatures();
         SimpleFeatureCollection sfcSTIF = dsSTIF.getFeatureSource(dsSTIF.getTypeNames()[0]).getFeatures();
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
@@ -70,7 +70,7 @@ public class CreatePublicTransportation {
         DefaultFeatureCollection featCollection = new DefaultFeatureCollection();
         for (SubwayStation subwayStation : listSubwayStation)
             featCollection.add(subwayStation.generateFeature());
-        Collec.exportSFC(featCollection, new File(outFolder, "SubwayStation.gpkg"));
+        CollecMgmt.exportSFC(featCollection, new File(outFolder, "SubwayStation.gpkg"));
         dsOSM.dispose();
         dsSTIF.dispose();
     }

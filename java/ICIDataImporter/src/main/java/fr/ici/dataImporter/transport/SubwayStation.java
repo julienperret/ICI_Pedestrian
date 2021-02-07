@@ -1,7 +1,7 @@
 package fr.ici.dataImporter.transport;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.apache.commons.lang3.tuple.Pair;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -83,7 +83,7 @@ public class SubwayStation extends Station {
 			e.printStackTrace();
 		}
 		sfTypeBuilder.setName("SubwayStation");
-		sfTypeBuilder.add(Collec.getDefaultGeomName(), MultiPoint.class);
+		sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), MultiPoint.class);
 		sfTypeBuilder.add("name", String.class);
 		sfTypeBuilder.add("route_ref", String.class);
 		sfTypeBuilder.add("IdSTIF", String.class);
@@ -92,7 +92,7 @@ public class SubwayStation extends Station {
 		sfTypeBuilder.add("PlusGrosseAffluenceHorsJoursOuvre", String.class);
 		sfTypeBuilder.add("PeriodePlusGrosseAffluenceHorsJoursOuvre", String.class);
 		sfTypeBuilder.add("numberOfEntrances", Integer.class);
-		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+		sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
 		return new SimpleFeatureBuilder(sfTypeBuilder.buildFeatureType());
 	}
 
@@ -116,7 +116,7 @@ public class SubwayStation extends Station {
 
 	public SimpleFeature generateFeature() throws IOException {
 		SimpleFeatureBuilder sfb = getSubwayStationSFB();
-		sfb.set(Collec.getDefaultGeomName(), this.getEntrances());
+		sfb.set(CollecMgmt.getDefaultGeomName(), this.getEntrances());
 		sfb.set("name", this.getName());
 		sfb.set("route_ref", this.lineNames);
 		sfb.set("IdSTIF", iDsToId(this.getIDsSTIF()));

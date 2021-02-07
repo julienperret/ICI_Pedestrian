@@ -2,7 +2,7 @@ package fr.ici.dataImporter.insee;
 
 import fr.ici.dataImporter.util.Geocode;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -139,8 +139,8 @@ public class SireneWorkingPlace extends SireneEntry {
             e.printStackTrace();
         }
         sfTypeBuilder.setName("SireneWorkingPlace");
-        sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
-        sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         sfTypeBuilder.add("nAdresse", String.class);
         sfTypeBuilder.add("adresse", String.class);
         sfTypeBuilder.add("typeVoie", String.class);
@@ -166,10 +166,10 @@ public class SireneWorkingPlace extends SireneEntry {
         try {
             geocode = Geocode.geocodeAdresseDataGouv(completeAddress);
             try {
-                sfb.set(Collec.getDefaultGeomName(),
+                sfb.set(CollecMgmt.getDefaultGeomName(),
                         gf.createPoint(new Coordinate(Double.parseDouble(geocode[1]), Double.parseDouble(geocode[2]))));
             } catch (NullPointerException np) {
-                sfb.set(Collec.getDefaultGeomName(), gf.createPoint(new Coordinate(0, 0)));
+                sfb.set(CollecMgmt.getDefaultGeomName(), gf.createPoint(new Coordinate(0, 0)));
             }
             sfb.set("nAdresse", nAddress);
             sfb.set("adresse", address);

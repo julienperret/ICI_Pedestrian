@@ -1,8 +1,9 @@
 package fr.ici.dataImporter.osm;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.GeoJSON;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -29,7 +30,7 @@ public class ImportCommonTransportation {
 	public ImportCommonTransportation(File geojsonFile, File folderOut, File empriseFile) throws IOException {
 
 		// information for i/o of geocollection
-		Collec.setDefaultGISFileType(".geojson");
+		CollecMgmt.setDefaultGISFileType(".geojson");
 		// importing geojson
 		DefaultFeatureCollection commonTransport = new DefaultFeatureCollection();
 		DataStore ds = GeoJSON.getGeoJSONDataStore(geojsonFile);
@@ -56,7 +57,7 @@ public class ImportCommonTransportation {
 						ref = "";
 					}
 					sfbTC.set("IdSTIF", ref);
-					sfbTC.set(Collec.getDefaultGeomName(), JTS.transform((Geometry) feat.getDefaultGeometry(),
+					sfbTC.set(CollecMgmt.getDefaultGeomName(), JTS.transform((Geometry) feat.getDefaultGeometry(),
 							CRS.findMathTransform(CRS.decode("EPSG:4326", true), CRS.decode("EPSG:2154", true))));
 					commonTransport.add(sfbTC.buildFeature(Attribute.makeUniqueId()));
 				}
@@ -69,14 +70,14 @@ public class ImportCommonTransportation {
 					sfbTC.set("route_ref", feat.getAttribute("route_ref"));
 					sfbTC.set("shelter", feat.getAttribute("shelter"));
 					sfbTC.set("wheelchair", feat.getAttribute("wheelchair"));
-					sfbTC.set(Collec.getDefaultGeomName(), JTS.transform((Geometry) feat.getDefaultGeometry(),
+					sfbTC.set(CollecMgmt.getDefaultGeomName(), JTS.transform((Geometry) feat.getDefaultGeometry(),
 							CRS.findMathTransform(CRS.decode("EPSG:4326", true), CRS.decode("EPSG:2154", true))));
 					commonTransport.add(sfbTC.buildFeature(Attribute.makeUniqueId()));
 				}
 				String building = (String) feat.getAttribute("building");
 				if (building != null && !building.equals("") && building.equals("train_station")) {
 					// get entrance points
-					SimpleFeatureCollection entrances = Collec.selectIntersection(sfc, (Geometry) feat.getDefaultGeometry())
+					SimpleFeatureCollection entrances = CollecTransform.selectIntersection(sfc, (Geometry) feat.getDefaultGeometry())
 							.subCollection(ff.or(Arrays.asList(ff.like(ff.property("entrance"), "main"), ff.like(ff.property("entrance"), "yes"),
 									ff.like(ff.property("entrance"), "exit"))));
 					System.out.println(entrances.size());
@@ -90,7 +91,7 @@ public class ImportCommonTransportation {
 							sfbTC.set("route_ref", feat.getAttribute("route_ref"));
 							sfbTC.set("shelter", feat.getAttribute("shelter"));
 							sfbTC.set("wheelchair", feat.getAttribute("wheelchair"));
-							sfbTC.set(Collec.getDefaultGeomName(), JTS.transform((Geometry) f.getDefaultGeometry(),
+							sfbTC.set(CollecMgmt.getDefaultGeomName(), JTS.transform((Geometry) f.getDefaultGeometry(),
 									CRS.findMathTransform(CRS.decode("EPSG:4326", true), CRS.decode("EPSG:2154", true))));
 							commonTransport.add(sfbTC.buildFeature(Attribute.makeUniqueId()));
 						}
@@ -100,6 +101,6 @@ public class ImportCommonTransportation {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Collec.exportSFC(Collec.selectIntersection(commonTransport, empriseFile), new File(folderOut, "fr.ici.dataImporter.transport.gpkg"));
+		CollecMgmt.exportSFC(CollecTransform.selectIntersection(commonTransport, empriseFile), new File(folderOut, "fr.ici.dataImporter.transport.gpkg"));
 	}
 }

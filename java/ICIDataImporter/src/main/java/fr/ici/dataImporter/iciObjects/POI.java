@@ -3,7 +3,7 @@ package fr.ici.dataImporter.iciObjects;
 import com.opencsv.CSVReader;
 import fr.ici.dataImporter.insee.SirenePOI;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -296,7 +296,7 @@ public class POI {
 
     public static void exportListPOI(List<POI> lPOI, File fileOut) throws IOException {
         DefaultFeatureCollection result = lPOI.stream().map(POI::generateSF).collect(Collectors.toCollection(DefaultFeatureCollection::new));
-        Collec.exportSFC(result, fileOut);
+        CollecMgmt.exportSFC(result, fileOut);
     }
 
     public static void exportHighAttendancePOI(List<POI> lPOI, File fileOut) throws IOException {
@@ -304,7 +304,7 @@ public class POI {
         for (POI poi : lPOI)
             if (poi.attendance != null && (poi.attendance.equals("high") || poi.attendance.equals("veryHigh")))
                 result.add(poi.generateSF());
-        Collec.exportSFC(result, fileOut);
+        CollecMgmt.exportSFC(result, fileOut);
     }
 
     public static SimpleFeatureCollection getRestaurant(SimpleFeatureCollection poi) throws IOException {
@@ -345,7 +345,7 @@ public class POI {
 
     public SimpleFeature generateSF() {
         SimpleFeatureBuilder sfb = getPOISFB();
-        sfb.set(Collec.getDefaultGeomName(), p);
+        sfb.set(CollecMgmt.getDefaultGeomName(), p);
         sfb.set("nAddress", nAddress);
         sfb.set("address", address);
         sfb.set("typeRoad", typeRoad);
@@ -369,7 +369,7 @@ public class POI {
             e.printStackTrace();
         }
         sfTypeBuilder.setName("IciPOI");
-        sfTypeBuilder.add(Collec.getDefaultGeomName(), Point.class);
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
         sfTypeBuilder.add("nAddress", String.class);
         sfTypeBuilder.add("address", String.class);
         sfTypeBuilder.add("typeRoad", String.class);
@@ -382,7 +382,7 @@ public class POI {
         sfTypeBuilder.add("attendance", String.class);
         sfTypeBuilder.add("attendanceIndice", Integer.class);
         sfTypeBuilder.add("openingHour", String.class);
-        sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         return new SimpleFeatureBuilder(featureType);
     }

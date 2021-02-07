@@ -1,7 +1,8 @@
 package fr.ici.dataImporter.pop;
 
 import fr.ign.artiscales.tools.carto.CountPointInPolygon;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import org.geotools.data.DataStore;
 import fr.ici.dataImporter.util.Util;
 
@@ -21,10 +22,10 @@ public class AffectSyntheticPop {
     }
     public static void affectSyntheticPop(String zoneName , File syntheticPopFile, File zoneGeoFile) throws IOException {
 
-        DataStore spDS = Collec.getDataStore(syntheticPopFile);
-        DataStore iDS = Collec.getDataStore(zoneGeoFile);
+        DataStore spDS = CollecMgmt.getDataStore(syntheticPopFile);
+        DataStore iDS = CollecMgmt.getDataStore(zoneGeoFile);
 
-        Collec.exportSFC(CountPointInPolygon.countPointInPolygon(Collec.selectIntersection(spDS.getFeatureSource(spDS.getTypeNames()[0]).getFeatures(), iDS.getFeatureSource(iDS.getTypeNames()[0]).getFeatures()),"POP",
+        CollecMgmt.exportSFC(CountPointInPolygon.countPointInPolygon(CollecTransform.selectIntersection(spDS.getFeatureSource(spDS.getTypeNames()[0]).getFeatures(), iDS.getFeatureSource(iDS.getTypeNames()[0]).getFeatures()),"POP",
                 iDS.getFeatureSource(iDS.getTypeNames()[0]).getFeatures(), true, null, Arrays.asList("age", "sex", "education"),null
         ), new File(Util.getRootFolder(), "ICI/"+zoneName+"SyntheticPop.gpkg"));
         spDS.dispose();

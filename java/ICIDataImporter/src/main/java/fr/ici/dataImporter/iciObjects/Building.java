@@ -1,7 +1,7 @@
 package fr.ici.dataImporter.iciObjects;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.geom.Polygons;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -47,11 +47,11 @@ public class Building {
         DefaultFeatureCollection result = new DefaultFeatureCollection();
         for (Building b : lB)
             result.add(b.generateSimpleFeature());
-        return Collec.exportSFC(result, fileOut);
+        return CollecMgmt.exportSFC(result, fileOut);
     }
 
     public static List<Building> importBuilding(File buildingBDTopoFile) throws IOException {
-        DataStore ds = Collec.getDataStore(buildingBDTopoFile);
+        DataStore ds = CollecMgmt.getDataStore(buildingBDTopoFile);
         List<Building> lB = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
             while (fIt.hasNext()) {
@@ -79,8 +79,8 @@ public class Building {
         } catch (FactoryException e) {
             e.printStackTrace();
         }
-        sfTypeBuilder.add(Collec.getDefaultGeomName(), Polygon.class);
-        sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         sfTypeBuilder.add("ID", String.class);
         sfTypeBuilder.add("nature", String.class);
         sfTypeBuilder.add("usage1", String.class);
@@ -105,7 +105,7 @@ public class Building {
 
     public SimpleFeature generateSimpleFeature() {
         SimpleFeatureBuilder sfb = getBuildingSFB();
-        sfb.set(Collec.getDefaultGeomName(), geom);
+        sfb.set(CollecMgmt.getDefaultGeomName(), geom);
         sfb.set("ID", ID);
         sfb.set("nature", nature);
         sfb.set("usage1", usage1);

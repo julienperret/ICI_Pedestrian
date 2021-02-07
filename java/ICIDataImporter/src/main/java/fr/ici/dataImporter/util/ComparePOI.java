@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -18,18 +20,17 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
 import fr.ign.artiscales.tools.io.Csv;
 
 public class ComparePOI {
 
 	public static void main(String[] args) throws IOException {
 		File rootFolder = Util.getRootFolder();
-		DataStore buildingDS = Collec.getDataStore(new File(rootFolder, "IGN/batVeme.gpkg"));
-		DataStore wpDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-WorkingPlace.gpkg"));
-		DataStore sireneDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg"));
-		DataStore bPEDS = Collec.getDataStore(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg"));
-		DataStore oSMDS = Collec.getDataStore(new File(rootFolder, "OSM/OSMamenities.gpkg"));
+		DataStore buildingDS = CollecMgmt.getDataStore(new File(rootFolder, "IGN/batVeme.gpkg"));
+		DataStore wpDS = CollecMgmt.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-WorkingPlace.gpkg"));
+		DataStore sireneDS = CollecMgmt.getDataStore(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg"));
+		DataStore bPEDS = CollecMgmt.getDataStore(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg"));
+		DataStore oSMDS = CollecMgmt.getDataStore(new File(rootFolder, "OSM/OSMamenities.gpkg"));
 //		DataStore apurDS = Collec.getDataStore(new File(rootFolder, "fr.ici.dataImporter.paris/APUR/commercesVeme.gpkg"));
 		ComparePOIInBuilding(buildingDS.getFeatureSource(buildingDS.getTypeNames()[0]).getFeatures(),
 				wpDS.getFeatureSource(wpDS.getTypeNames()[0]).getFeatures(), sireneDS.getFeatureSource(sireneDS.getTypeNames()[0]).getFeatures(),
@@ -50,7 +51,7 @@ public class ComparePOI {
 			e.printStackTrace();
 		}
 		sfTypeBuilder.setName("batimentAppareillementPOI");
-		sfTypeBuilder.add(Collec.getDefaultGeomName(), Polygon.class);
+		sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
 		sfTypeBuilder.add("buildingID", String.class);
 		sfTypeBuilder.add("nbWorkingPlace", String.class);
 		sfTypeBuilder.add("nbPOISirene", String.class);
@@ -60,7 +61,7 @@ public class ComparePOI {
 		sfTypeBuilder.add("typesPOISirene", String.class);
 		sfTypeBuilder.add("typesPOI_BPE", String.class);
 		sfTypeBuilder.add("typesPOI_OSM", String.class);
-		sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+		sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
 		SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
 		return new SimpleFeatureBuilder(featureType);
 	}
@@ -85,10 +86,10 @@ public class ComparePOI {
 				System.out.println(count++ + " on " + buildingSFC.size());
 				Geometry buildingBuffered = ((Geometry) building.getDefaultGeometry()).buffer(1);
 				// Get the points in each buildings
-				SimpleFeatureCollection wpInDaBuilding = Collec.selectIntersection(workingPlaceSFC, buildingBuffered);
-				SimpleFeatureCollection poiSInDaBuilding = Collec.selectIntersection(poiSirereSFC, buildingBuffered);
-				SimpleFeatureCollection poiBPEInDaBuilding = Collec.selectIntersection(poiBPESFC, buildingBuffered);
-				SimpleFeatureCollection poiOSMInDaBuilding = Collec.selectIntersection(poiOSMSFC, buildingBuffered);
+				SimpleFeatureCollection wpInDaBuilding = CollecTransform.selectIntersection(workingPlaceSFC, buildingBuffered);
+				SimpleFeatureCollection poiSInDaBuilding = CollecTransform.selectIntersection(poiSirereSFC, buildingBuffered);
+				SimpleFeatureCollection poiBPEInDaBuilding = CollecTransform.selectIntersection(poiBPESFC, buildingBuffered);
+				SimpleFeatureCollection poiOSMInDaBuilding = CollecTransform.selectIntersection(poiOSMSFC, buildingBuffered);
 				// Count points
 				line[0] = String.valueOf(wpInDaBuilding.size());
 				line[1] = String.valueOf(poiSInDaBuilding.size());
@@ -135,7 +136,7 @@ public class ComparePOI {
 				line[7] = amenites.toString();
 				data.put((String) building.getAttribute("ID"), line);
 
-				sfb.set(Collec.getDefaultGeomName(), building.getDefaultGeometry());
+				sfb.set(CollecMgmt.getDefaultGeomName(), building.getDefaultGeometry());
 				sfb.set("buildingID", building.getAttribute("ID"));
 				sfb.set("nbWorkingPlace", line[0]);
 				sfb.set("nbPOISirene", line[1]);
@@ -154,7 +155,7 @@ public class ComparePOI {
 		System.out.println("More Sirene :" + moreSirene);
 		System.out.println("More BPE :" + moreBPE);
 		Csv.generateCsvFile(data, folderOut, "statBuilding", false, fLine);
-		Collec.exportSFC(export, new File(folderOut, "buildingPOIappareillement"));
+		CollecMgmt.exportSFC(export, new File(folderOut, "buildingPOIappareillement"));
 	}
 
 }

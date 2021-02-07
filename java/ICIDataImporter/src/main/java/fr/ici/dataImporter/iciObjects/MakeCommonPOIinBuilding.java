@@ -1,7 +1,8 @@
 package fr.ici.dataImporter.iciObjects;
 
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -32,7 +33,7 @@ public class MakeCommonPOIinBuilding {
             e.printStackTrace();
         }
         sfTypeBuilder.setName("batimentAppareillementPOI");
-        sfTypeBuilder.add(Collec.getDefaultGeomName(), Polygon.class);
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
         sfTypeBuilder.add("buildingID", String.class);
         sfTypeBuilder.add("", String.class);
         sfTypeBuilder.add("nbPOISirene", String.class);
@@ -42,7 +43,7 @@ public class MakeCommonPOIinBuilding {
         sfTypeBuilder.add("typesPOISirene", String.class);
         sfTypeBuilder.add("typesPOI_BPE", String.class);
         sfTypeBuilder.add("typesPOI_OSM", String.class);
-        sfTypeBuilder.setDefaultGeometry(Collec.getDefaultGeomName());
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         return new SimpleFeatureBuilder(featureType);
     }
@@ -67,10 +68,10 @@ public class MakeCommonPOIinBuilding {
                 System.out.println(count++ + " on " + buildingSFC.size());
                 Geometry buildingBuffered = ((Geometry) building.getDefaultGeometry()).buffer(1);
                 // Get the points in each buildings
-                SimpleFeatureCollection wpInDaBuilding = Collec.selectIntersection(workingPlaceSFC, buildingBuffered);
-                SimpleFeatureCollection poiSInDaBuilding = Collec.selectIntersection(poiSirereSFC, buildingBuffered);
-                SimpleFeatureCollection poiBPEInDaBuilding = Collec.selectIntersection(poiBPESFC, buildingBuffered);
-                SimpleFeatureCollection poiOSMInDaBuilding = Collec.selectIntersection(poiOSMSFC, buildingBuffered);
+                SimpleFeatureCollection wpInDaBuilding = CollecTransform.selectIntersection(workingPlaceSFC, buildingBuffered);
+                SimpleFeatureCollection poiSInDaBuilding = CollecTransform.selectIntersection(poiSirereSFC, buildingBuffered);
+                SimpleFeatureCollection poiBPEInDaBuilding = CollecTransform.selectIntersection(poiBPESFC, buildingBuffered);
+                SimpleFeatureCollection poiOSMInDaBuilding = CollecTransform.selectIntersection(poiOSMSFC, buildingBuffered);
                 // Count points
                 line[0] = String.valueOf(wpInDaBuilding.size());
                 line[1] = String.valueOf(poiSInDaBuilding.size());
@@ -117,7 +118,7 @@ public class MakeCommonPOIinBuilding {
                 line[7] = amenites.toString();
                 data.put((String) building.getAttribute("ID"), line);
 
-                sfb.set(Collec.getDefaultGeomName(), building.getDefaultGeometry());
+                sfb.set(CollecMgmt.getDefaultGeomName(), building.getDefaultGeometry());
                 sfb.set("buildingID", building.getAttribute("ID"));
                 sfb.set("nbWorkingPlace", line[0]);
                 sfb.set("nbPOISirene", line[1]);
@@ -136,6 +137,6 @@ public class MakeCommonPOIinBuilding {
         System.out.println("More Sirene :" + moreSirene);
         System.out.println("More BPE :" + moreBPE);
         Csv.generateCsvFile(data, folderOut, "statBuilding", false, fLine);
-        Collec.exportSFC(export, new File(folderOut, "buildingPOIappareillement"));
+        CollecMgmt.exportSFC(export, new File(folderOut, "buildingPOIappareillement"));
     }
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.opencsv.CSVReader;
 import fr.ici.dataImporter.util.Util;
-import fr.ign.artiscales.tools.geoToolsFunctions.vectors.Collec;
+import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
 import fr.ign.artiscales.tools.io.Json;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -216,13 +216,13 @@ public class SireneImport {
         // GPKG export
         File geomFile = new File(folderOut, "SIRENE-" + entryType + ".gpkg");
         if (geomFile.exists() && append) {
-            DataStore ds = Collec.getDataStore(geomFile);
+            DataStore ds = CollecMgmt.getDataStore(geomFile);
             result.addAll(ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures());
             ds.dispose();
         }
         if (!append)
             append = true;
-        Collec.exportSFC(result, geomFile);
+        CollecMgmt.exportSFC(result, geomFile);
     }
 
     public static String[] classSIRENEEntryNAF1993(String amen, boolean revised, File modele) throws IOException {
