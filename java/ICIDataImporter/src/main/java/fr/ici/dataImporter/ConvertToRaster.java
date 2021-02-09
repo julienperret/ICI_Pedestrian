@@ -9,6 +9,7 @@ import fr.ign.artiscales.tools.geoToolsFunctions.StatisticOperation;
 import fr.ign.artiscales.tools.geoToolsFunctions.rasters.Rasters;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
+import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
@@ -30,8 +31,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,8 +42,9 @@ import java.util.List;
 
 public class ConvertToRaster {
 
-    static String[] demoColls = {"age_00_02", "age_03_05", "age_06_10", "age-11 - 1", "age-15 - 1", "age_18_24", "age-25 - 2", "age-30 - 3", "age-40 - 4", "age_45_54", "age_55_59", "age-60 - 6", "age-65 - 7", "age-75 - 7", "age-80 - P"
-            , "sex_Femme", "sex-Homme"}; // missing education (but the field names are f* up)
+    static String[] demoColl = {"count", "age_00_02", "age_03_05", "age_06_10", "age-11 - 1", "age-15 - 1", "age_18_24",
+            "age-25 - 2", "age-30 - 3", "age-40 - 4", "age_45_54", "age_55_59", "age-60 - 6", "age-65 - 7", "age-75 - 7",
+            "age-80 - P", "sex_Femme", "sex-Homme"}; // missing education (but the field names are f* up)
 
     public static void main(String[] args) throws Exception {
         makeRasterWithCSV();
@@ -51,49 +53,61 @@ public class ConvertToRaster {
 
     /**
      * Associate a raster with a csv file containing attribute values
-     *
-     * @throws IOException
      */
-    public static void makeRasterWithCSV() throws IOException {
-        int width = 1500;
-        int height = 1500;
+    public static void makeRasterWithCSV() throws IOException, FactoryException {
+        int cellResolution = 5;
         DataStore dsBBox = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "5eme.gpkg"));
-        SimpleFeatureCollection bb = dsBBox.getFeatureSource(dsBBox.getTypeNames()[0]).getFeatures();
+        ReferencedEnvelope bb = dsBBox.getFeatureSource(dsBBox.getTypeNames()[0]).getFeatures().getBounds();
         DataStore dsAddress = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "IGN/outban_75_20201002Vemr.gpkg"));
         SimpleFeatureCollection address = dsAddress.getFeatureSource(dsAddress.getTypeNames()[0]).getFeatures();
         DataStore dsBuilding = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "ICI/BuildingSyntheticPop2.shp"));
+        File outputFolder = new File("/tmp");
 
-        SimpleFeatureCollection demo = affectDemoStatToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address);
-        CollecMgmt.exportSFC(demo, new File("/tmp/demo.gpkg"));
+        //Prepare the coordinate raster
+        DataStore dsPOI = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "ICI/POI.gpkg"));
+        Rasters.writeGeotiff(Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizePOI(SirenePOI.getRestaurant(dsPOI.getFeatureSource(dsPOI.getTypeNames()[0]).getFeatures()), address), "POINumber"), "POINumber", Rasters.getDimentionValuesForSquaredRasters(bb, cellResolution), bb, "POINumber"), new File(outputFolder, "resto.tif"));
+        File rastID = Rasters.createRasterWithID(Rasters.getDimentionValuesForSquaredRasters(bb, cellResolution), cellResolution, new File("/tmp/resto.tif"), outputFolder);
+        List<File> csvToMerge = new ArrayList<>();
 
+        // Buildings with population
+        Rasters.rasterize(affectDemoStatToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address), demoColl, Rasters.getDimentionValuesForSquaredRasters(bb, cellResolution), bb, demoColl, true, outputFolder);
+        for (String attr : demoColl)
+            csvToMerge.add(Rasters.convertRasterAndPositionValuesToCsv(new File(outputFolder, attr + ".tif"), rastID, attr));
+        System.out.println("Done buildings");
+
+        // Restaurant
+        String attrRestos = "POINumber";
+        GridCoverage2D rasterResto = Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizePOI(SirenePOI.getRestaurant(dsPOI.getFeatureSource(dsPOI.getTypeNames()[0]).getFeatures()), address), attrRestos), attrRestos, Rasters.getDimentionValuesForSquaredRasters(bb, cellResolution), bb, attrRestos);
+        csvToMerge.add(Rasters.convertRasterAndPositionValuesToCsv(Rasters.writeGeotiff(rasterResto, new File(outputFolder, "resto.tif")), rastID, attrRestos));
+        dsPOI.dispose();
+        System.out.println("Done restaurant");
+
+        // Working place
+        String attrWF = "WorkforceEstimate";
+        DataStore dsWP = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "POI/SIRENE-WorkingPlace.gpkg"));
+        GridCoverage2D rasterWorkforce = Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizeWP(dsWP.getFeatureSource(dsWP.getTypeNames()[0]).getFeatures(), address), "WorkforceEstimate"), attrWF, Rasters.getDimentionValuesForSquaredRasters(bb, cellResolution), bb, attrWF);
+        csvToMerge.add(Rasters.convertRasterAndPositionValuesToCsv(Rasters.writeGeotiff(rasterWorkforce, new File(outputFolder, "wf.tif")), rastID, attrWF));
+        dsPOI.dispose();
+        System.out.println("done Working Place");
+
+        Csv.mergeCsvFilesCol(csvToMerge, outputFolder, "attributes", true);
+
+        dsBuilding.dispose();
         dsAddress.dispose();
         dsBuilding.dispose();
         dsBBox.dispose();
     }
 
-//    /**
-//     * This method
-//     *
-//     * @return
-//     */
-//    public static GridCoverage2D writeCoordinates() throws IOException {
-//        DataStore dsBuilding = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "ICI/BuildingSyntheticPop2.shp"));
-//        affectIndivToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address);
-//
-//
-//    }
-
     public static void makeUniqueRaster() throws IOException, FactoryException {
         DataStore dsBBox = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "5eme.gpkg"));
         ReferencedEnvelope bb = dsBBox.getFeatureSource(dsBBox.getTypeNames()[0]).getFeatures().getBounds();
-        int width = 1500;
-        int height = 1500;
 
         // Rasterizing buildings and households
         DataStore dsAddress = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "IGN/outban_75_20201002Vemr.gpkg"));
         SimpleFeatureCollection address = dsAddress.getFeatureSource(dsAddress.getTypeNames()[0]).getFeatures();
         DataStore dsBuilding = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "ICI/BuildingSyntheticPop2.shp"));
-        GridCoverage2D batRaster = Rasters.rasterize(affectIndivToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address), "NB_INDIV", new Dimension(width, height), bb, "NB_INDIV");
+//        GridCoverage2D batRaster = Rasters.rasterize(affectDemoStatToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address), demoColl, Rasters.getDimentionValuesForSquaredRasters(bb, 1), bb,demoColl, false,null);
+        GridCoverage2D batRaster = Rasters.rasterize(affectIndivToAddress(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures(), address), "NB_INDIV", Rasters.getDimentionValuesForSquaredRasters(bb, 1), bb, "NB_INDIV");
 //        Rasters.writeGeotiff(batRaster, new File(Util.getRootFolder(), "rasters/households.geotiff"));
         System.out.println("Done rasterizing addresses");
         System.out.println();
@@ -101,7 +115,7 @@ public class ConvertToRaster {
 
         // Rasterizing Working Place
         DataStore dsWP = CollecMgmt.getDataStore(new File(Util.getRootFolder(), "POI/SIRENE-WorkingPlace.gpkg"));
-        GridCoverage2D rasterWorkforce = Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizeWP(dsWP.getFeatureSource(dsWP.getTypeNames()[0]).getFeatures(), address), "WorkforceEstimate"), "WorkforceEstimate", new Dimension(width, height), bb, "WorkforceEstimate");
+        GridCoverage2D rasterWorkforce = Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizeWP(dsWP.getFeatureSource(dsWP.getTypeNames()[0]).getFeatures(), address), "WorkforceEstimate"), "WorkforceEstimate", Rasters.getDimentionValuesForSquaredRasters(bb, 1), bb, "WorkforceEstimate");
 //        Rasters.writeGeotiff(rasterWorkforce, new File(Util.getRootFolder(), "/rasters/workforce.geotiff"));
         System.out.println("Done rasterizing working places");
         dsWP.dispose();
@@ -112,7 +126,7 @@ public class ConvertToRaster {
 //        String[] attrRestos = {"POINumber", "POIimportance"};
         String attrRestos = "POINumber";
         GridCoverage2D rasterResto = Rasters.rasterize(CollecMgmt.convertAttributeToFloat(summarizePOI(SirenePOI.getRestaurant(dsPOI.getFeatureSource(dsPOI.getTypeNames()[0]).getFeatures()),
-                address), attrRestos), attrRestos, new Dimension(width, height), bb, attrRestos);
+                address), attrRestos), attrRestos, Rasters.getDimentionValuesForSquaredRasters(bb, 1), bb, attrRestos);
         System.out.println("done rasterizing retaurants");
         System.out.println();
 //        Rasters.writeGeotiff(rasterResto, new File(Util.getRootFolder(), "/rasters/resto.geotiff"));
@@ -120,21 +134,20 @@ public class ConvertToRaster {
 
         //get the pedestrian infos (from QGIS, failed to do it with GeoTools yet)
         GridCoverage2D ped = Rasters.importRaster(new File(Util.getRootFolder(), "rasters/cheminementPieton.tif"));
-        System.out.println("ped.getCoordinateReferenceSystem() = " + ped.getCoordinateReferenceSystem());
+
         // merge those rasters together
-
         BandMergeProcess bm = new BandMergeProcess();
-
         GridCoverage2D rastermerged = bm.execute(Arrays.asList(ped,
                 rasterResto, rasterWorkforce, batRaster), null, null, null);
 //                batRaster),null,null,null);
 
         Rasters.writeGeotiff(rastermerged, new File(Util.getRootFolder(), "rasters/out.geotiff"));
         dsAddress.dispose();
+        System.out.println("done");
     }
 
 //    public static GridCoverage2D generatePedestrianRepRaster() throws IOException {
-//
+//        todo not working, done on QGIS
 //        DataStore dsBBox = Collec.getDataStore(new File(Util.getRootFolder(), "5eme.shp"));
 //        ReferencedEnvelope bb = dsBBox.getFeatureSource(dsBBox.getTypeNames()[0]).getFeatures().getBounds();
 //        int resWeight = 1000;
@@ -220,11 +233,12 @@ public class ConvertToRaster {
         sfTypeBuilder.add(geomName, Point.class);
         sfTypeBuilder.setDefaultGeometry(geomName);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sfTypeBuilder.buildFeatureType());
+
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
         try (SimpleFeatureIterator adIt = addressesSFC.features()) {
             while (adIt.hasNext()) {
                 Geometry addressGeom = (Geometry) adIt.next().getDefaultGeometry();
-                if (addressGeom != null || !addressGeom.isEmpty()) {
+                if (addressGeom != null && !addressGeom.isEmpty()) {
                     SimpleFeatureCollection overlapping = poiSFC.subCollection(ff.dwithin(ff.property(geomName), ff.literal(addressGeom), 1, "m"));
                     if (overlapping != null && !overlapping.isEmpty()) {
                         builder.set(geomName, addressGeom);
@@ -335,9 +349,9 @@ public class ConvertToRaster {
     }
 
     /**
-     * @param addresses
-     * @param ff
-     * @return
+     * @param addresses input addresses
+     * @param ff        filter factory to use (that may fast the process)
+     * @return entrance addressses (or the input addresses if no <i>typ_loc</i> field)
      */
     public static SimpleFeatureCollection getEntrancesFromAddresses(SimpleFeatureCollection addresses, FilterFactory2 ff) {
         if (!CollecMgmt.isCollecContainsAttribute(addresses, "typ_loc"))
@@ -354,7 +368,7 @@ public class ConvertToRaster {
                 return affectIndividualsPerAddress(addressesSFC, addressBuilder, building);
             case "demoStats":
 
-                return affectDemoStatPerAddress(addressesSFC, addressBuilder, building, demoColls);
+                return affectDemoStatPerAddress(addressesSFC, addressBuilder, building, demoColl);
         }
         throw new InvalidPropertiesFormatException("affectMethodToAffection : method " + method + " not implemented");
 
@@ -368,7 +382,7 @@ public class ConvertToRaster {
                 return Schemas.addFloatColToSFB(addressSFC, "NB_INDIV");
             case "demoStats":
 
-                return Schemas.addColsToSFB(addressSFC, demoColls, Integer.class);
+                return Schemas.addColsToSFB(addressSFC, demoColl, Integer.class);
         }
         throw new InvalidPropertiesFormatException("getSFBforAffection : method " + method + " not implemented");
     }
@@ -400,11 +414,11 @@ public class ConvertToRaster {
     /**
      * Affect the (demographic) data of a building to the closest address.
      *
-     * @param addressesSFC
-     * @param addressBuilder
-     * @param building
-     * @param fields
-     * @return
+     * @param addressesSFC   list of addresses
+     * @param addressBuilder builder to create new points
+     * @param building       buildings containing <i>NB_LOGTS</i> attribute
+     * @param fields         the fields to affect
+     * @return addresses with affection
      */
     public static SimpleFeatureCollection affectDemoStatPerAddress(SimpleFeatureCollection addressesSFC, SimpleFeatureBuilder addressBuilder, SimpleFeature building, String[] fields) {
         if (addressesSFC == null)
@@ -432,13 +446,12 @@ public class ConvertToRaster {
     }
 
     /**
-     *
-     * @param addressesSFC
-     * @param addressBuilder
-     * @param building
-     * @param fieldIn
-     * @param fieldOut
-     * @return
+     * @param addressesSFC   list of addresses
+     * @param addressBuilder builder to create new points
+     * @param building       buildings containing <i>NB_LOGTS</i> attribute
+     * @param fieldIn        name of the field to affect
+     * @param fieldOut       name of the field to write in the builder
+     * @return addresses with affection
      */
     public static SimpleFeatureCollection affectSingleFieldPerAddress(SimpleFeatureCollection addressesSFC, SimpleFeatureBuilder addressBuilder, SimpleFeature building, String fieldIn, String fieldOut) {
         if (addressesSFC == null)
