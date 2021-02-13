@@ -2,30 +2,34 @@
 
 # get the data from opendata paris
 BASE_URL='https://opendata.paris.fr/explore/dataset'
-OPTS='download/?format=geojson&timezone=Europe/Berlin&lang=fr'
+#OPTS='download/?format=shp&timezone=Europe/Berlin&lang=fr&epsg=2154'
+OPTS='download/?format=geojson&timezone=Europe/Berlin&lang=fr&epsg=2154'
 mkdir input
-mkdir input_l93
+#mkdir input_l93
 mkdir output
 
 getData () {
 list=$2[@]
 l=("${!list}")
-mkdir -p input_l93/$1
 mkdir -p output/$1
 mkdir -p input/$1
+#mkdir -p input_l93/$1
 for layer in "${l[@]}"
 do
     # get the data from opendata paris
     wget ${BASE_URL}/${layer}/${OPTS} -O input/$1/${layer}.geojson
+    ogr2ogr -f "GPKG" output/$1/${layer}.gpkg "input/$1/${layer}.geojson"
+ #   unzip input/$1/${layer} -d input/$1/ 
+ #   rm input/$1/${layer}
     # reproject everything to lambert93 (EPSG:2154)
-    ogr2ogr -s_srs EPSG:4326 -t_srs EPSG:2154 -f GeoJSON input_l93/$1/${layer}.geojson input/$1/${layer}.geojson
+  #  ogr2ogr -s_srs EPSG:4326 -t_srs EPSG:2154 -f ESRI Shapefile input_l93/$1/${layer}.shp input/$1/${layer}.shp
     # rasterize
-    gdal_rasterize -at -burn 255 -a_nodata 0.0 -tr 1.0 1.0 -te 651000 6859000 654000 6862000 -ot Byte -of GTiff input_l93/$1/${layer}.geojson output/$1/${layer}.tif
+  #  gdal_rasterize -at -burn 255 -a_nodata 0.0 -tr 1.0 1.0 -te 651000 6859000 654000 6862000 -ot Byte -of GTiff input_l93/$1/${layer}.geojson output/$1/${layer}.tif
 done
 }
 
 declare -a lType 
-lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees plan-de-voirie-terre-pleins)
+lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-chaussees plan-de-voirie-terre-pleins plan-de-voirie-ilots-directionnels)
 getData "voirie-voiture" lType
 lType=(plan-de-voirie-aires-mixtes-vehicules-et-pietons plan-de-voirie-passages-pietons plan-de-voirie-emprises-espaces-verts plan-de-voirie-voies-privees-fermees plan-de-voirie-voies-en-escalier plan-de-voirie-trottoirs-emprises)
 getData "voirie-pieton" lType

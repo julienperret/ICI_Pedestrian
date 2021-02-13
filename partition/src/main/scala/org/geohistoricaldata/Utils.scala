@@ -2,6 +2,7 @@ package org.geohistoricaldata
 
 import org.geotools.data.shapefile.{ShapefileDataStore, ShapefileDataStoreFactory}
 import org.geotools.data.{DataStoreFinder, DataUtilities, Transaction}
+import org.geotools.geopkg.GeoPkgDataStoreFactory
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.filter.Filter
 
@@ -9,6 +10,7 @@ import java.io.File
 import java.nio.file.Path
 import java.util
 import scala.collection.mutable.ArrayBuffer
+
 
 object Utils {
   def getShapefile(file: Path): Seq[SimpleFeature] = {
@@ -30,6 +32,40 @@ object Utils {
     dataStore.dispose()
     featureBuffer.toSeq
   }
+
+//  def getGeojson(file: Path): Seq[SimpleFeature] = {
+//    val map = new util.HashMap[String, Object]
+//    map.put(GeoJSONDataStoreFactory.URL_PARAM.key, file.toUri.toURL)
+//    map.put("charset", sun.nio.cs.UTF_8.INSTANCE)
+//    val dataStore = DataStoreFinder.getDataStore(map)
+//    val collection = dataStore.getFeatureSource(dataStore.getTypeNames.head).getFeatures()
+//    val featureBuffer = ArrayBuffer[SimpleFeature]()
+//    val features = collection.features()
+//    try while (features.hasNext) featureBuffer += features.next()
+//    catch {
+//      case e: Exception => println(file)
+//    } finally if (features != null) features.close()
+//    dataStore.dispose()
+//    featureBuffer.toSeq
+//  }
+
+  def getGPKG(f: Path) : Seq[SimpleFeature] = {
+    val map = new util.HashMap[String, Object]
+    map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg")
+    map.put(GeoPkgDataStoreFactory.DATABASE.key, new File(f.toString))
+
+    val dataStore = DataStoreFinder.getDataStore(map)
+    val collection = dataStore.getFeatureSource(dataStore.getTypeNames.head).getFeatures()
+    val featureBuffer = ArrayBuffer[SimpleFeature]()
+    val features = collection.features()
+    try while (features.hasNext) featureBuffer += features.next()
+    catch {
+      case _: Exception => println("error on import of "+f)
+    } finally if (features != null) features.close()
+    dataStore.dispose()
+    featureBuffer.toSeq
+  }
+
   def createShapefile(f: File, spec: String, list: List[Array[AnyRef]]): Unit = {
     val factory = new ShapefileDataStoreFactory
     val outputDataStore = factory.createDataStore(f.toURI.toURL).asInstanceOf[ShapefileDataStore]

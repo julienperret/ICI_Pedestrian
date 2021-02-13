@@ -23,33 +23,35 @@ object Partition extends App {
     case None => Array()
   }
 
-  val inputDir = File("../input_l93")
-  def path(name: String) = (inputDir / (name + ".shp")).path
+  val inputDir = File("../output")
+  def path(name: String) = (inputDir / (name + ".gpkg")).path
 
   // get the geometry of the target area (5th arrondissement)
-  val arrondissement = Utils.getShapefile(path("arrondissements")).filter(_.getAttribute("c_ar").toString.toInt == 5).head.getDefaultGeometry.asInstanceOf[Geometry]
+  val arrondissement = Utils.getShapefile(File("../input/arrondissements.shp").path).filter(_.getAttribute("c_ar").toString.toInt == 5).head.getDefaultGeometry.asInstanceOf[Geometry]
   val arrondissementGeom = reduce(arrondissement)
 
-  def get(path: Path) = Utils.getShapefile(path).flatMap(getFeaturePolygons).filter(_.intersects(arrondissementGeom))
+  def get(path: Path) = Utils.getGPKG(path).flatMap(getFeaturePolygons).filter(_.intersects(arrondissementGeom))
 
-  def getWithAttributes(path: Path, attributes: Array[String]) = Utils.getShapefile(path).flatMap(f=>getFeaturePolygons(f).map(p=>(p, attributes.map(a=>f.getAttribute(a))))).filter(_._1.intersects(arrondissementGeom))
+  def getWithAttributes(path: Path, attributes: Array[String]) = Utils.getGPKG(path).flatMap(f=>getFeaturePolygons(f).map(p=>(p, attributes.map(a=>f.getAttribute(a))))).filter(_._1.intersects(arrondissementGeom))
 
   //  val chaussee = Utils.getShapefile(new JFile("/home/julien/devel/ICI_Pedestrian/input_l93/plan-de-voirie-chaussees.shp").toPath).flatMap(getFeaturePolygons).filter(_.intersects(arrondissementGeom))
-  val chaussee = getWithAttributes(path("plan-de-voirie-chaussees"), Array("objectid"))
+  val chaussee = getWithAttributes(path("voirie-voiture/plan-de-voirie-chaussees"), Array("surface"))
   val chausseeGeom = reduce(arrondissementGeom.getFactory.createGeometryCollection(chaussee.map(_._1).toArray).union())
 
   // check that a geometry does not intersect the street (remove the 'quais de seine')
   def notOnStreet(g: Geometry) = !g.intersects(chausseeGeom) || g.intersection(chausseeGeom).getArea < 1.0
 
-  val trottoirs = getWithAttributes(path("plan-de-voirie-trottoirs-emprises"), Array("objectid")).filter(x=>notOnStreet(x._1))
-  val passages = getWithAttributes(path("plan-de-voirie-passages-pietons"), Array("objectid"))
-  val mixte = getWithAttributes(path("plan-de-voirie-aires-mixtes-vehicules-et-pietons"), Array("objectid"))
-  val ilots = getWithAttributes(path("plan-de-voirie-ilots-directionnels"), Array("objectid"))
-  val terre_pleins = getWithAttributes(path("plan-de-voirie-terre-pleins"), Array("objectid"))
-  val escaliers = getWithAttributes(path("plan-de-voirie-voies-en-escalier"), Array("objectid"))
+  val trottoirs = getWithAttributes(path("voirie-pieton/plan-de-voirie-trottoirs-emprises"), Array("objectid")).filter(x=>notOnStreet(x._1))
+  val passages = getWithAttributes(path("voirie-pieton/plan-de-voirie-passages-pietons"), Array("objectid"))
+  val mixte = getWithAttributes(path("voirie-voiture/plan-de-voirie-aires-mixtes-vehicules-et-pietons"), Array("objectid"))
+  val ilots = getWithAttributes(path("voirie-voiture/plan-de-voirie-ilots-directionnels"), Array("objectid"))
+  val terre_pleins = getWithAttributes(path("voirie-voiture/plan-de-voirie-terre-pleins"), Array("objectid"))
+  val escaliers = getWithAttributes(path("voirie-pieton/plan-de-voirie-voies-en-escalier"), Array("objectid"))
 //  val batiments = getWithAttributes(path("volumesbatis"),Array("h_et_max"))
-  val espacesVerts = getWithAttributes(path("plan-de-voirie-emprises-espaces-verts"), Array("objectid"))
-  val batimentsIGN = getWithAttributes(path("BATIMENT_XY"), Array("HAUTEUR", "NB_ETAGES", "NB_LOGTS", "ID"))
+  val espacesVerts = getWithAttributes(path("voirie-pieton/plan-de-voirie-emprises-espaces-verts"), Array("objectid"))
+  // this building has been generated with todo
+  val batimentsIGN = getWithAttributes(path("batBDTopo"), Array("HAUTEUR", "NB_ETAGES", "NB_LOGTS", "ID"))
+//  val batimentsIGN = getWithAttributes(path("volumesbatisparis"), Array("h_et_max"))
   val inputFeatures = (chaussee ++ trottoirs ++ passages ++ mixte ++ ilots ++ terre_pleins ++ escaliers ++ batimentsIGN).toList.map(_._1)
 //  val batimentsIGN_seq = batimentsIGN.map(_._1)
   val features = FeaturePolygonizer.getPolygons(inputFeatures).map {
@@ -75,7 +77,7 @@ object Partition extends App {
             val attributs = batimentsIGN.find(_._1.contains(point)).get._2
 
             def getAsInt(v: AnyRef) = Option(v) match {
-              case Some(x) => x.toString.toInt
+              case Some(x) => x.toString.split("\\.").head.toInt //todo ugly regex but unfortunatly necessary for now
               case None => 0
             }
             (p, n, attributs.head.asInstanceOf[Double], getAsInt(attributs(1)), getAsInt(attributs(2)), attributs(3).toString)

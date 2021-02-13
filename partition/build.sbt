@@ -15,12 +15,14 @@ libraryDependencies ++= List(
   "org.geotools" % "gt-epsg-hsql" % geotoolsVersion,
   "org.geotools" % "gt-cql" % geotoolsVersion,
   "org.geotools" % "gt-coverage" % geotoolsVersion,
+  "org.geotools" % "gt-geopkg" % geotoolsVersion,
   "javax.media" % "jai_core" % "1.1.3",
   "javax.media" % "jai_codec" % "1.1.3",
   "javax.media" % "jai_imageio" % "1.1.1",
   "com.github.pathikrit" %% "better-files" % "3.9.1",
   "org.jgrapht" % "jgrapht-core" % "1.5.0",
   "com.github.scopt" %% "scopt" % "4.0.0"
+ // "fr.ign.artiscales.tools" % "ArtiScales-tools" % "0.3-SNAPSHOT"
 )
 
 resolvers ++= List(
@@ -30,5 +32,6 @@ resolvers ++= List(
   "Bounless" at "https://repo.boundlessgeo.com/main/",
   "central" at "https://repo1.maven.org/maven2/",
   "geosolutions" at "https://maven.geo-solutions.it/",
-  "geotoolkit" at "https://maven.geotoolkit.org/"
+  "geotoolkit" at "https://maven.geotoolkit.org/",
+ // "Cogit Snapshots Repository" at "https://forge-cogit.ign.fr/nexus/content/repositories/snapshots/"
 )
