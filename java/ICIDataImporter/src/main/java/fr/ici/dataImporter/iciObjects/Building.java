@@ -1,5 +1,6 @@
 package fr.ici.dataImporter.iciObjects;
 
+import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.geom.Polygons;
@@ -14,20 +15,21 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
-import fr.ici.dataImporter.util.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Building integration in the ICI project.
+ */
 public class Building {
     String ID, nature, usage1, usage2;
     boolean light;
     double height, area;
     int nbStairs, nbLgt;
-    List<String> idAmenities;
-    List<String> idEntrances;
+    List<String> idPOI, idWorkingPlaces, idEntrances;
     Polygon geom;
 
     public Building(String ID, String nature, String usage1, String usage2, boolean light, double height, double area, int nbStairs, int nbLgt, Polygon geom) {
@@ -50,7 +52,7 @@ public class Building {
         return CollecMgmt.exportSFC(result, fileOut);
     }
 
-    public static List<Building> importBuilding(File buildingBDTopoFile) throws IOException {
+    public static List<Building> importBuilding(File buildingBDTopoFile, File workingPlaceFile, File POIFile) throws IOException {
         DataStore ds = CollecMgmt.getDataStore(buildingBDTopoFile);
         List<Building> lB = new ArrayList<>();
         try (SimpleFeatureIterator fIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
@@ -90,7 +92,8 @@ public class Building {
         sfTypeBuilder.add("area", Double.class);
         sfTypeBuilder.add("nbStairs", Integer.class);
         sfTypeBuilder.add("nbLgt", Integer.class);
-        sfTypeBuilder.add("idsAmenities", String.class);
+        sfTypeBuilder.add("idsPOI", String.class);
+        sfTypeBuilder.add("idsWorkingPlaces", String.class);
         sfTypeBuilder.add("idsEntrances", String.class);
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         return new SimpleFeatureBuilder(featureType);
@@ -98,9 +101,10 @@ public class Building {
 
     public static void main(String[] args) throws Exception {
         File rootFolder = Util.getRootFolder();
-        File buildingFile = new File(rootFolder, "IGN/batVeme.gpkg");
-        List<Building> lb = importBuilding(buildingFile);
+        List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "POI/SIRENE-WorkingPlace.gpkg"), new File(rootFolder, "ICI/POI.gpkg"));
+
         exportBuildings(lb, new File("/tmp/b.gpkg"));
+
     }
 
     public SimpleFeature generateSimpleFeature() {
@@ -115,7 +119,9 @@ public class Building {
         sfb.set("area", area);
         sfb.set("nbStairs", nbStairs);
         sfb.set("nbLgt", nbLgt);
-        sfb.set("idsAmenities", idAmenities);
+        sfb.set("idsPOI", idPOI);
+        sfb.set("idsWorkingPLaces", idWorkingPlaces);
+
         sfb.set("idsEntrances", idEntrances);
         return sfb.buildFeature(Attribute.makeUniqueId());
     }

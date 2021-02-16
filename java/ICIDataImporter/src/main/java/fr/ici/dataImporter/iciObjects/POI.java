@@ -2,6 +2,7 @@ package fr.ici.dataImporter.iciObjects;
 
 import com.opencsv.CSVReader;
 import fr.ici.dataImporter.insee.SirenePOI;
+import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -15,39 +16,42 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
-import fr.ici.dataImporter.util.Util;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * General class for point of interest in the ICI project
  */
 public class POI {
-    public String openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciName, nomenclature, name;
-    public int  attendanceIndice;
+    public String idICI, openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciName, nomenclature, name;
+    public int attendanceIndice;
     public String[] completeAddress = new String[4];
     public String[] idBuilding;
     public Point p;
 
 
-//    public static void main(String[] args) throws IOException {
-//        File rootFolder = Util.getRootFolder();
-//        List<POI> lPOI = new ArrayList<>();
-//        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
-//        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
-//        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
-//        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
-//        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
-//        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
-//        exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
-//    }
+/*    public static void main(String[] args) throws IOException {
+        File rootFolder = Util.getRootFolder();
+        List<POI> lPOI = new ArrayList<>();
+        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
+        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
+        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
+        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
+        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
+        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
+        exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
+    }*/
 
-    public POI(String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
+    public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
                String amenityIciName, String nomenclature, Point p) {
+        this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -59,8 +63,9 @@ public class POI {
         this.p = p;
     }
 
-    public POI(String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
+    public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
                String amenityIciName, String nomenclature, String name) {
+        this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -72,7 +77,8 @@ public class POI {
         this.name = name;
     }
 
-    public POI(String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String openingHour, Point p) {
+    public POI(String idICI, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String openingHour, Point p) {
+        this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -86,7 +92,8 @@ public class POI {
         this.p = p;
     }
 
-    public POI(String codeIRIS, String amenityCode, String amenityName, String amenityIciName, String nomenclature, String name, Point p) {
+    public POI(String idICI, String codeIRIS, String amenityCode, String amenityName, String amenityIciName, String nomenclature, String name, Point p) {
+        this.idICI = idICI;
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenityName;
@@ -99,7 +106,8 @@ public class POI {
     public POI() {
     }
 
-    public POI(String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
+    public POI(String idICI, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
+        this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -124,7 +132,7 @@ public class POI {
      */
     public static String getIciAmenity(String amenityCode, String from) {
         try {
-            CSVReader r = new CSVReader(new FileReader(new File(Util.getRootFolder(), "nomenclatureCommune.csv").exists() ? new File(Util.getRootFolder(), "nomenclatureCommune.csv") : new MakeCommonNomenclature(new File(Util.getRootFolder(), "nomenclatureCommune.csv")).getCommonNomenclatureFile()));
+            CSVReader r = new CSVReader(new FileReader(new File(Util.getRootFolder(), "ICI/nomenclatureCommune.csv").exists() ? new File(Util.getRootFolder(), "ICI/nomenclatureCommune.csv") : new MakeCommonNomenclature(new File(Util.getRootFolder(), "nomenclatureCommune.csv")).getCommonNomenclatureFile()));
             switch (from) {
                 case "APUR":
                     for (String[] l : r.readAll())
@@ -147,12 +155,13 @@ public class POI {
             e.printStackTrace();
         }
 //        throw new InvalidPropertiesFormatException("CommonNomenclature doesn't know " + amenityCode + " from " + from);
-    return "";
+        return "";
     }
 
     /**
      * Check for every POI if they can be considered as a double. TODO add relations
-     * @param lPOI {@link List} of {@link POI}s
+     *
+     * @param lPOI      {@link List} of {@link POI}s
      * @param lBuilding {@link List} of {@link Building}s
      * @return the list of POI with no double
      */
@@ -165,7 +174,7 @@ public class POI {
             for (List<POI> lP : poiByType.values()) {
                 if (lP.size() > 1) {
                     List<POI> alreadyAdd = new ArrayList<>();
-                    // Different occurences of same type. Enquête
+                    // Different occurrences of same type.
                     for (POI pObs : lP) {
                         if (alreadyAdd.contains(pObs))
                             continue;
@@ -272,7 +281,7 @@ public class POI {
                 name.append(p.name);
             }
         }
-        return new POI(address.toString(),
+        return new POI("POI-" + Attribute.makeUniqueId(), address.toString(),
                 nAddress.toString(), typeRoad.toString(), codeIRIS.toString(), amenityCode.toString(), amenitySourceName.toString(), amenityIciName.toString(), nomenclature.toString(), name.toString(), attendance.toString(), openingHour.toString(), pt);
     }
 
@@ -294,7 +303,7 @@ public class POI {
         return lPOI.stream().filter(b -> g.intersects(b.p)).collect(Collectors.toList());
     }
 
-    public static void exportListPOI(List<POI> lPOI, File fileOut) throws IOException {
+    public static void exportListPOI(List<? extends POI> lPOI, File fileOut) throws IOException {
         DefaultFeatureCollection result = lPOI.stream().map(POI::generateSF).collect(Collectors.toCollection(DefaultFeatureCollection::new));
         CollecMgmt.exportSFC(result, fileOut);
     }
@@ -325,7 +334,8 @@ public class POI {
     @Override
     public String toString() {
         return "POI{" +
-                "openingHour='" + openingHour + '\'' +
+                "idICI='" + idICI + '\'' +
+                ", openingHour='" + openingHour + '\'' +
                 ", attendance='" + attendance + '\'' +
                 ", attendanceIndice='" + attendanceIndice + '\'' +
                 ", nAddress='" + nAddress + '\'' +
@@ -346,6 +356,7 @@ public class POI {
     public SimpleFeature generateSF() {
         SimpleFeatureBuilder sfb = getPOISFB();
         sfb.set(CollecMgmt.getDefaultGeomName(), p);
+        sfb.set("idICI", idICI);
         sfb.set("nAddress", nAddress);
         sfb.set("address", address);
         sfb.set("typeRoad", typeRoad);
@@ -358,6 +369,8 @@ public class POI {
         sfb.set("attendance", attendance);
         sfb.set("attendanceIndice", attendanceIndice);
         sfb.set("openingHour", openingHour);
+        if (this instanceof OsmPOI)
+            sfb.set("capacity", ((OsmPOI) this).getCapacity());
         return sfb.buildFeature(Attribute.makeUniqueId());
     }
 
@@ -370,6 +383,7 @@ public class POI {
         }
         sfTypeBuilder.setName("IciPOI");
         sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
+        sfTypeBuilder.add("idICI", String.class);
         sfTypeBuilder.add("nAddress", String.class);
         sfTypeBuilder.add("address", String.class);
         sfTypeBuilder.add("typeRoad", String.class);
@@ -382,6 +396,7 @@ public class POI {
         sfTypeBuilder.add("attendance", String.class);
         sfTypeBuilder.add("attendanceIndice", Integer.class);
         sfTypeBuilder.add("openingHour", String.class);
+        sfTypeBuilder.add("capacity", String.class);
         sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         return new SimpleFeatureBuilder(featureType);

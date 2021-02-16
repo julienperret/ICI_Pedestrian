@@ -1,5 +1,6 @@
 package fr.ici.dataImporter.iciObjects;
 
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -18,7 +19,7 @@ public class BpePOI extends POI {
     public static File nomenclatureFile = new File(Util.getRootFolder(), "INSEE/descriptif/BPE/BPE-varTYPEQU.csv");
 
     public BpePOI(String codeIRIS, String amenityCode, String amenityName, Point p) throws InvalidPropertiesFormatException {
-        super(codeIRIS.replace("_", ""), amenityCode, amenityName, getIciAmenity(amenityCode, "BPE"), "BPE", null, p);
+        super("POI-"+ Attribute.makeUniqueId(),codeIRIS.replace("_", ""), amenityCode, amenityName, getIciAmenity(amenityCode, "BPE"), "BPE", null, p);
     }
 
     public static List<BpePOI> importBpePOI(File bpePOIFile) throws IOException {

@@ -33,7 +33,7 @@ public class SirenePOI extends SireneEntry {
 
     public SirenePOI(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
                      String name, String siret, String trancheEffectifsUniteLegale) throws IOException {
-        super(nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, name, siret, trancheEffectifsUniteLegale);
+        super("POI",nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, name, siret, trancheEffectifsUniteLegale);
         makeClassement();
         if (this.isValid())
             this.attendance = generateAttendance(trancheEffectifsUniteLegale, amenityCode);
@@ -42,7 +42,7 @@ public class SirenePOI extends SireneEntry {
 
     public SirenePOI(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String amenityName, String nomenclature,
                      String name, String siret, String workforceNormalized, Point p) throws IOException {
-        super(nAdresse, adresse, typeVoie, codePos, amenityCode, amenityName, nomenclature, name, siret, workforceNormalized, p);
+        super("POI", nAdresse, adresse, typeVoie, codePos, amenityCode, amenityName, nomenclature, name, siret, workforceNormalized, p);
         if (this.isValid())
             this.attendance = generateAttendance(workforceNormalized, amenityCode);
             this.attendanceIndice = SirenePOI.generateAttendanceCode(this.attendance);

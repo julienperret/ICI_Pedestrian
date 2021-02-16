@@ -1,6 +1,7 @@
 package fr.ici.dataImporter.iciObjects;
 
 import fr.ici.dataImporter.insee.SirenePOI;
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
@@ -20,7 +21,7 @@ public class ApurPOI extends POI {
     public String areaBound;
 
     public ApurPOI(int nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenityName, int areaBound, Point p) throws InvalidPropertiesFormatException {
-        super(String.valueOf(nAddress), address, typeRoad, codeIRIS, amenityCode, amenityName, getIciAmenity(amenityCode, "APUR"), "APUR", p);
+        super("POI-"+ Attribute.makeUniqueId(),String.valueOf(nAddress), address, typeRoad, codeIRIS, amenityCode, amenityName, getIciAmenity(amenityCode, "APUR"), "APUR", p);
         this.areaBound = getAreaBound(areaBound);
         try {
             this.attendance = generateAttendance(areaBound, amenityCode);

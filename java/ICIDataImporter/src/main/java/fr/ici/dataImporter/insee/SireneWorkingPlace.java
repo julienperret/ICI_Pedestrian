@@ -26,7 +26,7 @@ public class SireneWorkingPlace extends SireneEntry {
 
     public SireneWorkingPlace(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
                               String denominationUniteLegale, String siret, String trancheEffectifsEtablissement) throws IOException {
-        super(nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, denominationUniteLegale, siret, trancheEffectifsEtablissement);
+        super("WorkingPlace", nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, denominationUniteLegale, siret, trancheEffectifsEtablissement);
         makeClassement();
     }
 

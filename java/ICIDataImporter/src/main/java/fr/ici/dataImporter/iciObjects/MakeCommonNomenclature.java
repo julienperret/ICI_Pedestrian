@@ -3,8 +3,8 @@ package fr.ici.dataImporter.iciObjects;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import fr.ici.dataImporter.insee.SirenePOI;
-import fr.ign.artiscales.tools.io.Csv;
 import fr.ici.dataImporter.util.Util;
+import fr.ign.artiscales.tools.io.Csv;
 
 import java.io.File;
 import java.io.FileReader;
@@ -29,15 +29,13 @@ public class MakeCommonNomenclature {
     }
 
     public static void main(String[] args) throws IOException {
-        //TODO wrong field indices : check them all
         File rootFolder = Util.getRootFolder();
         File SireneNomenclature = new File("src/main/resources/NAFRev2POI.csv");
         File OsmNomenclature = new File(rootFolder, "OSM/nomenclatureOSM.csv");
-        File ApurNomenclature = new File(rootFolder, "fr/ici/dataImporter/paris/APUR/APURNomenclature.csv");
+        File ApurNomenclature = new File(rootFolder, "paris/APUR/APURNomenclature.csv");
         File BPENomenclature = new File(rootFolder, "INSEE/descriptif/BPE/BPE-varTYPEQU.csv");
         File outFile = new File(rootFolder, "ICI/nomenclatureCommune.csv");
         new MakeCommonNomenclature(SireneNomenclature, OsmNomenclature, ApurNomenclature, BPENomenclature, outFile);
-        System.out.println(isSireneRealCategorie(new File("src/main/resources/NAFRev2POI.csv"), 0));
     }
 
     public static long isSireneRealCategorie(File f, int iAttr) throws IOException {
@@ -55,9 +53,6 @@ public class MakeCommonNomenclature {
         for (String[] c : rCorres.readAll()) {
             String nameComp = translate ? translateOSMAmenityNames(c[indiceNameComp]) : c[indiceNameComp].toLowerCase();
             if (((float) Util.LevenshteinDistance(nameNAF, nameComp) / nameComp.length()) < 0.2) { // || Util.jaro_distance(nameNAF, nameComp) > 0.85) {
-                System.out.println(nameComp);
-                System.out.println(nameNAF);
-                System.out.println();
                 usedTerms.add(c[indiceCodeComp]);
                 inputArray[indiceCodeOut] = c[indiceCodeComp];
                 inputArray[indiceNameOut] = nameComp;
@@ -188,6 +183,202 @@ public class MakeCommonNomenclature {
                 return "école de langue";
             case "townhall":
                 return "mairie";
+            case "alcohol":
+            case "wine":
+            case "beverages":
+                return "Commerce de détail de boissons en magasin spécialisé";
+            case "anime":
+                return "manga-store";
+            case "antiques":
+                return "antiquités";
+            case "art":
+                return "galerie d'art";
+            case "baby_goods":
+                return "articles pour bébés";
+            case "bakery":
+            case "pastry":
+                return "boulangerie - boulangerie pâtisserie";
+            case "beauty":
+                return "Soins de beauté";
+            case "bathrooms":
+                return "bains";
+            case "bed":
+                return "literie";
+            case "bicycle":
+                return "vélo";
+            case "books":
+                return "librairie";
+            case "butcher":
+                return "boucherie";
+            case "car":
+            case "car_repair":
+                return "garagiste";
+            case "carpenter":
+                return "Menuisier, charpentier, serrurier";
+            case "carpet":
+                return "Commerce de détail de tapis - moquettes et revêtements de murs et de sols en magasin spécialisé";
+            case "caterer":
+                return "traiteur";
+            case "cheese":
+                return "fromagerie";
+            case "chocolate":
+                return "Chocolaterie - Confiserie";
+            case "clothes":
+                return "Magasin de vêtements";
+            case "coffee":
+                return "café";
+            case "coffeemaker":
+            case "tea":
+                return "Torréfacteur - Commerce détail thé et café";
+            case "computer":
+                return "informatique";
+            case "confectionery":
+                return "Chocolaterie - Confiserie";
+            case "convenience":
+                return "épicerie";
+            case "copyshop":
+                return "imprimerie";
+            case "deli":
+                return "Chocolaterie - Confiserie";
+            case "diplomatic":
+                return "ambassade";
+            case "doityourself":
+                return "recyclerie";
+            case "dressmaker":
+                return "tailleur";
+            case "dry_cleaning":
+            case "laundry":
+                return "blanchisserie";
+            case "E-cigarette":
+                return "Vente de cigarettes électroniques";
+            case "educational_institution":
+                return "institution éducative";
+            case "electrical":
+            case "electrician":
+                return "Électricien";
+            case "employment_agency":
+                return "agence d'emploi";
+            case "estate_agent":
+                return "agence immobilière";
+            case "fashion_accessories":
+                return "Bijouterie fantaisie - Accessoire de mode";
+            case "fitness_station":
+                return "musculation";
+            case "florist":
+                return "fleuriste";
+            case "frozen_food":
+                return "Produits surgelés";
+            case "furniture":
+                return "Papeterie - Fournitures de bureau";
+            case "games":
+            case "toys":
+                return "Vente de jouets et jeux";
+            case "gift":
+            case "variety_store":
+                return "Bimbeloterie - Articles souvenirs";
+            case "gold":
+                return "Achat - Vente d'or";
+            case "government":
+                return "Bâtiment gouvernemental";
+            case "greengrocer":
+                return "Vente de fruits et légumes";
+            case "hairdresser":
+                return "Coiffeur";
+            case "handicraft":
+            case "craft":
+                return "Artisanat";
+            case "hifi":
+            case "video":
+            case "hardware":
+                return "Magasin d'électroménager,  audio vidéo";
+            case "hearing_aids":
+                return "Vente de prothèses auditives";
+            case "hostel":
+            case "hotel":
+            case "guest_house":
+                return "Hôtels et hébergement similaire";
+            case "insurance":
+                return "assurance";
+            case "interior_decoration":
+                return "décoration d'intérieur";
+            case "jewelry":
+                return "Horlogerie Bijouterie";
+            case "newsagent":
+            case "kiosk":
+                return "Kiosque à journaux";
+            case "kitchen":
+            case "tableware":
+            case "houseware":
+                return "Vente de meubles de cuisines et salle de bain";
+            case "lamps":
+            case "lighting":
+                return "Vente de luminaires";
+            case "locksmith":
+                return "serrurerie";
+            case "luthier":
+                return "luthier";
+            case "massage":
+                return "salon de massage";
+            case "mobile_phone":
+                return "téléphonie";
+            case "motorcycle":
+                return "Commerce et réparation de motocycles";
+            case "moving_company":
+                return "Déménagement / Garde meuble";
+            case "olive_oil":
+                return "huile d'olive";
+            case "optician":
+                return "opticien";
+            case "outdoor":
+                return "exterieur";
+            case "party":
+                return "fête";
+            case "perfumery":
+                return "parfumerie";
+            case "pet":
+                return "Animalerie";
+            case "pitch":
+                return "terrain";
+            case "plumber":
+                return "plomberie";
+            case "scuba_diving":
+                return "plongée sous-marine";
+            case "seafood":
+                return "poissonnerie";
+            case "shoemaker":
+                return "Cordonnerie";
+            case "shoes":
+                return "Magasin de chaussures";
+            case "sports_centre":
+            case "sports":
+                return "Centre sprotif";
+            case "stationery":
+                return "Papéterie";
+            case "supermarket":
+                return "supermarché";
+            case "tailor":
+                return "tailleur";
+            case "tattoo":
+                return "Tatouage - Piercing";
+            case "ticket":
+                return "Ticket de transport";
+            case "tiler":
+                return "Couvreur";
+            case "tobacco":
+                return "Tabac";
+            case "toilettes_publiques":
+                return "toilettes_publiques";
+            case "travel_agency":
+            case "travel_agent":
+                return "Agence de voyage";
+            case "playground":
+                return "terrain de jeu";
+            case "boutique":
+                return "boutique";
+            case"household_linen":
+            return "Magasin de revêtements murs et sols";
+            case"painter":
+                return "Plâtrier peintre";
         }
         return enName;
     }

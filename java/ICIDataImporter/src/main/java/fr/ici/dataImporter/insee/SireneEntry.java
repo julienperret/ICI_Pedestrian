@@ -1,6 +1,7 @@
 package fr.ici.dataImporter.insee;
 
 import fr.ici.dataImporter.iciObjects.POI;
+import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -8,6 +9,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.opengis.feature.simple.SimpleFeature;
 
 import java.util.InvalidPropertiesFormatException;
+import java.util.jar.Attributes;
 
 public abstract class SireneEntry extends POI {
 
@@ -15,9 +17,9 @@ public abstract class SireneEntry extends POI {
     String siret, trancheEffectifsEtablissementReadable, trancheEffectifsEtablissement, resteOuvertArrete0314, resteOuvertArrete1030;
     boolean valid = true;
 
-    public SireneEntry(String nAddress, String address, String typeRoad, String codePos, String amenityCode,
+    public SireneEntry(String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode,
                        String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement) throws InvalidPropertiesFormatException {
-        super(nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
+        super(type + "-" + Attribute.makeUniqueId(), nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
         this.nAddress = nAddress;
         completeAddress[0] = nAddress;
         this.address = address;
@@ -31,9 +33,9 @@ public abstract class SireneEntry extends POI {
         this.trancheEffectifsEtablissement =  transformWorkforce(trancheEffectifsEtablissement,false);
     }
 
-    public SireneEntry(String nAddress, String address, String typeRoad, String codePos, String amenityCode,
+    public SireneEntry(String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode,
                        String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement, Point p) throws InvalidPropertiesFormatException {
-        super(nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
+        super(type + "-" + Attribute.makeUniqueId(),nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
         this.p = p;
         this.nAddress = nAddress;
         completeAddress[0] = nAddress;
