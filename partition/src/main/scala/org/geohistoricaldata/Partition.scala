@@ -33,6 +33,7 @@ object Partition extends App {
   def get(path: Path) = Utils.getGPKG(path).flatMap(getFeaturePolygons).filter(_.intersects(arrondissementGeom))
 
   def getWithAttributes(path: Path, attributes: Array[String]) = Utils.getGPKG(path).flatMap(f=>getFeaturePolygons(f).map(p=>(p, attributes.map(a=>f.getAttribute(a))))).filter(_._1.intersects(arrondissementGeom))
+  def getShpWithAttributes(path: Path, attributes: Array[String]) = Utils.getShapefile(path).flatMap(f=>getFeaturePolygons(f).map(p=>(p, attributes.map(a=>f.getAttribute(a))))).filter(_._1.intersects(arrondissementGeom))
 
   //  val chaussee = Utils.getShapefile(new JFile("/home/julien/devel/ICI_Pedestrian/input_l93/plan-de-voirie-chaussees.shp").toPath).flatMap(getFeaturePolygons).filter(_.intersects(arrondissementGeom))
   val chaussee = getWithAttributes(path("voirie-voiture/plan-de-voirie-chaussees"), Array("surface"))
@@ -50,8 +51,9 @@ object Partition extends App {
 //  val batiments = getWithAttributes(path("volumesbatis"),Array("h_et_max"))
   val espacesVerts = getWithAttributes(path("voirie-pieton/plan-de-voirie-emprises-espaces-verts"), Array("objectid"))
   // this building has been generated with todo
-  val batimentsIGN = getWithAttributes(path("batBDTopo"), Array("HAUTEUR", "NB_ETAGES", "NB_LOGTS", "ID"))
-//  val batimentsIGN = getWithAttributes(path("volumesbatisparis"), Array("h_et_max"))
+//  val batimentsIGN = getWithAttributes(path("batBDTopo"), Array("HAUTEUR", "NB_ETAGES", "NB_LOGTS", "ID"))
+val batimentsIGN = getShpWithAttributes(File("/home/mc/workspace/ici_pedestrian/input/volumesbatisparis.shp").path, Array("objectid", "h_et_max"))
+
   val inputFeatures = (chaussee ++ trottoirs ++ passages ++ mixte ++ ilots ++ terre_pleins ++ escaliers ++ batimentsIGN).toList.map(_._1)
 //  val batimentsIGN_seq = batimentsIGN.map(_._1)
   val features = FeaturePolygonizer.getPolygons(inputFeatures).map {
@@ -76,11 +78,12 @@ object Partition extends App {
             // if it is a building, add the height, etc.
             val attributs = batimentsIGN.find(_._1.contains(point)).get._2
 
-            def getAsInt(v: AnyRef) = Option(v) match {
-              case Some(x) => x.toString.split("\\.").head.toInt //todo ugly regex but unfortunatly necessary for now
-              case None => 0
-            }
-            (p, n, attributs.head.asInstanceOf[Double], getAsInt(attributs(1)), getAsInt(attributs(2)), attributs(3).toString)
+//            def getAsInt(v: AnyRef) = Option(v) match {
+//              case Some(x) => x.toString.split("\\.").head.toInt //todo ugly regex but unfortunatly necessary for now
+//              case None => 0
+//            }
+//            (p, n, attributs.head.asInstanceOf[Double], getAsInt(attributs(1)), getAsInt(attributs(2)), attributs(3).toString)
+            (p, n, attributs(1).asInstanceOf[Double] * 3.5, 0,0,"Building")
           case n if n.equals("trottoir") || n.equals("ilot directionnel") || n.equals("terre-plein") =>
             val attributs = pt.seq.find(_._1.contains(point)).get._2
             (p, n, 0.1, 0, 0, attributs.head.toString) // arbitrary sidewalk height

@@ -23,7 +23,6 @@ object Utils {
     val collection = source.getFeatures(Filter.INCLUDE)
     val featureBuffer = ArrayBuffer[SimpleFeature]()
     val features = collection.features()
-//    println(collection.size() + " features")
     try while (features.hasNext) featureBuffer += features.next()
     catch {
       case e: Exception => e.printStackTrace()
