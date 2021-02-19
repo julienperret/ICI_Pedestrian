@@ -37,17 +37,17 @@ public class POI {
     public Point p;
 
 
-/*    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         File rootFolder = Util.getRootFolder();
         List<POI> lPOI = new ArrayList<>();
         lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
         lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
         lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
         lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
-        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg")));
+        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"),new File(rootFolder, "INSEE/IRIS-logements.gpkg")));
         exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
         exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
-    }*/
+    }
 
     public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
                String amenityIciName, String nomenclature, Point p) {
@@ -168,7 +168,7 @@ public class POI {
     public static List<POI> delDouble(List<POI> lPOI, List<Building> lBuilding) {
         List<POI> result = new ArrayList<>();
         for (Building b : lBuilding) {
-            List<POI> buildingPOI = selectIntersection(lPOI, b.geom.buffer(0.2));
+            List<POI> buildingPOI = selectIntersection(lPOI, b.geomBuilding.buffer(0.2));
             // Sort points by their ICI nomenclatures
             HashMap<String, List<POI>> poiByType = sortPOIByType(buildingPOI);
             for (List<POI> lP : poiByType.values()) {

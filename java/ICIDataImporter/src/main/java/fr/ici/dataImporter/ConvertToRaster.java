@@ -381,7 +381,6 @@ public class ConvertToRaster {
             case "individuals":
                 return Schemas.addFloatColToSFB(addressSFC, "NB_INDIV");
             case "demoStats":
-
                 return Schemas.addColsToSFB(addressSFC, demoColl, Integer.class);
         }
         throw new InvalidPropertiesFormatException("getSFBforAffection : method " + method + " not implemented");
