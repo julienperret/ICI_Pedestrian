@@ -2,11 +2,13 @@ package fr.ici.dataImporter.iciObjects;
 
 import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
+import fr.ign.artiscales.tools.geoToolsFunctions.Schemas;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.geom.Polygons;
 import fr.ign.artiscales.tools.io.Csv;
 import org.geotools.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
  */
 public class Building {
     static double[] probabilitiesBuildingSize;
+    static double functionalRatio = 0.85;
+    static boolean DEBUG;
     String ID, nature, usage1, usage2;
     boolean light;
     double height, area;
@@ -37,8 +41,6 @@ public class Building {
     List<String> idPOI, idWorkingPlaces, idEntrances;
     List<Double> areaHousingLot;
     Polygon geomBuilding;
-    boolean isTight;
-    static double functionalRatio = 0.8;
 
     public Building(String ID, String nature, String usage1, String usage2, boolean light, double height, double area, int nbStairs, int nbLgt, List<Double> areaHousingLot, Polygon geom) {
         this.ID = ID;
@@ -55,8 +57,9 @@ public class Building {
     }
 
     public static void main(String[] args) throws Exception {
+//        DEBUG = true;
         File rootFolder = Util.getRootFolder();
-        List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "POI/SIRENE-WorkingPlace.gpkg"), new File(rootFolder, "ICI/POI.gpkg"));
+        List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"));
         exportBuildings(lb, new File("/tmp/b.gpkg"));
         analyseDistribution(lb, new File(rootFolder, "INSEE/IRIS-logements.gpkg"));
     }
@@ -64,25 +67,30 @@ public class Building {
     static File exportBuildings(List<Building> lB, File fileOut) throws IOException {
         return CollecMgmt.exportSFC(lB.stream().map(Building::generateSimpleFeature).collect(Collectors.toCollection(DefaultFeatureCollection::new)).collection(), fileOut);
     }
+
     public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat) throws IOException {
-        return importBuilding(buildingBDTopoFile, inseeLogementStat, null, null);
+        return importBuilding(buildingBDTopoFile, inseeLogementStat, null);
     }
-    public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat, File workingPlaceFile, File POIFile) throws IOException {
+
+    public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat, File apurPOI) throws IOException {
         // for every IRIS
         DataStore dsIRIS = CollecMgmt.getDataStore(inseeLogementStat);
-        DataStore ds = CollecMgmt.getDataStore(buildingBDTopoFile);
-        DefaultFeatureCollection unfit = new DefaultFeatureCollection();
+        DataStore dsBuilding = CollecMgmt.getDataStore(buildingBDTopoFile);
+        DataStore dsAPUR = null;
+        if (apurPOI != null)
+            dsAPUR = CollecMgmt.getDataStore(apurPOI);
         List<Building> lB = new ArrayList<>();
         try (SimpleFeatureIterator irisIt = dsIRIS.getFeatureSource(dsIRIS.getTypeNames()[0]).getFeatures().features()) {
             while (irisIt.hasNext()) {
                 SimpleFeature iris = irisIt.next();
-//                System.out.println();
-//                System.out.println(iris.getAttribute("NOM_IRIS"));
-//                System.out.println();
-                // we calculate the distribution of housing sizes for that IRIS
-                makeHousingProbabilities(iris);
+                if (DEBUG) {
+                    System.out.println();
+                    System.out.println(iris.getAttribute("NOM_IRIS"));
+                    System.out.println();
+                }
+                makeHousingProbabilities(iris); // we calculate the distribution of housing sizes for that IRIS
                 // iterate on the iris's buildings . We also sort them by their surfaces (might be better to process the smallest building faster)
-                try (SimpleFeatureIterator buildingIt = CollecTransform.selectIntersection(CollecTransform.sortSFCWithArea(ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures()), iris).features()) {
+                try (SimpleFeatureIterator buildingIt = CollecTransform.sortSFCWithField(CollecTransform.selectIntersectMost(addRatioHousingPerVolume(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures()), (Geometry) iris.getDefaultGeometry()), "RatioLGTVol", false).features()) { //todo that should be the way but it's not working
                     while (buildingIt.hasNext()) {
                         SimpleFeature building = buildingIt.next();
                         List<Double> distribBuilding = new ArrayList<>();
@@ -90,29 +98,44 @@ public class Building {
                         // for every buildings that has housings
                         if (nbLgt != null && !(nbLgt.equals("0") || nbLgt.equals("00") || nbLgt.equals(0))) {
                             int count = 0;
+                            int nbStairs = (int) building.getAttribute("NB_ETAGES");
+                            double areaBuilding = ((Geometry) building.getDefaultGeometry()).getArea();
+                            if (apurPOI != null) {// We check if there are big shops
+                                List<SimpleFeature> shops = Arrays.stream(CollecTransform.selectIntersection(dsAPUR.getFeatureSource(dsAPUR.getTypeNames()[0]).getFeatures(), building).toArray(new SimpleFeature[0])).collect(Collectors.toList());
+                                // possibility to get the position of the shop in the building (Cour intérieur, too rare to care)
+                                if (!shops.isEmpty()) {
+                                    nbStairs--; // either way, if there is shops, the 0 floor will be occupy by them
+                                    for (SimpleFeature shop : shops)
+                                        switch ((int) shop.getAttribute("SURF")) {
+                                            case 2:
+                                                areaBuilding = areaBuilding - 650;
+                                            case 3:
+                                                areaBuilding = areaBuilding - 1000;
+                                        }
+                                }
+                            }
                             do {
                                 distribBuilding = new ArrayList<>();
-                                //for every housing unit, we get a size corresponding to the IRIS's probability
-                                for (int i = 0; i < (int) nbLgt; i++)
+                                for (int i = 0; i < (int) nbLgt; i++) //for every housing unit, we get a size corresponding to the IRIS's probability
                                     distribBuilding.add(whichAppartmentSize());
-                                if (count++ == 5) {
-                                    // Try to fit smaller households
-                                    // new count
-                                    int countSmall = 0;
+                                if (count++ == 10) {  // Try to fit smaller households
+                                    int countSmall = 0;     // new count
+                                    if (DEBUG)
+                                        System.out.println("lil distribution");
                                     do {
                                         distribBuilding = new ArrayList<>();
-                                        for (int j = 0; j < (int) nbLgt; j++)
+                                        for (int i = 0; i < (int) nbLgt; i++)
                                             distribBuilding.add(whichAppartmentSize(smallHousingDistribution()));
                                         if (countSmall++ == 5) {
-                                            System.out.println(("Even with a small distribution, impossible to distribute housing in " + building.getAttribute("ID")+". Making flat average"));
-                                            double averageSize = ((Geometry) building.getDefaultGeometry()).getArea()*functionalRatio*(int) building.getAttribute("NB_ETAGES");
-                                            for (int j = 0; j < (int) nbLgt; j++)
-                                                distribBuilding.add( averageSize/(int) nbLgt );
-                                            unfit.add(building);
+                                            if (DEBUG)
+                                                System.out.println(("Even with a small distribution, impossible to distribute housing in " + building.getAttribute("ID") + ". Making flat average"));
+                                            distribBuilding = new ArrayList<>();
+                                            for (int i = 0; i < (int) nbLgt; i++)
+                                                distribBuilding.add(areaBuilding * nbStairs * functionalRatio / (int) nbLgt);
                                         }
-                                    } while (isDistribImpossible(distribBuilding, building) && countSmall <= 5);
+                                    } while (isDistribImpossible(distribBuilding, nbStairs, areaBuilding) && countSmall <= 5);
                                 }
-                            } while (isDistribImpossible(distribBuilding, building) && count <= 5);
+                            } while (isDistribImpossible(distribBuilding, nbStairs, areaBuilding) && count <= 10);
                             fitHousingProbabilities(distribBuilding);
                         }
                         lB.add(new Building((String) building.getAttribute("ID"), (String) building.getAttribute("NATURE"),
@@ -131,12 +154,29 @@ public class Building {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        CollecMgmt.exportSFC(unfit, new File("/tmp/unfitBuildings.gpkg"));
-        ds.dispose();
+        dsBuilding.dispose();
+        if (apurPOI != null)
+            dsAPUR.dispose();
         dsIRIS.dispose();
         return lB;
     }
 
+    public static SimpleFeatureCollection addRatioHousingPerVolume(SimpleFeatureCollection buildingSFC) {
+        DefaultFeatureCollection result = new DefaultFeatureCollection();
+        String[] ratio = {"RatioLGTVol"};
+        SimpleFeatureBuilder sfb = Schemas.addColsToSFB(buildingSFC, ratio, Double.class);
+        try (SimpleFeatureIterator it = buildingSFC.features()) {
+            while (it.hasNext()) {
+                SimpleFeature sf = it.next();
+                sfb = Schemas.setFieldsToSFB(sfb, sf);
+                sfb.set("RatioLGTVol", ((Geometry) sf.getDefaultGeometry()).getArea() / ((sf.getAttribute("NB_LOGTS") != null && (int) sf.getAttribute("NB_LOGTS") != 0) ? (int) sf.getAttribute("NB_LOGTS") : Double.POSITIVE_INFINITY));
+                result.add(sfb.buildFeature(Attribute.makeUniqueId()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     public static void analyseDistribution(List<Building> lb, File inseeLogementStat) throws IOException {
         DataStore dsIRIS = CollecMgmt.getDataStore(inseeLogementStat);
@@ -176,19 +216,18 @@ public class Building {
     /**
      * Check if the random distribution of housing can fit in the building. A ratio of 0.9 is applied to surface * (nbStairs +1) to represent common parts.
      *
-     * @param list     distribution of average size of housing units.
-     * @param building building from BDTopo
+     * @param list         distribution of average size of housing units.
+     * @param nbStairs     number of stairs
+     * @param buildingArea foot area of building
      * @return true if the number of housing units can fit
      */
-    public static boolean isDistribImpossible(List<Double> list, SimpleFeature building) {
+    public static boolean isDistribImpossible(List<Double> list, int nbStairs, double buildingArea) {
         if (list.isEmpty())
             return true;
         double sumDistribution = 0;
         for (double f : list)
             sumDistribution = sumDistribution + f;
-        double volBuilding = ((int) building.getAttribute("NB_ETAGES") + 1) *
-                ((Geometry) building.getDefaultGeometry()).getArea();
-        return !(sumDistribution < volBuilding * functionalRatio);
+        return !(sumDistribution < nbStairs * buildingArea * functionalRatio);
     }
 
     public static int getHousingsCategorieOfBuilding(Building b, String housingCategory) {
@@ -232,8 +271,7 @@ public class Building {
     /**
      * substract
      *
-     * @param changes
-     * @throws ParseException
+     * @param changes values that has been set and needs to be removed from the propability of size affection
      */
     public static void fitHousingProbabilities(double[] changes) throws ParseException {
         double[] percentages = new double[7];
@@ -244,7 +282,8 @@ public class Building {
         percentages[4] = probabilitiesBuildingSize[4] - changes[4] > 0 ? probabilitiesBuildingSize[4] - changes[4] : 0;
         percentages[5] = probabilitiesBuildingSize[5] - changes[5] > 0 ? probabilitiesBuildingSize[5] - changes[5] : 0;
         percentages[6] = probabilitiesBuildingSize[6] - changes[6] > 0 ? probabilitiesBuildingSize[6] - changes[6] : 0;
-//        System.out.println(percentages[0] + "-" + percentages[1] + "-" + percentages[2] + "-" + percentages[3] + "-" + percentages[4] + "-" + percentages[5] + "-" + percentages[6]);
+        if (DEBUG)
+            System.out.println(percentages[0] + "-" + percentages[1] + "-" + percentages[2] + "-" + percentages[3] + "-" + percentages[4] + "-" + percentages[5] + "-" + percentages[6]);
         probabilitiesBuildingSize = percentages;
     }
 
@@ -253,7 +292,6 @@ public class Building {
      * Get the information for every class of size and multiply them by the ratio of not principal housing (whe assume here that vacant and secondary housing have the same distribution of size as principal housing)
      *
      * @param iris INSEE's IRIS with <i>logement</i> information joined
-     * @throws ParseException
      */
     public static void makeHousingProbabilities(SimpleFeature iris) throws ParseException {
         double percentagePrincipalHousehold = getPercentageOfPrincipalHouseholds(iris);
@@ -269,7 +307,7 @@ public class Building {
     }
 
     private static double[] smallHousingDistribution() {
-        return new double[]{60, 30, 10, 0, 0, 0, 0};
+        return new double[]{40, 40, 10, 0, 0, 0, 0};
     }
 
     /**
@@ -363,17 +401,13 @@ public class Building {
      * @return the type of housing
      */
     public static double getPercentageOfPrincipalHouseholds(SimpleFeature iris) throws ParseException {
-        double[] percentages = new double[3];
-        percentages[0] = getDoubleFromInseeFormatedString(iris, "P17_RSECOCC");
-        percentages[1] = getDoubleFromInseeFormatedString(iris, "P17_RP");
-        percentages[2] = getDoubleFromInseeFormatedString(iris, "P17_LOGVAC");
         return getDoubleFromInseeFormatedString(iris, "P17_RP") / (getDoubleFromInseeFormatedString(iris, "P17_RP") + getDoubleFromInseeFormatedString(iris, "P17_LOGVAC") + getDoubleFromInseeFormatedString(iris, "P17_RSECOCC"));
     }
 
     public double getRoomLeft() {
         if (nbLgt == 0)
             return 0;
-        return functionalRatio * geomBuilding.getArea() * nbStairs - areaHousingLot.stream().mapToDouble(map -> map).sum() ;
+        return functionalRatio * geomBuilding.getArea() * nbStairs - areaHousingLot.stream().mapToDouble(map -> map).sum();
     }
 
     public SimpleFeature generateSimpleFeature() {
@@ -398,7 +432,7 @@ public class Building {
         sfb.set("nbHousing80100sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_80100M2"));
         sfb.set("nbHousing100120sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_100120M2"));
         sfb.set("nbHousingSup120sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_120M2P"));
-        sfb.set("roomLeft",getRoomLeft() );
+        sfb.set("roomLeft", getRoomLeft());
         return sfb.buildFeature(Attribute.makeUniqueId());
     }
 }

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * General class for point of interest in the ICI project
  */
 public class POI {
-    public String idICI, openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciName, nomenclature, name;
+    public String idICI, openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciTypeName, nomenclature, name;
     public int attendanceIndice;
     public String[] completeAddress = new String[4];
     public String[] idBuilding;
@@ -50,7 +50,7 @@ public class POI {
     }
 
     public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
-               String amenityIciName, String nomenclature, Point p) {
+               String amenityIciTypeName, String nomenclature, Point p) {
         this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
@@ -58,13 +58,13 @@ public class POI {
         this.codePos = codePos;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenitySourceName;
-        this.amenityIciName = amenityIciName;
+        this.amenityIciTypeName = amenityIciTypeName;
         this.nomenclature = nomenclature;
         this.p = p;
     }
 
     public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
-               String amenityIciName, String nomenclature, String name) {
+               String amenityIciTypeName, String nomenclature, String name) {
         this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
@@ -72,12 +72,12 @@ public class POI {
         this.codePos = codePos;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenitySourceName;
-        this.amenityIciName = amenityIciName;
+        this.amenityIciTypeName = amenityIciTypeName;
         this.nomenclature = nomenclature;
         this.name = name;
     }
 
-    public POI(String idICI, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String openingHour, Point p) {
+    public POI(String idICI, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String openingHour, Point p) {
         this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
@@ -85,19 +85,19 @@ public class POI {
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenitySourceName;
-        this.amenityIciName = amenityIciName;
+        this.amenityIciTypeName = amenityIciTypeName;
         this.nomenclature = nomenclature;
         this.name = name;
         this.openingHour = openingHour;
         this.p = p;
     }
 
-    public POI(String idICI, String codeIRIS, String amenityCode, String amenityName, String amenityIciName, String nomenclature, String name, Point p) {
+    public POI(String idICI, String codeIRIS, String amenityCode, String amenityName, String amenityIciTypeName, String nomenclature, String name, Point p) {
         this.idICI = idICI;
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenityName;
-        this.amenityIciName = amenityIciName;
+        this.amenityIciTypeName = amenityIciTypeName;
         this.nomenclature = nomenclature;
         this.name = name;
         this.p = p;
@@ -106,7 +106,7 @@ public class POI {
     public POI() {
     }
 
-    public POI(String idICI, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
+    public POI(String idICI, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
         this.idICI = idICI;
         this.address = address;
         this.nAddress = nAddress;
@@ -114,7 +114,7 @@ public class POI {
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenitySourceName;
-        this.amenityIciName = amenityIciName;
+        this.amenityIciTypeName = amenityIciTypeName;
         this.nomenclature = nomenclature;
         this.name = name;
         this.attendance = attendance;
@@ -168,17 +168,17 @@ public class POI {
     public static List<POI> delDouble(List<POI> lPOI, List<Building> lBuilding) {
         List<POI> result = new ArrayList<>();
         for (Building b : lBuilding) {
-            List<POI> buildingPOI = selectIntersection(lPOI, b.geomBuilding.buffer(0.2));
+            List<POI> poiInBuilding = selectIntersection(lPOI, b.geomBuilding.buffer(0.2));
             // Sort points by their ICI nomenclatures
-            HashMap<String, List<POI>> poiByType = sortPOIByType(buildingPOI);
+            HashMap<String, List<POI>> poiByType = sortPOIByType(poiInBuilding);
             for (List<POI> lP : poiByType.values()) {
-                if (lP.size() > 1) {
+                if (lP.size() > 1) { // if types for various points are alike
                     List<POI> alreadyAdd = new ArrayList<>();
                     // Different occurrences of same type.
                     for (POI pObs : lP) {
                         if (alreadyAdd.contains(pObs))
                             continue;
-                        // If the POI is of the same class as every other ones, we add them
+                        // If the POI is from the same source as every other ones, they are not double and we add them all
                         if (lP.stream().filter(x -> x.nomenclature.equals(pObs.nomenclature)).count() == lP.size()) {
                             result.addAll(lP);
                             alreadyAdd.addAll(lP);
@@ -190,6 +190,7 @@ public class POI {
                         if (lSameName.size() > 1) {
                             alreadyAdd.addAll(lSameName);
                             result.add(mergePOI(lSameName));
+                            continue;
                         }
 //                        // get the same types
 //                        List<POI> lSameType = lP.stream().filter(x -> !(x == pObs) &&
@@ -198,7 +199,6 @@ public class POI {
 //                            if ()
 //                        }
                         // case BPE has the same type of another - we merge them (this is most of the time in disfavour of the BPE)
-
                     }
                 } else
                     result.add(lP.get(0));
@@ -207,6 +207,11 @@ public class POI {
         return result;
     }
 
+    /**
+     * Merge POI that should be alike. Different rules regarding their sources.
+     * @param lToMerge
+     * @return
+     */
     private static POI mergePOI(List<POI> lToMerge) {
         System.out.println("merge " + lToMerge);
         StringBuilder address = new StringBuilder();
@@ -232,7 +237,7 @@ public class POI {
                 amenityCode.append("_Apur:").append(p.amenityCode);
                 amenitySourceName.append("_Apur:").append(p.amenitySourceName);
                 attendance.append("_Apur:").append(p.attendance);
-                amenityIciName.delete(0, amenityIciName.length()).append(p.amenityIciName);
+                amenityIciName.delete(0, amenityIciName.length()).append(p.amenityIciTypeName);
                 nomenclature.append("_Apur:").append(p.nomenclature);
                 pt = p.p;
             }
@@ -243,7 +248,7 @@ public class POI {
                     nAddress.append(p.nAddress);
                     typeRoad.append(p.typeRoad);
                     codeIRIS.append(p.typeRoad);
-                    amenityIciName.append(p.amenityIciName);
+                    amenityIciName.append(p.amenityIciTypeName);
                 }
                 if (pt == null)
                     pt = p.p;
@@ -258,7 +263,7 @@ public class POI {
                 if (name.length() == 0)
                     name.append(p.name);
                 if (amenityIciName.length() == 0)
-                    amenityIciName.append(p.amenityIciName);
+                    amenityIciName.append(p.amenityIciTypeName);
                 if (pt == null)
                     pt = p.p;
                 nomenclature.append("_Osm:").append(p.nomenclature);
@@ -270,7 +275,7 @@ public class POI {
                     nAddress.append(p.nAddress);
                     typeRoad.append(p.typeRoad);
                     codeIRIS.append(p.typeRoad);
-                    amenityIciName.append(p.amenityIciName);
+                    amenityIciName.append(p.amenityIciTypeName);
                 }
                 if (pt == null)
                     pt = p.p;
@@ -285,16 +290,21 @@ public class POI {
                 nAddress.toString(), typeRoad.toString(), codeIRIS.toString(), amenityCode.toString(), amenitySourceName.toString(), amenityIciName.toString(), nomenclature.toString(), name.toString(), attendance.toString(), openingHour.toString(), pt);
     }
 
-    private static HashMap<String, List<POI>> sortPOIByType(List<POI> buildingPOI) {
+    /**
+     * Put POI in type categories regarding to the ICI type.
+     * @param lPOI
+     * @return
+     */
+    private static HashMap<String, List<POI>> sortPOIByType(List<POI> lPOI) {
         HashMap<String, List<POI>> result = new HashMap<>();
-        for (POI poi : buildingPOI) {
+        for (POI poi : lPOI) {
             List<POI> tmp;
-            if (result.get(poi.amenityIciName) != null)
-                tmp = result.get(poi.amenityIciName);
+            if (result.get(poi.amenityIciTypeName) != null)
+                tmp = result.get(poi.amenityIciTypeName);
             else
                 tmp = new ArrayList<>();
             tmp.add(poi);
-            result.put(poi.amenityIciName, tmp);
+            result.put(poi.amenityIciTypeName, tmp);
         }
         return result;
     }
@@ -345,7 +355,7 @@ public class POI {
                 ", codeIRIS='" + codeIRIS + '\'' +
                 ", amenityCode='" + amenityCode + '\'' +
                 ", amenitySourceName='" + amenitySourceName + '\'' +
-                ", amenityIciName='" + amenityIciName + '\'' +
+                ", amenityIciName='" + amenityIciTypeName + '\'' +
                 ", nomenclature='" + nomenclature + '\'' +
                 ", name='" + name + '\'' +
                 ", idBuilding=" + Arrays.toString(idBuilding) +
@@ -363,7 +373,7 @@ public class POI {
         sfb.set("codeIRIS", codePos);
         sfb.set("amenityCode", amenityCode);
         sfb.set("amenitySourceName", amenitySourceName);
-        sfb.set("amenityIciName", amenityIciName);
+        sfb.set("amenityIciName", amenityIciTypeName);
         sfb.set("nomenclature", nomenclature);
         sfb.set("name", name);
         sfb.set("attendance", attendance);
