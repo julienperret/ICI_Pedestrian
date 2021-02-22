@@ -60,14 +60,22 @@ public class Building {
 //        DEBUG = true;
         File rootFolder = Util.getRootFolder();
         List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"));
-        exportBuildings(lb, new File("/tmp/b.gpkg"));
-        analyseDistribution(lb, new File(rootFolder, "INSEE/IRIS-logements.gpkg"));
+        exportBuildings(lb, new File(rootFolder, "ICI/building.gpkg"));
+        analyseDistribution(lb, new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "ICI/"));
     }
 
     static File exportBuildings(List<Building> lB, File fileOut) throws IOException {
         return CollecMgmt.exportSFC(lB.stream().map(Building::generateSimpleFeature).collect(Collectors.toCollection(DefaultFeatureCollection::new)).collection(), fileOut);
     }
 
+    /**
+     * Import buildings and automatically generate a repartition for the housing sizes of buildings
+     *
+     * @param buildingBDTopoFile File containing the <b>BDTOPO</b> buildings
+     * @param inseeLogementStat  File containing the INSEE's IRIS enriched with housing statistics
+     * @return A list of ICI's building objects
+     * @throws IOException
+     */
     public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat) throws IOException {
         return importBuilding(buildingBDTopoFile, inseeLogementStat, null);
     }
@@ -90,7 +98,7 @@ public class Building {
                 }
                 makeHousingProbabilities(iris); // we calculate the distribution of housing sizes for that IRIS
                 // iterate on the iris's buildings . We also sort them by their surfaces (might be better to process the smallest building faster)
-                try (SimpleFeatureIterator buildingIt = CollecTransform.sortSFCWithField(CollecTransform.selectIntersectMost(addRatioHousingPerVolume(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures()), (Geometry) iris.getDefaultGeometry()), "RatioLGTVol", false).features()) { //todo that should be the way but it's not working
+                try (SimpleFeatureIterator buildingIt = CollecTransform.sortSFCWithField(CollecTransform.selectIntersectMost(addRatioHousingPerVolume(dsBuilding.getFeatureSource(dsBuilding.getTypeNames()[0]).getFeatures()), (Geometry) iris.getDefaultGeometry()), "RatioLGTVol", false).features()) {
                     while (buildingIt.hasNext()) {
                         SimpleFeature building = buildingIt.next();
                         List<Double> distribBuilding = new ArrayList<>();
@@ -98,9 +106,9 @@ public class Building {
                         // for every buildings that has housings
                         if (nbLgt != null && !(nbLgt.equals("0") || nbLgt.equals("00") || nbLgt.equals(0))) {
                             int count = 0;
-                            int nbStairs = (int) building.getAttribute("NB_ETAGES");
-                            double areaBuilding = ((Geometry) building.getDefaultGeometry()).getArea();
-                            if (apurPOI != null) {// We check if there are big shops
+                            int nbStairs = (int) building.getAttribute("NB_ETAGES") + 1;
+                            double shoppingArea = 0;
+                            if (apurPOI != null) {// We check if there are shops inside the building (and optionally their sizes)
                                 List<SimpleFeature> shops = Arrays.stream(CollecTransform.selectIntersection(dsAPUR.getFeatureSource(dsAPUR.getTypeNames()[0]).getFeatures(), building).toArray(new SimpleFeature[0])).collect(Collectors.toList());
                                 // possibility to get the position of the shop in the building (Cour intérieur, too rare to care)
                                 if (!shops.isEmpty()) {
@@ -108,12 +116,13 @@ public class Building {
                                     for (SimpleFeature shop : shops)
                                         switch ((int) shop.getAttribute("SURF")) {
                                             case 2:
-                                                areaBuilding = areaBuilding - 650;
+                                                shoppingArea = 650;
                                             case 3:
-                                                areaBuilding = areaBuilding - 1000;
+                                                shoppingArea = 1000;
                                         }
                                 }
                             }
+                            double floorArea = nbStairs * ((Geometry) building.getDefaultGeometry()).getArea() - shoppingArea;
                             do {
                                 distribBuilding = new ArrayList<>();
                                 for (int i = 0; i < (int) nbLgt; i++) //for every housing unit, we get a size corresponding to the IRIS's probability
@@ -131,11 +140,11 @@ public class Building {
                                                 System.out.println(("Even with a small distribution, impossible to distribute housing in " + building.getAttribute("ID") + ". Making flat average"));
                                             distribBuilding = new ArrayList<>();
                                             for (int i = 0; i < (int) nbLgt; i++)
-                                                distribBuilding.add(areaBuilding * nbStairs * functionalRatio / (int) nbLgt);
+                                                distribBuilding.add(floorArea * functionalRatio / (int) nbLgt);
                                         }
-                                    } while (isDistribImpossible(distribBuilding, nbStairs, areaBuilding) && countSmall <= 5);
+                                    } while (isDistribImpossible(distribBuilding, floorArea) && countSmall <= 5);
                                 }
-                            } while (isDistribImpossible(distribBuilding, nbStairs, areaBuilding) && count <= 10);
+                            } while (isDistribImpossible(distribBuilding, floorArea) && count <= 10);
                             fitHousingProbabilities(distribBuilding);
                         }
                         lB.add(new Building((String) building.getAttribute("ID"), (String) building.getAttribute("NATURE"),
@@ -147,9 +156,12 @@ public class Building {
                                 distribBuilding,
                                 Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
                     }
-                } catch (Exception problem) {
-                    problem.printStackTrace();
+                } catch (NullPointerException ignore) {
+                    System.out.println("no features for " + iris.getAttribute("NOM_IRIS"));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,56 +190,84 @@ public class Building {
         return result;
     }
 
-    public static void analyseDistribution(List<Building> lb, File inseeLogementStat) throws IOException {
+    public static void analyseDistribution(List<Building> lb, File inseeLogementStat, File outFolder) throws IOException {
         DataStore dsIRIS = CollecMgmt.getDataStore(inseeLogementStat);
+
+        SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
+        try {
+            sfTypeBuilder.setCRS(CRS.decode("EPSG:2154"));
+        } catch (FactoryException e) {
+            e.printStackTrace();
+        }
+        sfTypeBuilder.setName("IRISstat");
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
+        sfTypeBuilder.add("nbSimulatedHousing", Integer.class);
+        sfTypeBuilder.add("nbHousingFromBuilding", Integer.class);
+        sfTypeBuilder.add("nbTotalHousing", Double.class);
+        SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
+        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType);
+        DefaultFeatureCollection irisStat = new DefaultFeatureCollection();
+
         HashMap<String, Object[]> stat = new HashMap<>();
-        String[] fLine = {"IrisName", "totalHousing", "totalHousingSimulated", "inf30sqm", "inf30sqmSimulated",
-                "30_40sqm", "30_40sqmSimulated", "40_60sqm", "40_60sqmSimulated", "60_80sqm", "60_80sqmSimulated", "80_100sqm", "80_100sqmSimulated"
-                , "100_120sqm", "100_120sqmSimulated", "Sup120sqm", "Sup120sqmSimulated"};
+        String[] fLine = {"IrisName", "totalHousing", "totalHousingSimulated", "inf30sqm", "inf30sqmReadjusted", "inf30sqmSimulated",
+                "30_40sqm", "30_40sqmReadjusted", "30_40sqmSimulated", "40_60sqm", "40_60sqmReadjusted", "40_60sqmSimulated", "60_80sqm",
+                "60_80sqmReadjusted", "60_80sqmSimulated", "80_100sqm", "80_100sqmReadjusted", "80_100sqmSimulated", "100_120sqm",
+                "100_120sqmReadjusted", "100_120sqmSimulated", "Sup120sqm", "Sup120sqmReadjusted", "Sup120sqmSimulated"};
         try (SimpleFeatureIterator irisIt = dsIRIS.getFeatureSource(dsIRIS.getTypeNames()[0]).getFeatures().features()) {
             while (irisIt.hasNext()) {
                 SimpleFeature iris = irisIt.next();
-                Object[] line = new Object[16];
+                Object[] line = new Object[23];
                 line[0] = getDoubleFromInseeFormatedString(iris, "P17_LOG");
                 List<Building> lBuildingIris = lb.stream().filter(x -> x.geomBuilding.intersects((Geometry) iris.getDefaultGeometry())).collect(Collectors.toList());
                 line[1] = lBuildingIris.stream().map(x -> (long) x.areaHousingLot.size()).mapToInt(Long::intValue).sum();
                 line[2] = getDoubleFromInseeFormatedString(iris, "P17_RP_M30M2");
-                line[3] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_M30M2")).mapToInt(num -> num).sum();
-                line[4] = getDoubleFromInseeFormatedString(iris, "P17_RP_3040M2");
-                line[5] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_3040M2")).mapToInt(num -> num).sum();
-                line[6] = getDoubleFromInseeFormatedString(iris, "P17_RP_4060M2");
-                line[7] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_4060M2")).mapToInt(num -> num).sum();
-                line[8] = getDoubleFromInseeFormatedString(iris, "P17_RP_6080M2");
-                line[9] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_6080M2")).mapToInt(num -> num).sum();
-                line[10] = getDoubleFromInseeFormatedString(iris, "P17_RP_80100M2");
-                line[11] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_80100M2")).mapToInt(num -> num).sum();
-                line[12] = getDoubleFromInseeFormatedString(iris, "P17_RP_100120M2");
-                line[13] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_100120M2")).mapToInt(num -> num).sum();
-                line[14] = getDoubleFromInseeFormatedString(iris, "P17_RP_120M2P");
-                line[15] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_120M2P")).mapToInt(num -> num).sum();
+                line[3] = getDoubleFromInseeFormatedString(iris, "P17_RP_M30M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[4] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_M30M2")).mapToInt(num -> num).sum();
+                line[5] = getDoubleFromInseeFormatedString(iris, "P17_RP_3040M2");
+                line[6] = getDoubleFromInseeFormatedString(iris, "P17_RP_3040M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[7] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_3040M2")).mapToInt(num -> num).sum();
+                line[8] = getDoubleFromInseeFormatedString(iris, "P17_RP_4060M2");
+                line[9] = getDoubleFromInseeFormatedString(iris, "P17_RP_4060M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[10] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_4060M2")).mapToInt(num -> num).sum();
+                line[11] = getDoubleFromInseeFormatedString(iris, "P17_RP_6080M2");
+                line[12] = getDoubleFromInseeFormatedString(iris, "P17_RP_6080M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[13] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_6080M2")).mapToInt(num -> num).sum();
+                line[14] = getDoubleFromInseeFormatedString(iris, "P17_RP_80100M2");
+                line[15] = getDoubleFromInseeFormatedString(iris, "P17_RP_80100M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[16] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_80100M2")).mapToInt(num -> num).sum();
+                line[17] = getDoubleFromInseeFormatedString(iris, "P17_RP_100120M2");
+                line[18] = getDoubleFromInseeFormatedString(iris, "P17_RP_100120M2") / getPercentageOfPrincipalHouseholds(iris);
+                line[19] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_100120M2")).mapToInt(num -> num).sum();
+                line[20] = getDoubleFromInseeFormatedString(iris, "P17_RP_120M2P");
+                line[21] = getDoubleFromInseeFormatedString(iris, "P17_RP_120M2P") / getPercentageOfPrincipalHouseholds(iris);
+                line[22] = lBuildingIris.stream().map(x -> getHousingsCategorieOfBuilding(x, "RP_120M2P")).mapToInt(num -> num).sum();
                 stat.put((String) iris.getAttribute("NOM_IRIS"), line);
+
+                // generation of an IRIS SFC
+                sfb.set("nbSimulatedHousing", lBuildingIris.stream().map(x -> (long) x.areaHousingLot.size()).mapToInt(Long::intValue).sum());
+                sfb.set("nbTotalHousing", getDoubleFromInseeFormatedString(iris, "P17_LOG"));
+                sfb.set(CollecMgmt.getDefaultGeomName(), iris.getDefaultGeometry());
+                irisStat.add(sfb.buildFeature(Attribute.makeUniqueId()));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Csv.generateCsvFile(stat, new File("/tmp/"), "statBuilding", fLine, false);
+        CollecMgmt.exportSFC(irisStat, new File(outFolder, "IrisStat.gpkg"));
+        Csv.generateCsvFile(stat, outFolder, "statBuilding", fLine, false);
     }
 
     /**
      * Check if the random distribution of housing can fit in the building. A ratio of 0.9 is applied to surface * (nbStairs +1) to represent common parts.
      *
-     * @param list         distribution of average size of housing units.
-     * @param nbStairs     number of stairs
-     * @param buildingArea foot area of building
+     * @param list      distribution of average size of housing units.
+     * @param floorArea Area of floors used for housing purposes
      * @return true if the number of housing units can fit
      */
-    public static boolean isDistribImpossible(List<Double> list, int nbStairs, double buildingArea) {
+    public static boolean isDistribImpossible(List<Double> list, double floorArea) {
         if (list.isEmpty())
             return true;
-        double sumDistribution = 0;
-        for (double f : list)
-            sumDistribution = sumDistribution + f;
-        return !(sumDistribution < nbStairs * buildingArea * functionalRatio);
+        return list.stream().mapToDouble(n -> n).sum() > floorArea * functionalRatio;
     }
 
     public static int getHousingsCategorieOfBuilding(Building b, String housingCategory) {
