@@ -3,8 +3,8 @@ library(dplyr)
 library(tidyr)
 library(sf)
 
-pathOutGraph <- "/home/mc/Nextcloud/boulot/inria/privee/presentations/presentation24fev/graph/BuildingWithCorrection/"
-pathData <- "/home/mc/Nextcloud/boulot/inria/ICIproject/donnees/"
+pathOutGraph <- ""
+pathData <- ""
 
 # generation of comparison map between INSEE and IGN data
 library(cartography)
@@ -13,6 +13,8 @@ irisStat$diffSimCount <- irisStat$nbSimulatedHousing - irisStat$nbTotalHousing
 colors <- carto.pal(pal1 = "green.pal",n1= 3, pal2="red.pal", n2=3, transparency = TRUE)
 choroLayer(x = irisStat , var = "diffSimCount", method = "jenks", nclass = 6, col = colors, legend.pos = "right", legend.values.rnd = 0
            , legend.title.txt = "Difference entre le nombre de logements\ndes bâtiments provenant de l'IGN et\nles logements par IRIS de l'INSEE",legend.title.cex = 0.55, legend.values.cex= 0.45, legend.horiz = FALSE )
+
+
 
 
 # generation of comparison graph between classes 
