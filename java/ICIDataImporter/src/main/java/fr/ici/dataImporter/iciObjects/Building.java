@@ -7,6 +7,7 @@ import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecTransform;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.geom.Polygons;
 import fr.ign.artiscales.tools.io.Csv;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -37,12 +38,12 @@ public class Building {
     String ID, nature, usage1, usage2;
     boolean light;
     double height, area;
-    int nbStairs, nbLgt;
+    int nbFloor, nbLgt, nbWorkingPlace, nbPOI;
     List<String> idPOI, idWorkingPlaces, idEntrances;
     List<Double> areaHousingLot;
     Polygon geomBuilding;
 
-    public Building(String ID, String nature, String usage1, String usage2, boolean light, double height, double area, int nbStairs, int nbLgt, List<Double> areaHousingLot, Polygon geom) {
+    public Building(String ID, String nature, String usage1, String usage2, boolean light, double height, double area, int nbStairs, int nbLgt, List<Double> areaHousingLot, int nbWorkingPlace, int nbPOI, Polygon geom) {
         this.ID = ID;
         this.nature = nature;
         this.usage1 = usage1;
@@ -50,22 +51,84 @@ public class Building {
         this.light = light;
         this.height = height;
         this.area = area;
-        this.nbStairs = nbStairs;
+        this.nbFloor = nbStairs;
         this.nbLgt = nbLgt;
         this.geomBuilding = geom;
         this.areaHousingLot = areaHousingLot;
+        this.nbWorkingPlace = nbWorkingPlace;
+        this.nbPOI = nbPOI;
     }
 
     public static void main(String[] args) throws Exception {
 //        DEBUG = true;
-        File rootFolder = Util.getRootFolder();
-        List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"));
-        exportBuildings(lb, new File(rootFolder, "ICI/building.gpkg"));
-        analyseDistribution(lb, new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "ICI/"));
+//        File rootFolder = Util.getRootFolder();
+//        List<Building> lb = importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"), new File(rootFolder,"INSEE/POI/SIRENE-WorkingPlace.gpkg"), new File(rootFolder,"ICI/POI.gpkg"));
+//        exportBuildings(lb, new File(rootFolder, "ICI/building.gpkg"));
+//        analyseDistribution(lb, new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "ICI/"));
+        roomLeftRobustness();
     }
 
-    static File exportBuildings(List<Building> lB, File fileOut) throws IOException {
-        return CollecMgmt.exportSFC(lB.stream().map(Building::generateSimpleFeature).collect(Collectors.toCollection(DefaultFeatureCollection::new)).collection(), fileOut);
+
+    static void roomLeftRobustness() throws IOException {
+        File rootFolder = Util.getRootFolder();
+        List<List<Building>> llBuilding = new ArrayList<>();
+        int repl = 50;
+        for (int i = 0 ; i < repl ; i++)
+            llBuilding.add(importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"), null, null));
+        //export one
+        exportBuildings(llBuilding.get(0), new File("/tmp/exBuilding"));
+        //flat collection
+        HashMap<String,List<Double>> distribBuilding = new HashMap<>();
+        for (List<Building> lb : llBuilding){
+            for (Building b : lb){
+                List<Double> tmp = new ArrayList<>();
+                if (distribBuilding.containsKey(b.ID))
+                    tmp.addAll(distribBuilding.get(b.ID));
+                tmp.add(b.getRoomLeft());
+                distribBuilding.put(b.ID,tmp);
+            }
+        }
+
+        //export
+        SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
+        try {
+            sfTypeBuilder.setCRS(CRS.decode("EPSG:2154"));
+        } catch (FactoryException e) {
+            e.printStackTrace();
+        }
+        sfTypeBuilder.setName("BuildingRobustness");
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
+        sfTypeBuilder.add("ID", String.class);
+        sfTypeBuilder.add("vals", String.class);
+        sfTypeBuilder.add("variationCoefficient", Double.class);
+        SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
+        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType);
+        DefaultFeatureCollection result = new DefaultFeatureCollection();
+        for (String id : distribBuilding.keySet()){
+            List<Double> values = distribBuilding.get(id);
+            DescriptiveStatistics ds = new DescriptiveStatistics();
+            for (double d: values)
+                ds.addValue(d);
+            sfb.set("variationCoefficient",ds.getStandardDeviation() / ds.getMean());
+
+            Geometry g = null;
+            double fval = 0;
+            for (Building b : llBuilding.get(0))
+                if( b.ID.equals(id)) {
+                    g = b.geomBuilding;
+                    fval = b.getRoomLeft();
+                    break;
+                }
+            sfb.set("ID",id);
+            sfb.set("vals", Arrays.stream(ds.getValues()).mapToObj(x -> String.valueOf(Math.round(x))).collect(Collectors.joining(",")));
+            sfb.set(CollecMgmt.getDefaultGeomName(),g);
+            result.add(sfb.buildFeature(Attribute.makeUniqueId()));
+        }
+        CollecMgmt.exportSFC(result, new File("/tmp/bVar.gpkg"));
+    }
+    static void exportBuildings(List<Building> lB, File fileOut) throws IOException {
+        CollecMgmt.exportSFC(lB.stream().map(Building::generateSimpleFeature).collect(Collectors.toCollection(DefaultFeatureCollection::new)).collection(), fileOut);
     }
 
     /**
@@ -74,19 +137,37 @@ public class Building {
      * @param buildingBDTopoFile File containing the <b>BDTOPO</b> buildings
      * @param inseeLogementStat  File containing the INSEE's IRIS enriched with housing statistics
      * @return A list of ICI's building objects
-     * @throws IOException
+     * @throws IOException reading data
      */
     public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat) throws IOException {
-        return importBuilding(buildingBDTopoFile, inseeLogementStat, null);
+        return importBuilding(buildingBDTopoFile, inseeLogementStat, null, null, null);
     }
 
-    public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat, File apurPOI) throws IOException {
+    /**
+     * Import buildings and automatically generate a repartition for the housing sizes of buildings.
+     * Adjust with optional manual census of shops. Optionally count working places and POIs.
+     *
+     * @param buildingBDTopoFile File containing the <b>BDTOPO</b> buildings
+     * @param inseeLogementStat  File containing the INSEE's IRIS enriched with housing statistics
+     * @param apurPOI file containing shops (must have a <b>SURF</b> attribute which gives information about them sizes)
+     * @param poiFile file containing POI to be counted
+     * @param workingPlacesFile file containing working places to be counted
+     * @return A list of ICI's building objects
+     * @throws IOException reading data
+     */
+    public static List<Building> importBuilding(File buildingBDTopoFile, File inseeLogementStat, File apurPOI, File workingPlacesFile, File poiFile) throws IOException {
         // for every IRIS
         DataStore dsIRIS = CollecMgmt.getDataStore(inseeLogementStat);
         DataStore dsBuilding = CollecMgmt.getDataStore(buildingBDTopoFile);
         DataStore dsAPUR = null;
         if (apurPOI != null)
             dsAPUR = CollecMgmt.getDataStore(apurPOI);
+        DataStore dsWP = null;
+        if (workingPlacesFile != null)
+            dsWP = CollecMgmt.getDataStore(workingPlacesFile);
+        DataStore dsPOI = null;
+        if (poiFile != null)
+            dsPOI = CollecMgmt.getDataStore(poiFile);
         List<Building> lB = new ArrayList<>();
         try (SimpleFeatureIterator irisIt = dsIRIS.getFeatureSource(dsIRIS.getTypeNames()[0]).getFeatures().features()) {
             while (irisIt.hasNext()) {
@@ -116,9 +197,9 @@ public class Building {
                                     for (SimpleFeature shop : shops)
                                         switch ((int) shop.getAttribute("SURF")) {
                                             case 2:
-                                                shoppingArea = 650;
+                                                shoppingArea = shoppingArea + 650;
                                             case 3:
-                                                shoppingArea = 1000;
+                                                shoppingArea = shoppingArea + 1000;
                                         }
                                 }
                             }
@@ -147,14 +228,24 @@ public class Building {
                             } while (isDistribImpossible(distribBuilding, floorArea) && count <= 10);
                             fitHousingProbabilities(distribBuilding);
                         }
+
+                        // Calculation of number of Working Places
+                        int nbWorkingPlace = 0;
+                        if (workingPlacesFile != null)
+                            nbWorkingPlace = CollecTransform.selectIntersection(dsWP.getFeatureSource(dsWP.getTypeNames()[0]).getFeatures(), building).size();
+
+                        // Calculation of number of POI
+                        int nbPOI = 0;
+                        if (poiFile != null)
+                            nbPOI = CollecTransform.selectIntersection(dsPOI.getFeatureSource(dsPOI.getTypeNames()[0]).getFeatures(), building).size();
+
                         lB.add(new Building((String) building.getAttribute("ID"), (String) building.getAttribute("NATURE"),
                                 (String) building.getAttribute("USAGE1"), (String) building.getAttribute("USAGE2"),
                                 building.getAttribute("LEGER").equals("OUI"), (double) building.getAttribute("HAUTEUR"),
                                 ((Geometry) building.getDefaultGeometry()).getArea(),
-                                building.getAttribute("NB_ETAGES") == null ? 0 : (Integer) building.getAttribute("NB_ETAGES"),
+                                building.getAttribute("NB_ETAGES") == null ? 0 : (Integer) building.getAttribute("NB_ETAGES") + 1,
                                 building.getAttribute("NB_LOGTS") == null ? 0 : (Integer) building.getAttribute("NB_LOGTS"),
-                                distribBuilding,
-                                Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
+                                distribBuilding,nbWorkingPlace,nbPOI, Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
                     }
                 } catch (NullPointerException ignore) {
                     System.out.println("no features for " + iris.getAttribute("NOM_IRIS"));
@@ -169,6 +260,10 @@ public class Building {
         dsBuilding.dispose();
         if (apurPOI != null)
             dsAPUR.dispose();
+        if (workingPlacesFile != null)
+            dsWP.dispose();
+        if (poiFile != null)
+            dsPOI.dispose();
         dsIRIS.dispose();
         return lB;
     }
@@ -203,7 +298,6 @@ public class Building {
         sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Polygon.class);
         sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
         sfTypeBuilder.add("nbSimulatedHousing", Integer.class);
-        sfTypeBuilder.add("nbHousingFromBuilding", Integer.class);
         sfTypeBuilder.add("nbTotalHousing", Double.class);
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType);
@@ -309,7 +403,7 @@ public class Building {
     }
 
     /**
-     * substract
+     * substract affected housings ad recalculate housing probability
      *
      * @param changes values that has been set and needs to be removed from the propability of size affection
      */
@@ -412,11 +506,13 @@ public class Building {
         sfTypeBuilder.add("light", Boolean.class);
         sfTypeBuilder.add("height", Double.class);
         sfTypeBuilder.add("area", Double.class);
-        sfTypeBuilder.add("nbStairs", Integer.class);
+        sfTypeBuilder.add("nbFloors", Integer.class);
         sfTypeBuilder.add("nbLgt", Integer.class);
         sfTypeBuilder.add("idsPOI", String.class);
-        sfTypeBuilder.add("idsWorkingPlaces", String.class);
-        sfTypeBuilder.add("idsEntrances", String.class);
+        sfTypeBuilder.add("idsWorkingPlace", String.class);
+        sfTypeBuilder.add("idsEntrance", String.class);
+        sfTypeBuilder.add("nbPOI", Integer.class);
+        sfTypeBuilder.add("nbWorkingPlace", Integer.class);
         sfTypeBuilder.add("nbHousingInf30sqm", Integer.class);
         sfTypeBuilder.add("nbHousing3040sqm", Integer.class);
         sfTypeBuilder.add("nbHousing4060sqm", Integer.class);
@@ -446,8 +542,8 @@ public class Building {
 
     public double getRoomLeft() {
         if (nbLgt == 0)
-            return 0;
-        return functionalRatio * geomBuilding.getArea() * nbStairs - areaHousingLot.stream().mapToDouble(map -> map).sum();
+            return functionalRatio * geomBuilding.getArea() * nbFloor;
+        return functionalRatio * geomBuilding.getArea() * nbFloor - areaHousingLot.stream().mapToDouble(map -> map).sum();
     }
 
     public SimpleFeature generateSimpleFeature() {
@@ -460,11 +556,13 @@ public class Building {
         sfb.set("light", light);
         sfb.set("height", height);
         sfb.set("area", area);
-        sfb.set("nbStairs", nbStairs);
+        sfb.set("nbFloors", nbFloor);
         sfb.set("nbLgt", nbLgt);
         sfb.set("idsPOI", idPOI);
-        sfb.set("idsWorkingPlaces", idWorkingPlaces);
-        sfb.set("idsEntrances", idEntrances);
+        sfb.set("idsWorkingPlace", idWorkingPlaces);
+        sfb.set("idsEntrance", idEntrances);
+        sfb.set("nbWorkingPlace", nbWorkingPlace);
+        sfb.set("nbPOI", nbPOI);
         sfb.set("nbHousingInf30sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_M30M2"));
         sfb.set("nbHousing3040sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_3040M2"));
         sfb.set("nbHousing4060sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_4060M2"));
