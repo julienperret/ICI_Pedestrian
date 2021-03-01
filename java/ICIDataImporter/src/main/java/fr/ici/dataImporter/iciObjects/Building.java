@@ -31,11 +31,13 @@ import java.util.stream.Collectors;
 /**
  * Building integration in the ICI project.
  */
-public class Building {
+public class Building extends ICIObject {
     static double[] probabilitiesBuildingSize;
     static double functionalRatio = 0.85;
     static boolean DEBUG;
-    String ID, nature, usage1, usage2;
+
+
+    String nature, usage1, usage2;
     boolean light;
     double height, area;
     int nbFloor, nbLgt, nbWorkingPlace, nbPOI;
@@ -68,24 +70,27 @@ public class Building {
         roomLeftRobustness();
     }
 
-
+    /**
+     * Calculate the robustness of the roomLeft value
+     * @throws IOException
+     */
     static void roomLeftRobustness() throws IOException {
         File rootFolder = Util.getRootFolder();
         List<List<Building>> llBuilding = new ArrayList<>();
         int repl = 50;
-        for (int i = 0 ; i < repl ; i++)
+        for (int i = 0; i < repl; i++)
             llBuilding.add(importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg"), new File(rootFolder, "paris/APUR/commercesVeme.gpkg"), null, null));
         //export one
         exportBuildings(llBuilding.get(0), new File("/tmp/exBuilding"));
         //flat collection
-        HashMap<String,List<Double>> distribBuilding = new HashMap<>();
-        for (List<Building> lb : llBuilding){
-            for (Building b : lb){
+        HashMap<String, List<Double>> distribBuilding = new HashMap<>();
+        for (List<Building> lb : llBuilding) {
+            for (Building b : lb) {
                 List<Double> tmp = new ArrayList<>();
                 if (distribBuilding.containsKey(b.ID))
                     tmp.addAll(distribBuilding.get(b.ID));
                 tmp.add(b.getRoomLeft());
-                distribBuilding.put(b.ID,tmp);
+                distribBuilding.put(b.ID, tmp);
             }
         }
 
@@ -105,34 +110,83 @@ public class Building {
         SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType);
         DefaultFeatureCollection result = new DefaultFeatureCollection();
-        for (String id : distribBuilding.keySet()){
+        for (String id : distribBuilding.keySet()) {
             List<Double> values = distribBuilding.get(id);
             DescriptiveStatistics ds = new DescriptiveStatistics();
-            for (double d: values)
+            for (double d : values)
                 ds.addValue(d);
-            sfb.set("variationCoefficient",ds.getStandardDeviation() / ds.getMean());
+            sfb.set("variationCoefficient", ds.getStandardDeviation() / ds.getMean());
 
             Geometry g = null;
-            double fval = 0;
             for (Building b : llBuilding.get(0))
-                if( b.ID.equals(id)) {
+                if (b.ID.equals(id)) {
                     g = b.geomBuilding;
-                    fval = b.getRoomLeft();
                     break;
                 }
-            sfb.set("ID",id);
+            sfb.set("ID", id);
             sfb.set("vals", Arrays.stream(ds.getValues()).mapToObj(x -> String.valueOf(Math.round(x))).collect(Collectors.joining(",")));
-            sfb.set(CollecMgmt.getDefaultGeomName(),g);
+            sfb.set(CollecMgmt.getDefaultGeomName(), g);
             result.add(sfb.buildFeature(Attribute.makeUniqueId()));
         }
         CollecMgmt.exportSFC(result, new File("/tmp/bVar.gpkg"));
     }
+
     static void exportBuildings(List<Building> lB, File fileOut) throws IOException {
         CollecMgmt.exportSFC(lB.stream().map(Building::generateSimpleFeature).collect(Collectors.toCollection(DefaultFeatureCollection::new)).collection(), fileOut);
     }
 
+    public List<Double> getAreaHousingLot() {
+        return areaHousingLot;
+    }
+
     /**
      * Import buildings and automatically generate a repartition for the housing sizes of buildings
+     *
+     * @param buildingICI containing the <b>BDTOPO</b> buildings
+     * @return A list of ICI's building objects
+     * @throws IOException reading data
+     */
+    public static List<Building> importBuilding(File buildingICI) throws IOException {
+        DataStore ds = CollecMgmt.getDataStore(buildingICI);
+        List<Building> lB = new ArrayList<>();
+        try (SimpleFeatureIterator bIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
+            while (bIt.hasNext()) {
+                SimpleFeature building = bIt.next();
+                lB.add(new Building((String) building.getAttribute("ID"), (String) building.getAttribute("nature"),
+                        (String) building.getAttribute("usage1"), (String) building.getAttribute("usage2"),
+                        ((int) building.getAttribute("light"))==0 ? false : true, (double) building.getAttribute("height"),
+                        (double) building.getAttribute("area"), (int) building.getAttribute("nbFloors"), (int) building.getAttribute("nbLgt"),
+                        generateListDistribHousing(building), (int) building.getAttribute("nbWorkingPlace"), (int) building.getAttribute("nbPOI"),
+                        Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ds.dispose();
+        return lB;
+    }
+
+    private static List<Double> generateListDistribHousing(SimpleFeature b) {
+        List<Double> distribBuilding = new ArrayList<>();
+        for (int i = 0; i < (int) b.getAttribute("nbHousingInf30sqm"); i++)
+            distribBuilding.add(19d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousing3040sqm"); i++)
+            distribBuilding.add(35d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousing4060sqm"); i++)
+            distribBuilding.add(50d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousing6080sqm"); i++)
+            distribBuilding.add(70d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousing80100sqm"); i++)
+            distribBuilding.add(90d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousing100120sqm"); i++)
+            distribBuilding.add(110d);
+        for (int i = 0; i < (int) b.getAttribute("nbHousingSup120sqm"); i++)
+            distribBuilding.add(140d);
+        return distribBuilding;
+    }
+
+    /**
+     * Import ICI buildings from IGN BDTOPO buildings and automatically generate a repartition for the housing sizes of buildings
      *
      * @param buildingBDTopoFile File containing the <b>BDTOPO</b> buildings
      * @param inseeLogementStat  File containing the INSEE's IRIS enriched with housing statistics
@@ -144,14 +198,14 @@ public class Building {
     }
 
     /**
-     * Import buildings and automatically generate a repartition for the housing sizes of buildings.
+     * Import ICI buildings from IGN BDTOPO buildings and automatically generate a repartition for the housing sizes of buildings.
      * Adjust with optional manual census of shops. Optionally count working places and POIs.
      *
      * @param buildingBDTopoFile File containing the <b>BDTOPO</b> buildings
      * @param inseeLogementStat  File containing the INSEE's IRIS enriched with housing statistics
-     * @param apurPOI file containing shops (must have a <b>SURF</b> attribute which gives information about them sizes)
-     * @param poiFile file containing POI to be counted
-     * @param workingPlacesFile file containing working places to be counted
+     * @param apurPOI            file containing shops (must have a <b>SURF</b> attribute which gives information about them sizes)
+     * @param poiFile            file containing POI to be counted
+     * @param workingPlacesFile  file containing working places to be counted
      * @return A list of ICI's building objects
      * @throws IOException reading data
      */
@@ -245,7 +299,7 @@ public class Building {
                                 ((Geometry) building.getDefaultGeometry()).getArea(),
                                 building.getAttribute("NB_ETAGES") == null ? 0 : (Integer) building.getAttribute("NB_ETAGES") + 1,
                                 building.getAttribute("NB_LOGTS") == null ? 0 : (Integer) building.getAttribute("NB_LOGTS"),
-                                distribBuilding,nbWorkingPlace,nbPOI, Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
+                                distribBuilding, nbWorkingPlace, nbPOI, Polygons.getPolygon((Geometry) building.getDefaultGeometry())));
                     }
                 } catch (NullPointerException ignore) {
                     System.out.println("no features for " + iris.getAttribute("NOM_IRIS"));
@@ -572,5 +626,9 @@ public class Building {
         sfb.set("nbHousingSup120sqm", getHousingsCategorieOfBuilding(areaHousingLot, "RP_120M2P"));
         sfb.set("roomLeft", getRoomLeft());
         return sfb.buildFeature(Attribute.makeUniqueId());
+    }
+
+    public Polygon getGeomBuilding() {
+        return geomBuilding;
     }
 }

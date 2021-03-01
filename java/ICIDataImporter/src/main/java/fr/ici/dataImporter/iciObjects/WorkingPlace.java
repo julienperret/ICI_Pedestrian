@@ -1,5 +1,7 @@
-package fr.ici.dataImporter.insee;
+package fr.ici.dataImporter.iciObjects;
 
+import fr.ici.dataImporter.insee.SireneEntry;
+import fr.ici.dataImporter.insee.SireneImport;
 import fr.ici.dataImporter.util.Geocode;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
@@ -18,14 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 
-public class SireneWorkingPlace extends SireneEntry {
+public class WorkingPlace extends SireneEntry {
 
-    public SireneWorkingPlace() {
+    public WorkingPlace() {
         super();
     }
 
-    public SireneWorkingPlace(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
-                              String denominationUniteLegale, String siret, String trancheEffectifsEtablissement) throws IOException {
+    public WorkingPlace(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
+                        String denominationUniteLegale, String siret, String trancheEffectifsEtablissement) throws IOException {
         super("WorkingPlace", nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, denominationUniteLegale, siret, trancheEffectifsEtablissement);
         makeClassement();
     }

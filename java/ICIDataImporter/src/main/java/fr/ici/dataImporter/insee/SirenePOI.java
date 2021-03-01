@@ -70,6 +70,8 @@ public class SirenePOI extends SireneEntry {
     }
 
     public static int generateAttendanceCode(String attendance) {
+        if (attendance == null)
+            return 0;
         switch (attendance) {
             case "veryLow":
                 return 1;

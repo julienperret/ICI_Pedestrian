@@ -2,7 +2,10 @@ package fr.ici.dataImporter.iciObjects;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import fr.ici.dataImporter.insee.BpePOI;
 import fr.ici.dataImporter.insee.SirenePOI;
+import fr.ici.dataImporter.osm.OsmPOI;
+import fr.ici.dataImporter.paris.ApurPOI;
 import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.io.Csv;
 

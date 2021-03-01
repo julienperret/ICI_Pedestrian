@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.opencsv.CSVReader;
+import fr.ici.dataImporter.iciObjects.WorkingPlace;
 import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
 import fr.ign.artiscales.tools.io.Csv;
@@ -114,7 +115,7 @@ public class SireneImport {
         if ("POI".equals(entryType)) {
             fline = (new SirenePOI()).getCSVFirstLine();
         } else { // Working place
-            fline = (new SireneWorkingPlace()).getCSVFirstLine();
+            fline = (new WorkingPlace()).getCSVFirstLine();
         }
         HashMap<String, String[]> out = new HashMap<>();
         while (!parser.isClosed()) {
@@ -192,7 +193,7 @@ public class SireneImport {
 						entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationUniteLegale,
 								siret, trancheEffectifsEtablissement);
 					} else { //Working place
-						entry = new SireneWorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
+						entry = new WorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
 								denominationUniteLegale, siret, trancheEffectifsEtablissement);
 					}
 					if (entry.isValid()) {

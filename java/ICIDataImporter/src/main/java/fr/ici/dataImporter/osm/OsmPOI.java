@@ -1,5 +1,6 @@
-package fr.ici.dataImporter.iciObjects;
+package fr.ici.dataImporter.osm;
 
+import fr.ici.dataImporter.iciObjects.POI;
 import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;

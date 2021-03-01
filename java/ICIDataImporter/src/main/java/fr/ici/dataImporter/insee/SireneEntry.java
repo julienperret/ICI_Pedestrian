@@ -13,9 +13,9 @@ import java.util.jar.Attributes;
 
 public abstract class SireneEntry extends POI {
 
-    static GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-    String siret, trancheEffectifsEtablissementReadable, trancheEffectifsEtablissement, resteOuvertArrete0314, resteOuvertArrete1030;
-    boolean valid = true;
+    protected static GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
+    protected String siret, trancheEffectifsEtablissementReadable, trancheEffectifsEtablissement, resteOuvertArrete0314, resteOuvertArrete1030;
+    protected boolean valid = true;
 
     public SireneEntry(String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode,
                        String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement) throws InvalidPropertiesFormatException {
@@ -37,13 +37,9 @@ public abstract class SireneEntry extends POI {
                        String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement, Point p) throws InvalidPropertiesFormatException {
         super(type + "-" + Attribute.makeUniqueId(),nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
         this.p = p;
-        this.nAddress = nAddress;
         completeAddress[0] = nAddress;
-        this.address = address;
         completeAddress[2] = address;
-        this.typeRoad = typeRoad;
         completeAddress[1] = typeRoad;
-        this.codePos = codePos;
         completeAddress[3] = codePos;
         this.siret = siret;
         this.trancheEffectifsEtablissementReadable = transformWorkforce(trancheEffectifsEtablissement, true);

@@ -1,10 +1,14 @@
 package fr.ici.dataImporter.iciObjects;
 
 import com.opencsv.CSVReader;
+import fr.ici.dataImporter.insee.BpePOI;
 import fr.ici.dataImporter.insee.SirenePOI;
+import fr.ici.dataImporter.osm.OsmPOI;
+import fr.ici.dataImporter.paris.ApurPOI;
 import fr.ici.dataImporter.util.Util;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -29,29 +33,18 @@ import java.util.stream.Collectors;
 /**
  * General class for point of interest in the ICI project
  */
-public class POI {
-    public String idICI, openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciTypeName, nomenclature, name;
+public class POI extends ICIObject {
+    public String openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciTypeName, nomenclature, name;
     public int attendanceIndice;
     public String[] completeAddress = new String[4];
     public String[] idBuilding;
     public Point p;
+    public double potentialArea;
 
 
-    public static void main(String[] args) throws IOException {
-        File rootFolder = Util.getRootFolder();
-        List<POI> lPOI = new ArrayList<>();
-        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
-        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
-        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
-        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
-        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"),new File(rootFolder, "INSEE/IRIS-logements.gpkg")));
-        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
-        exportHighAttendancePOI(lPOI,  new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
-    }
-
-    public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
+    public POI(String ID, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
                String amenityIciTypeName, String nomenclature, Point p) {
-        this.idICI = idICI;
+        this.ID = ID;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -63,9 +56,9 @@ public class POI {
         this.p = p;
     }
 
-    public POI(String idICI, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
+    public POI(String ID, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
                String amenityIciTypeName, String nomenclature, String name) {
-        this.idICI = idICI;
+        this.ID = ID;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -77,8 +70,8 @@ public class POI {
         this.name = name;
     }
 
-    public POI(String idICI, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String openingHour, Point p) {
-        this.idICI = idICI;
+    public POI(String ID, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String openingHour, Point p) {
+        this.ID = ID;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -92,8 +85,8 @@ public class POI {
         this.p = p;
     }
 
-    public POI(String idICI, String codeIRIS, String amenityCode, String amenityName, String amenityIciTypeName, String nomenclature, String name, Point p) {
-        this.idICI = idICI;
+    public POI(String ID, String codeIRIS, String amenityCode, String amenityName, String amenityIciTypeName, String nomenclature, String name, Point p) {
+        this.ID = ID;
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
         this.amenitySourceName = amenityName;
@@ -106,8 +99,8 @@ public class POI {
     public POI() {
     }
 
-    public POI(String idICI, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
-        this.idICI = idICI;
+    public POI(String ID, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
+        this.ID = ID;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
@@ -121,6 +114,51 @@ public class POI {
         this.attendanceIndice = SirenePOI.generateAttendanceCode(attendance);
         this.openingHour = openingHour;
         this.p = pt;
+    }
+
+//    public static void main(String[] args) throws IOException {
+//        File rootFolder = Util.getRootFolder();
+//        List<POI> lPOI = importPOIFromUsualSources(rootFolder);
+//        exportListPOI(lPOI, new File(rootFolder, "ICI/POI.gpkg"));
+//        exportHighAttendancePOI(lPOI, new File(rootFolder, "ICI/POIHighAttendance.gpkg"));
+//    }
+
+    /**
+     * Import POI from an already generated file (loose the OSM's capacity attribute).
+     *
+     * @param poiFile the geo file exported with the {@link #exportListPOI(List, File)}} method.
+     * @return a fist of {@link POI} objects
+     * @throws IOException
+     */
+    public static List<POI> importPOI(File poiFile) throws IOException {
+        DataStore ds = CollecMgmt.getDataStore(poiFile);
+        List<POI> lPOI = new ArrayList<>();
+        try (SimpleFeatureIterator poiIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
+            while (poiIt.hasNext()) {
+                SimpleFeature poi = poiIt.next();
+                lPOI.add(new POI((String) poi.getAttribute("idICI"), (String) poi.getAttribute("address"),
+                        (String) poi.getAttribute("nAddress"), (String) poi.getAttribute("typeRoad"),
+                        (String) poi.getAttribute("codeIRIS"), (String) poi.getAttribute("amenityCode"),
+                        (String) poi.getAttribute("amenitySourceName"), (String) poi.getAttribute("amenityIciTypeName"),
+                        (String) poi.getAttribute("nomenclature"), (String) poi.getAttribute("name"),
+                        (String) poi.getAttribute("attendance"), (String) poi.getAttribute("openingHour"),
+                        (Point) poi.getDefaultGeometry()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ds.dispose();
+        return lPOI;
+    }
+
+    public static List<POI> importPOIFromUsualSources(File rootFolder) throws IOException {
+        List<POI> lPOI = new ArrayList<>();
+        lPOI.addAll(SirenePOI.importSirenePOIEntry(new File(rootFolder, "INSEE/POI/SIRENE-POI.gpkg")));
+        lPOI.addAll(OsmPOI.importOsmPOI(new File(rootFolder, "OSM/OSMamenities.gpkg")));
+        lPOI.addAll(BpePOI.importBpePOI(new File(rootFolder, "INSEE/POI/bpe19Coded-Veme.gpkg")));
+        lPOI.addAll(ApurPOI.importApurPOI(new File(rootFolder, "paris/APUR/commercesVeme.gpkg")));
+        lPOI = delDouble(lPOI, Building.importBuilding(new File(rootFolder, "IGN/batVeme.gpkg"), new File(rootFolder, "INSEE/IRIS-logements.gpkg")));
+        return lPOI;
     }
 
     /**
@@ -209,6 +247,7 @@ public class POI {
 
     /**
      * Merge POI that should be alike. Different rules regarding their sources.
+     *
      * @param lToMerge
      * @return
      */
@@ -292,6 +331,7 @@ public class POI {
 
     /**
      * Put POI in type categories regarding to the ICI type.
+     *
      * @param lPOI
      * @return
      */
@@ -344,7 +384,7 @@ public class POI {
     @Override
     public String toString() {
         return "POI{" +
-                "idICI='" + idICI + '\'' +
+                "idICI='" + ID + '\'' +
                 ", openingHour='" + openingHour + '\'' +
                 ", attendance='" + attendance + '\'' +
                 ", attendanceIndice='" + attendanceIndice + '\'' +
@@ -366,7 +406,7 @@ public class POI {
     public SimpleFeature generateSF() {
         SimpleFeatureBuilder sfb = getPOISFB();
         sfb.set(CollecMgmt.getDefaultGeomName(), p);
-        sfb.set("idICI", idICI);
+        sfb.set("idICI", ID);
         sfb.set("nAddress", nAddress);
         sfb.set("address", address);
         sfb.set("typeRoad", typeRoad);
