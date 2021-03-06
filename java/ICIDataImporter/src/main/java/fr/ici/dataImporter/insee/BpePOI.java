@@ -12,14 +12,13 @@ import fr.ici.dataImporter.util.Util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 public class BpePOI extends POI {
 
     public static File nomenclatureFile = new File(Util.getRootFolder(), "INSEE/descriptif/BPE/BPE-varTYPEQU.csv");
 
-    public BpePOI(String codeIRIS, String amenityCode, String amenityName, Point p) throws InvalidPropertiesFormatException {
+    public BpePOI(String codeIRIS, String amenityCode, String amenityName, Point p) {
         super("POI-"+ Attribute.makeUniqueId(),codeIRIS.replace("_", ""), amenityCode, amenityName, getIciAmenity(amenityCode, "BPE"), "BPE", null, p);
     }
 

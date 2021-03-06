@@ -5,6 +5,7 @@ import fr.ici.dataImporter.insee.SireneImport;
 import fr.ici.dataImporter.util.Geocode;
 import fr.ign.artiscales.tools.geoToolsFunctions.Attribute;
 import fr.ign.artiscales.tools.geoToolsFunctions.vectors.collec.CollecMgmt;
+import org.geotools.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -18,7 +19,8 @@ import org.opengis.referencing.FactoryException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.InvalidPropertiesFormatException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkingPlace extends SireneEntry {
 
@@ -27,9 +29,48 @@ public class WorkingPlace extends SireneEntry {
     }
 
     public WorkingPlace(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
-                        String denominationUniteLegale, String siret, String trancheEffectifsEtablissement) throws IOException {
-        super("WorkingPlace", nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, denominationUniteLegale, siret, trancheEffectifsEtablissement);
+                        String denominationUniteLegale, String siret, String workforceNormalized) throws IOException {
+        super("WorkingPlace", nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, denominationUniteLegale, siret, workforceNormalized);
         makeClassement();
+    }
+    public WorkingPlace(String ID, String address,
+                       String nAddress,String typeRoad,String codePos,String amenityCode,String amenityTypeNameSource,String amenityTypeNameICI,
+                       String    nomenclature,   String name ,String siret, String workforce,String workforceNormalized, String  rstOuv0314,String rstOuv1030,
+                       Point p){
+        super(ID,"WorkingPlace",address,nAddress, typeRoad, codePos, amenityCode, amenityTypeNameSource, amenityTypeNameICI,
+                nomenclature, name , siret, workforce, workforceNormalized, p);
+            this.resteOuvertArrete0314 = rstOuv0314;
+            this.resteOuvertArrete1030 = rstOuv1030;
+    }
+
+    /**
+     * Import WorkingPlace objects from an already generated file.
+     *
+     * @param poiFile the geo file exported with the {@link #exportListPOI(List, File)}} method.
+     * @return a fist of {@link POI} objects
+     * @throws IOException from getDataStore
+     */
+    public static List<WorkingPlace> importWorkingPlace(File poiFile) throws IOException {
+        DataStore ds = CollecMgmt.getDataStore(poiFile);
+        List<WorkingPlace> lPOI = new ArrayList<>();
+        try (SimpleFeatureIterator poiIt = ds.getFeatureSource(ds.getTypeNames()[0]).getFeatures().features()) {
+            while (poiIt.hasNext()) {
+                SimpleFeature poi = poiIt.next();
+                lPOI.add(new WorkingPlace((String) poi.getAttribute("ID"), (String) poi.getAttribute("address"),
+                        (String) poi.getAttribute("nAddress"), (String) poi.getAttribute("typeRoad"),
+                        (String) poi.getAttribute("codePos"), (String) poi.getAttribute("amenityCode"),
+                        (String) poi.getAttribute("amenityTypeNameSource"), (String) poi.getAttribute("amenityTypeNameICI"),
+                        (String) poi.getAttribute("nomenclature"),(String) poi.getAttribute("name"),(String) poi.getAttribute("siret"),
+                        (String) poi.getAttribute("workforce"),(String) poi.getAttribute("workforceNormalized"),
+                        (String) poi.getAttribute("rstOuv0314"),(String) poi.getAttribute("rstOuv1030"),
+                        (Point) poi.getDefaultGeometry()) {
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ds.dispose();
+        return lPOI;
     }
 
     private static String getAmenitySourceName(String amenityCode, String nomenclature) throws IOException {
@@ -97,34 +138,34 @@ public class WorkingPlace extends SireneEntry {
         switch (nomenclature) {
             case "NAFRev2":
                 String[] classement = SireneImport.classSIRENEEntryNAFRev2(amenityCode, new File("src/main/resources/NAFRev2.csv"));
-                amenitySourceName = classement[3];
+                amenityTypeNameSource = classement[3];
                 resteOuvertArrete0314 = classement[4];
                 resteOuvertArrete1030 = classement[5];
                 break;
             case "NAF1993":
-                amenitySourceName = SireneImport.classSIRENEEntryNAF1993(amenityCode, false, new File("src/main/resources/NAF93and03.csv"))[3];
+                amenityTypeNameSource = SireneImport.classSIRENEEntryNAF1993(amenityCode, false, new File("src/main/resources/NAF93and03.csv"))[3];
                 break;
             case "NAFRev1":
-                amenitySourceName = SireneImport.classSIRENEEntryNAF1993(amenityCode, true, new File("src/main/resources/NAF93and03.csv"))[3];
+                amenityTypeNameSource = SireneImport.classSIRENEEntryNAF1993(amenityCode, true, new File("src/main/resources/NAF93and03.csv"))[3];
                 break;
             case "null":
             case "NAP":
-                amenitySourceName = SireneImport.classSIRENEEntryNAP(amenityCode, new File("src/main/resources/NAP.csv"))[3];
+                amenityTypeNameSource = SireneImport.classSIRENEEntryNAP(amenityCode, new File("src/main/resources/NAP.csv"))[3];
                 break;
         }
-        if (amenitySourceName == null || amenitySourceName.equals("") || amenitySourceName.equalsIgnoreCase("null"))
+        if (amenityTypeNameSource == null || amenityTypeNameSource.equals("") || amenityTypeNameSource.equalsIgnoreCase("null"))
             valid = false;
     }
 
     public boolean equals(String[] line) {
         return line[0].equals(siret) && line[1].equals(nAddress) && line[2].equals(typeRoad) && line[3].equals(address) && line[4].equals(codePos)
-                && line[9].equals(trancheEffectifsEtablissementReadable);
+                && line[9].equals(workforce);
     }
 
     @Override
     public String[] getLineForCSV() {
-        return new String[]{siret, nAddress, typeRoad, address, codePos, amenitySourceName, amenityCode, nomenclature, name,
-                trancheEffectifsEtablissementReadable, resteOuvertArrete0314, resteOuvertArrete1030};
+        return new String[]{siret, nAddress, typeRoad, address, codePos, amenityTypeNameSource, amenityCode, nomenclature, name,
+                workforce, resteOuvertArrete0314, resteOuvertArrete1030};
     }
 
     public String[] getCSVFirstLine() {
@@ -143,17 +184,20 @@ public class WorkingPlace extends SireneEntry {
         sfTypeBuilder.setName("SireneWorkingPlace");
         sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
         sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
-        sfTypeBuilder.add("nAdresse", String.class);
-        sfTypeBuilder.add("adresse", String.class);
-        sfTypeBuilder.add("typeVoie", String.class);
+        sfTypeBuilder.add("ID", String.class);
+        sfTypeBuilder.add("nAddress", String.class);
+        sfTypeBuilder.add("address", String.class);
+        sfTypeBuilder.add("typeRoad", String.class);
         sfTypeBuilder.add("codePos", String.class);
-        sfTypeBuilder.add("amenity", String.class);
+        sfTypeBuilder.add("amenityTypeNameSource", String.class);
+        sfTypeBuilder.add("amenityTypeNameICI", String.class);
         sfTypeBuilder.add("amenityCode", String.class);
         sfTypeBuilder.add("amenityCodeNormalized", Float.class);
+        sfTypeBuilder.add("nomenclature", String.class);
         sfTypeBuilder.add("name", String.class);
         sfTypeBuilder.add("siret", String.class);
         sfTypeBuilder.add("workforce", String.class);
-        sfTypeBuilder.add("workforceNormalized", Integer.class);
+        sfTypeBuilder.add("workforceNormalized", String.class);
         sfTypeBuilder.add("scoreGeocode", Double.class);
         sfTypeBuilder.add("rstOuv0314", String.class);
         sfTypeBuilder.add("rstOuv1030", String.class);
@@ -173,17 +217,20 @@ public class WorkingPlace extends SireneEntry {
             } catch (NullPointerException np) {
                 sfb.set(CollecMgmt.getDefaultGeomName(), gf.createPoint(new Coordinate(0, 0)));
             }
-            sfb.set("nAdresse", nAddress);
-            sfb.set("adresse", address);
-            sfb.set("typeVoie", typeRoad);
+            sfb.set("ID", this.getID());
+            sfb.set("nAddress", nAddress);
+            sfb.set("address", address);
+            sfb.set("typeRoad", typeRoad);
             sfb.set("codePos", codePos);
-            sfb.set("amenity", amenitySourceName);
+            sfb.set("amenityTypeNameSource", amenityTypeNameSource);
+            sfb.set("amenityTypeNameICI", amenityTypeNameICI);
             sfb.set("amenityCode", amenityCode);
             sfb.set("amenityCodeNormalized", normalizeCodeAmenity(amenityCode));
+            sfb.set("nomenclature", nomenclature);
             sfb.set("name", name);
             sfb.set("siret", siret);
-            sfb.set("workforce", trancheEffectifsEtablissementReadable);
-            sfb.set("workforceNormalized", trancheEffectifsEtablissement);
+            sfb.set("workforce", workforce);
+            sfb.set("workforceNormalized", workforceNormalized);
             sfb.set("scoreGeocode", Double.valueOf(geocode[0]));
             sfb.set("rstOuv0314", resteOuvertArrete0314);
             sfb.set("rstOuv1030", resteOuvertArrete0314);
@@ -192,5 +239,8 @@ public class WorkingPlace extends SireneEntry {
             e.printStackTrace();
             return sfb.buildFeature(Attribute.makeUniqueId());
         }
+    }
+    public String getWorkforce(){
+        return this.workforce;
     }
 }

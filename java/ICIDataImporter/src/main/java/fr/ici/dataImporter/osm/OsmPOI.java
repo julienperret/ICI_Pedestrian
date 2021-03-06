@@ -13,8 +13,8 @@ import org.opengis.feature.simple.SimpleFeature;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * OpenStreetMap point of interest. types are gotten from the https://geodatamine.fr/ project
@@ -23,7 +23,7 @@ public class OsmPOI extends POI {
     public static File nomenclatureFile = new File(Util.getRootFolder(), "OSM/nomenclatureOSM.csv");
     public String capacity, outdoor;
 
-    public OsmPOI(String nAddress, String address, String typeRoad, String postCode, String amenityName, String name, Point p, String capacity, String openingHour, String outdoor) throws InvalidPropertiesFormatException {
+    public OsmPOI(String nAddress, String address, String typeRoad, String postCode, String amenityName, String name, Point p, String capacity, String openingHour, String outdoor) {
         super("POI-" + Attribute.makeUniqueId(), nAddress, address, typeRoad, postCode, amenityName, amenityName, getIciAmenity(amenityName, "OSM"), "OSM", name, openingHour, p);
         this.capacity = capacity;
         this.outdoor = outdoor;
@@ -38,8 +38,8 @@ public class OsmPOI extends POI {
      * import a list of OSM POI from a file. Can be used on an overpass dump or on single geodatamine dump.
      *
      * @param osmPOIFile the dump from OSM
-     * @return
-     * @throws IOException
+     * @return a {@link List} of {@link OsmPOI}
+     * @throws IOException from CollecMgmt.getDataStore()
      */
     public static List<OsmPOI> importOsmPOI(File osmPOIFile) throws IOException {
         DataStore ds = CollecMgmt.getDataStore(osmPOIFile);
@@ -74,14 +74,14 @@ public class OsmPOI extends POI {
     /**
      * import a list of OSM POI from an geodatamine dump
      *
-     * @param osmFolderOutput
-     * @return
-     * @throws IOException
+     * @param osmFolderOutput folder where the geodatamine dump has been stored. Every geo files from the set type will be imported.
+     * @return a {@link List} of processed {@link OsmPOI}
+     * @throws IOException from importOsmPOI
      */
     public static List<OsmPOI> importOsmPOIGeoDataMine(File osmFolderOutput) throws IOException {
         List<OsmPOI> lB = new ArrayList<>();
-        for (File f : osmFolderOutput.listFiles())
-            if(f.getName().endsWith(".gpkg"))
+        for (File f : Objects.requireNonNull(osmFolderOutput.listFiles()))
+            if(f.getName().endsWith(CollecMgmt.getDefaultGISFileType()))
                 lB.addAll(importOsmPOI(f));
         return lB;
     }

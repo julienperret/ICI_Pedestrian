@@ -1,10 +1,13 @@
 package fr.ici.dataImporter.iciObjects;
 
 public class ICIObject {
-    String ID;
+    String ID, type;
 
     public String getID() {
         return ID;
+    }
+    public String getType() {
+        return type;
     }
 
     public String toString() {

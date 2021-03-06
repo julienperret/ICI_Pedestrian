@@ -33,7 +33,7 @@ public class SirenePOI extends SireneEntry {
 
     public SirenePOI(String nAdresse, String adresse, String typeVoie, String codePos, String amenityCode, String nomenclature,
                      String name, String siret, String trancheEffectifsUniteLegale) throws IOException {
-        super("POI",nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenitySourceName(amenityCode, nomenclature), nomenclature, name, siret, trancheEffectifsUniteLegale);
+        super("POI",nAdresse, adresse, typeVoie, codePos, amenityCode, getAmenityTypeFromNAFs(amenityCode, nomenclature), nomenclature, name, siret, trancheEffectifsUniteLegale);
         makeClassement();
         if (this.isValid())
             this.attendance = generateAttendance(trancheEffectifsUniteLegale, amenityCode);
@@ -154,7 +154,7 @@ public class SirenePOI extends SireneEntry {
         throw new InvalidPropertiesFormatException("SirenePOI.generateAttendance: haven't found correspondences for " + amenityCode + " and ratio " + ratio + " and tranche effectif " + trancheEffectifs);
     }
 
-    public static String getAmenitySourceName(String amenityCode, String nomenclature) throws IOException {
+    public static String getAmenityTypeFromNAFs(String amenityCode, String nomenclature) throws IOException {
         switch (nomenclature) {
             case "NAFRev2":
                 return SireneImport.classSIRENEEntryNAFRev2(amenityCode, new File("src/main/resources/NAFRev2POI.csv"))[3];
@@ -260,8 +260,8 @@ public class SirenePOI extends SireneEntry {
         sfb.set("nomenclatr", nomenclature);
         sfb.set("name", name);
         sfb.set("siret", siret);
-        sfb.set("workforce", trancheEffectifsEtablissementReadable);
-        sfb.set("workforceNormalized", trancheEffectifsEtablissement);
+        sfb.set("workforce", workforce);
+        sfb.set("workforceNormalized", workforceNormalized);
         sfb.set("type", classement[0]);
         sfb.set("categorie", classement[1]);
         sfb.set("frequence", classement[2]);
@@ -281,18 +281,18 @@ public class SirenePOI extends SireneEntry {
         if (!valid)
             return null;
         return new String[]{siret, nAddress, typeRoad, address, codePos, amenityCode, classement[3], nomenclature, classement[0], classement[1],
-                classement[2], trancheEffectifsEtablissementReadable, name, classement[4], classement[5]};
+                classement[2], workforce, name, classement[4], classement[5]};
     }
 
     public boolean equals(SirenePOI in) {
         return in.getnAdresse().equals(nAddress) && in.getTypeVoie().equals(typeRoad) && in.getAdresse().equals(address)
                 && in.getCodePos().equals(codePos) && in.getClassement()[1].equals(classement[1])
-                && in.getTrancheEffectifsUniteLegale().equals(trancheEffectifsEtablissementReadable) && in.getSiren().equals(siret);
+                && in.getTrancheEffectifsUniteLegale().equals(workforce) && in.getSiren().equals(siret);
     }
 
     public boolean equals(String[] line) {
         return line[1].equals(nAddress) && line[2].equals(typeRoad) && line[3].equals(address) && line[4].equals(codePos)
-                && line[9].equals(classement[1]) && line[0].equals(siret) && line[11].equals(trancheEffectifsEtablissementReadable);
+                && line[9].equals(classement[1]) && line[0].equals(siret) && line[11].equals(workforce);
     }
 
     public String getnAdresse() {
@@ -336,11 +336,11 @@ public class SirenePOI extends SireneEntry {
     }
 
     public String getTrancheEffectifsUniteLegale() {
-        return trancheEffectifsEtablissementReadable;
+        return workforce;
     }
 
     public void setTrancheEffectifsUniteLegale(String trancheEffectifsUniteLegale) {
-        this.trancheEffectifsEtablissementReadable = trancheEffectifsUniteLegale;
+        this.workforce = trancheEffectifsUniteLegale;
     }
 
     public String[] getClassement() {

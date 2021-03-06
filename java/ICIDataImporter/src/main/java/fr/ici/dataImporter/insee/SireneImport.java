@@ -26,14 +26,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class SireneImport {
     static boolean append = false;
     static Timer timer = new Timer();
+
     public SireneImport() {
     }
 
@@ -53,16 +56,16 @@ public class SireneImport {
         // Step 2: Apply the pretreatments to the generated files. Put the total number of files on this next variable (last file should not contain anything)
         ////////////////
         int nbFile = 42;
-//		for (int i = 0; i <= nbFile; i++) {
-//			parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "POI/"), "WorkingPlace");
-//			System.out.println("done : file" + i);
-//		}
+		for (int i = 0; i <= nbFile; i++) {
+			parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "ICI/"), "WorkingPlace");
+			System.out.println("done : file" + i);
+		}
         append = false;
         System.out.println("done working places");
-        for (int i = 0; i <= nbFile; i++) {
-            parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "POI/"), "POI");
-            System.out.println("done : file" + i);
-        }
+//        for (int i = 0; i <= nbFile; i++) {
+//            parseSireneEntry(new File(rootFolder, "POI/sireneAPIOut/sirene" + i + ".json"), new File(rootFolder, "POI/"), "POI");
+//            System.out.println("done : file" + i);
+//        }
     }
 
     public static String getSIRENEData(String curseur, File outFile) throws IOException, URISyntaxException {
@@ -97,7 +100,8 @@ public class SireneImport {
         return Json.getHeaderJson(f).get("curseurSuivant");
     }
 
-    public static void parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException {
+    public static List<SireneEntry> parseSireneEntry(File jSON, File folderOut, String entryType) throws IOException {
+        List<SireneEntry> lSireneEntry = new ArrayList<>();
         // Logger logger = Logging.getLogger("org.geotools.feature.DefaultFeatureCollection");
         // logger.setLevel(Level.SEVERE);
         DefaultFeatureCollection result = new DefaultFeatureCollection();
@@ -189,21 +193,22 @@ public class SireneImport {
                     denominationUniteLegale = denominationUsuelle1UniteLegale;
                 SireneEntry entry;
                 if (SireneEntry.isActive(etatAdministratifEtablissement) && (dateFin.equals("") || dateFin.equals("null"))) {
-					if ("POI".equals(entryType)) {
-						entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationUniteLegale,
-								siret, trancheEffectifsEtablissement);
-					} else { //Working place
-						entry = new WorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
-								denominationUniteLegale, siret, trancheEffectifsEtablissement);
-					}
-					if (entry.isValid()) {
-						// Geopackage export
-						result.add(entry.generateSimpleFeature());
-						// CSV export
-						String[] l = entry.getLineForCSV();
-						out.put(siret + "-" + count++, l);
-					}
-				}
+                    if ("POI".equals(entryType))
+                        entry = new SirenePOI(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature, denominationUniteLegale,
+                                siret, trancheEffectifsEtablissement);
+                    else  //Working place
+                        entry = new WorkingPlace(nAdresse, adresse, typeVoie, codePos, codeAmeniteEtablissement, nomenclature,
+                                denominationUniteLegale, siret, trancheEffectifsEtablissement);
+                    if (entry.isValid()) {
+                        // Geopackage export
+                        result.add(entry.generateSimpleFeature());
+                        // add in list
+                        lSireneEntry.add(entry);
+                        // CSV export
+                        String[] l = entry.getLineForCSV();
+                        out.put(siret + "-" + count++, l);
+                    }
+                }
             }
             if (token == JsonToken.END_ARRAY && arrayStarted) {
                 // flush
@@ -224,6 +229,7 @@ public class SireneImport {
         if (!append)
             append = true;
         CollecMgmt.exportSFC(result, geomFile);
+        return lSireneEntry;
     }
 
     public static String[] classSIRENEEntryNAF1993(String amen, boolean revised, File modele) throws IOException {

@@ -9,41 +9,52 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.opengis.feature.simple.SimpleFeature;
 
 import java.util.InvalidPropertiesFormatException;
-import java.util.jar.Attributes;
 
 public abstract class SireneEntry extends POI {
 
     protected static GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
-    protected String siret, trancheEffectifsEtablissementReadable, trancheEffectifsEtablissement, resteOuvertArrete0314, resteOuvertArrete1030;
+    protected String siret, workforce, workforceNormalized, resteOuvertArrete0314, resteOuvertArrete1030;
     protected boolean valid = true;
 
     public SireneEntry(String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode,
-                       String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement) throws InvalidPropertiesFormatException {
-        super(type + "-" + Attribute.makeUniqueId(), nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
-        this.nAddress = nAddress;
+                       String amenityName, String nomenclature, String name, String siret, String workforceNormalized) throws InvalidPropertiesFormatException {
+        super(type + "-" + Attribute.makeUniqueId(),type, nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
         completeAddress[0] = nAddress;
-        this.address = address;
         completeAddress[2] = address;
-        this.typeRoad = typeRoad;
         completeAddress[1] = typeRoad;
-        this.codePos = codePos;
         completeAddress[3] = codePos;
         this.siret = siret;
-        this.trancheEffectifsEtablissementReadable = transformWorkforce(trancheEffectifsEtablissement,true);
-        this.trancheEffectifsEtablissement =  transformWorkforce(trancheEffectifsEtablissement,false);
+        this.workforce = transformWorkforce(workforceNormalized, true);
+        this.workforceNormalized = transformWorkforce(workforceNormalized, false);
     }
 
     public SireneEntry(String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode,
-                       String amenityName, String nomenclature, String name, String siret, String trancheEffectifsEtablissement, Point p) throws InvalidPropertiesFormatException {
-        super(type + "-" + Attribute.makeUniqueId(),nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
+                       String amenityName, String nomenclature, String name, String siret, String workforceNormalized, Point p) throws InvalidPropertiesFormatException {
+        super(type + "-" + Attribute.makeUniqueId(),type, nAddress, address, typeRoad, codePos, amenityCode, amenityName, getIciAmenity(amenityCode, "SIRENE"), nomenclature, name);
         this.p = p;
         completeAddress[0] = nAddress;
         completeAddress[2] = address;
         completeAddress[1] = typeRoad;
         completeAddress[3] = codePos;
         this.siret = siret;
-        this.trancheEffectifsEtablissementReadable = transformWorkforce(trancheEffectifsEtablissement, true);
-        this.trancheEffectifsEtablissement =  transformWorkforce(trancheEffectifsEtablissement,false);
+        this.workforce = transformWorkforce(workforceNormalized, true);
+        this.workforceNormalized = transformWorkforce(workforceNormalized, false);
+    }
+
+    /**
+     * Constructor for an already constructed & exported object
+     */
+    public SireneEntry(String ID,String type, String address, String nAddress, String typeRoad, String codePos, String amenityCode, String amenityTypeNameSource, String amenityTypeNameICI,
+                       String nomenclature, String name, String siret, String workforce, String workforceNormalized, Point p) {
+        super(ID,type, nAddress, address, typeRoad, codePos, amenityCode, amenityTypeNameSource, amenityTypeNameICI, nomenclature, name);
+        this.p = p;
+        completeAddress[0] = nAddress;
+        completeAddress[2] = address;
+        completeAddress[1] = typeRoad;
+        completeAddress[3] = codePos;
+        this.siret = siret;
+        this.workforce = workforce;
+        this.workforceNormalized = workforceNormalized;
     }
 
     public SireneEntry() {
@@ -62,8 +73,9 @@ public abstract class SireneEntry extends POI {
 
     /**
      * Workforce value is normalize in SIRENE data. Make those categories human readable.
+     *
      * @param workforceCode the corresponding code
-     * @param readable if true, return the string in a readable way (bounds of people). If false, parse it to a castable int
+     * @param readable      if true, return the string in a readable way (bounds of people). If false, parse it to a castable int
      * @return the slice of workforce corresponding to the code
      */
     public static String transformWorkforce(String workforceCode, boolean readable) {
@@ -76,8 +88,8 @@ public abstract class SireneEntry extends POI {
                     return "0";
                 default:
                     return workforceCode.replaceFirst("^0+(?!$)", "");
-        }
-            else {
+            }
+        else {
             switch (workforceCode) {
                 case "":
                 case "null":
@@ -121,12 +133,13 @@ public abstract class SireneEntry extends POI {
 
     /**
      * In NAF ranking, ranks can have a letter as a last character that specifies their type. Remove if if exists and convert into a float for normalization
+     *
      * @param codeAmenity NAF code of the amenity
      * @return a proper float code
      */
-    public static float normalizeCodeAmenity(String codeAmenity){
-        if (!Character.isDigit(codeAmenity.charAt(codeAmenity.length()-1)))
-            codeAmenity = codeAmenity.substring(0, codeAmenity.length()-1);
+    public static float normalizeCodeAmenity(String codeAmenity) {
+        if (!Character.isDigit(codeAmenity.charAt(codeAmenity.length() - 1)))
+            codeAmenity = codeAmenity.substring(0, codeAmenity.length() - 1);
         return Float.parseFloat(codeAmenity);
     }
 
@@ -136,12 +149,14 @@ public abstract class SireneEntry extends POI {
 
     public abstract String[] getLineForCSV();
 
+    public abstract boolean equals(String[] line);
+
+    public abstract String[] getCSVFirstLine();
+
     public boolean isValid() {
         return valid;
     }
 
-    public abstract boolean equals(String[] line);
 
-    public abstract String[] getCSVFirstLine();
 
 }

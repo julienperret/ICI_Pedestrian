@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * General class for point of interest in the ICI project
  */
 public class POI extends ICIObject {
-    public String openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenitySourceName, amenityIciTypeName, nomenclature, name;
+    public String openingHour, attendance, nAddress, address, typeRoad, codePos, codeIRIS, amenityCode, amenityTypeNameSource, amenityTypeNameICI, nomenclature, name;
     public int attendanceIndice;
     public String[] completeAddress = new String[4];
     public String[] idBuilding;
@@ -42,55 +42,57 @@ public class POI extends ICIObject {
     public double potentialArea;
 
 
-    public POI(String ID, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
-               String amenityIciTypeName, String nomenclature, Point p) {
+    public POI(String ID, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenityTypeNameSource, String amenityTypeNameICI, String nomenclature, Point p) {
         this.ID = ID;
+        this.type = "POI";
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
         this.codePos = codePos;
         this.amenityCode = amenityCode;
-        this.amenitySourceName = amenitySourceName;
-        this.amenityIciTypeName = amenityIciTypeName;
+        this.amenityTypeNameSource = amenityTypeNameSource;
+        this.amenityTypeNameICI = amenityTypeNameICI;
         this.nomenclature = nomenclature;
         this.p = p;
     }
 
-    public POI(String ID, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenitySourceName,
-               String amenityIciTypeName, String nomenclature, String name) {
+    public POI(String ID, String type, String nAddress, String address, String typeRoad, String codePos, String amenityCode, String amenityTypeNameSource, String amenityTypeNameICI, String nomenclature, String name) {
         this.ID = ID;
+        this.type = type;
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
         this.codePos = codePos;
         this.amenityCode = amenityCode;
-        this.amenitySourceName = amenitySourceName;
-        this.amenityIciTypeName = amenityIciTypeName;
+        this.amenityTypeNameSource = amenityTypeNameSource;
+        this.amenityTypeNameICI = amenityTypeNameICI;
         this.nomenclature = nomenclature;
         this.name = name;
     }
 
-    public POI(String ID, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String openingHour, Point p) {
+    public POI(String ID, String nAddress, String address, String typeRoad, String codeIRIS, String amenityCode, String amenityTypeNameSource, String amenityTypeNameICI, String nomenclature, String name, String openingHour, Point p) {
         this.ID = ID;
+        this.type = "POI";
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
-        this.amenitySourceName = amenitySourceName;
-        this.amenityIciTypeName = amenityIciTypeName;
+        this.amenityTypeNameSource = amenityTypeNameSource;
+        this.amenityTypeNameICI = amenityTypeNameICI;
         this.nomenclature = nomenclature;
         this.name = name;
         this.openingHour = openingHour;
         this.p = p;
     }
 
-    public POI(String ID, String codeIRIS, String amenityCode, String amenityName, String amenityIciTypeName, String nomenclature, String name, Point p) {
+    public POI(String ID, String codeIRIS, String amenityCode, String amenityName, String amenityTypeNameICI, String nomenclature, String name, Point p) {
         this.ID = ID;
+        this.type = "POI";
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
-        this.amenitySourceName = amenityName;
-        this.amenityIciTypeName = amenityIciTypeName;
+        this.amenityTypeNameSource = amenityName;
+        this.amenityTypeNameICI = amenityTypeNameICI;
         this.nomenclature = nomenclature;
         this.name = name;
         this.p = p;
@@ -99,15 +101,16 @@ public class POI extends ICIObject {
     public POI() {
     }
 
-    public POI(String ID, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenitySourceName, String amenityIciTypeName, String nomenclature, String name, String attendance, String openingHour, Point pt) {
+    public POI(String ID, String address, String nAddress, String typeRoad, String codeIRIS, String amenityCode, String amenityTypeNameSource, String amenityTypeNameICI, String nomenclature, String name, String attendance, String openingHour, Point pt) {
         this.ID = ID;
+        this.type = "POI";
         this.address = address;
         this.nAddress = nAddress;
         this.typeRoad = typeRoad;
         this.codeIRIS = codeIRIS;
         this.amenityCode = amenityCode;
-        this.amenitySourceName = amenitySourceName;
-        this.amenityIciTypeName = amenityIciTypeName;
+        this.amenityTypeNameSource = amenityTypeNameSource;
+        this.amenityTypeNameICI = amenityTypeNameICI;
         this.nomenclature = nomenclature;
         this.name = name;
         this.attendance = attendance;
@@ -274,9 +277,9 @@ public class POI extends ICIObject {
                 typeRoad.delete(0, typeRoad.length()).append(p.typeRoad);
                 codeIRIS.delete(0, codeIRIS.length()).append(p.codeIRIS);
                 amenityCode.append("_Apur:").append(p.amenityCode);
-                amenitySourceName.append("_Apur:").append(p.amenitySourceName);
+                amenitySourceName.append("_Apur:").append(p.amenityTypeNameSource);
                 attendance.append("_Apur:").append(p.attendance);
-                amenityIciName.delete(0, amenityIciName.length()).append(p.amenityIciTypeName);
+                amenityIciName.delete(0, amenityIciName.length()).append(p.amenityTypeNameICI);
                 nomenclature.append("_Apur:").append(p.nomenclature);
                 pt = p.p;
             }
@@ -287,13 +290,13 @@ public class POI extends ICIObject {
                     nAddress.append(p.nAddress);
                     typeRoad.append(p.typeRoad);
                     codeIRIS.append(p.typeRoad);
-                    amenityIciName.append(p.amenityIciTypeName);
+                    amenityIciName.append(p.amenityTypeNameICI);
                 }
                 if (pt == null)
                     pt = p.p;
                 nomenclature.append("_Bpe:").append(p.nomenclature);
                 amenityCode.append("_Bpe:").append(p.amenityCode);
-                amenitySourceName.append("_Bpe:").append(p.amenitySourceName);
+                amenitySourceName.append("_Bpe:").append(p.amenityTypeNameSource);
             }
             if (p instanceof OsmPOI) {
                 // TODO add attendance in OsmPOI but almost null everytime
@@ -302,7 +305,7 @@ public class POI extends ICIObject {
                 if (name.length() == 0)
                     name.append(p.name);
                 if (amenityIciName.length() == 0)
-                    amenityIciName.append(p.amenityIciTypeName);
+                    amenityIciName.append(p.amenityTypeNameICI);
                 if (pt == null)
                     pt = p.p;
                 nomenclature.append("_Osm:").append(p.nomenclature);
@@ -314,13 +317,13 @@ public class POI extends ICIObject {
                     nAddress.append(p.nAddress);
                     typeRoad.append(p.typeRoad);
                     codeIRIS.append(p.typeRoad);
-                    amenityIciName.append(p.amenityIciTypeName);
+                    amenityIciName.append(p.amenityTypeNameICI);
                 }
                 if (pt == null)
                     pt = p.p;
                 nomenclature.append("_Sirene:").append(p.nomenclature);
                 amenityCode.append("_Sirene:").append(p.amenityCode);
-                amenitySourceName.append("_Sirene:").append(p.amenitySourceName);
+                amenitySourceName.append("_Sirene:").append(p.amenityTypeNameSource);
                 attendance.append("_Sirene:").append(p.attendance);
                 name.append(p.name);
             }
@@ -339,12 +342,12 @@ public class POI extends ICIObject {
         HashMap<String, List<POI>> result = new HashMap<>();
         for (POI poi : lPOI) {
             List<POI> tmp;
-            if (result.get(poi.amenityIciTypeName) != null)
-                tmp = result.get(poi.amenityIciTypeName);
+            if (result.get(poi.amenityTypeNameICI) != null)
+                tmp = result.get(poi.amenityTypeNameICI);
             else
                 tmp = new ArrayList<>();
             tmp.add(poi);
-            result.put(poi.amenityIciTypeName, tmp);
+            result.put(poi.amenityTypeNameICI, tmp);
         }
         return result;
     }
@@ -394,8 +397,8 @@ public class POI extends ICIObject {
                 ", codePos='" + codePos + '\'' +
                 ", codeIRIS='" + codeIRIS + '\'' +
                 ", amenityCode='" + amenityCode + '\'' +
-                ", amenitySourceName='" + amenitySourceName + '\'' +
-                ", amenityIciName='" + amenityIciTypeName + '\'' +
+                ", amenitySourceName='" + amenityTypeNameSource + '\'' +
+                ", amenityIciName='" + amenityTypeNameICI + '\'' +
                 ", nomenclature='" + nomenclature + '\'' +
                 ", name='" + name + '\'' +
                 ", idBuilding=" + Arrays.toString(idBuilding) +
@@ -412,8 +415,8 @@ public class POI extends ICIObject {
         sfb.set("typeRoad", typeRoad);
         sfb.set("codeIRIS", codePos);
         sfb.set("amenityCode", amenityCode);
-        sfb.set("amenitySourceName", amenitySourceName);
-        sfb.set("amenityIciName", amenityIciTypeName);
+        sfb.set("amenitySourceName", amenityTypeNameSource);
+        sfb.set("amenityIciName", amenityTypeNameICI);
         sfb.set("nomenclature", nomenclature);
         sfb.set("name", name);
         sfb.set("attendance", attendance);

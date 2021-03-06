@@ -12,26 +12,29 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.FilterFactory2;
-import org.w3c.dom.Attr;
+import org.opengis.referencing.FactoryException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 public class Address extends ICIObject {
-    int number,irisCode;
+    int number, irisCode;
     String suffix, nameStreet, typ_loc, source;
     Point geom;
 
     public Address(int number, String suffix, String nameStreet, int irisCode, String typ_loc, String source, Point geom) {
-        this.ID = "ADDRESS"+ Attribute.makeUniqueId();
+        this.ID = "ADDRESS" + Attribute.makeUniqueId();
+        this.type = "ADDRESS";
         this.number = number;
         this.suffix = suffix;
         this.nameStreet = nameStreet;
@@ -141,7 +144,7 @@ public class Address extends ICIObject {
                 if (addressDoubled.size() == 1)
                     result.add(aT);
                 else {
-                    result.add(CollecTransform.unionAttributesOfAPoint(addressDoubled, StatisticOperation.SUM, Arrays.asList("IDsBuilding")));
+                    result.add(CollecTransform.unionAttributesOfAPoint(addressDoubled, StatisticOperation.SUM, Collections.singletonList("IDsBuilding")));
                     fids.add((String) aT.getAttribute("id_ban_adresse"));
                 }
             }
@@ -162,7 +165,6 @@ public class Address extends ICIObject {
         return addresses.subCollection(ff.like(ff.property("typ_loc"), "entrance"));
     }
 
-
     private static SimpleFeatureCollection affectMethodToAffection(String method, SimpleFeatureCollection addressesSFC, SimpleFeatureBuilder addressBuilder, SimpleFeature building, String[] demoColl) throws InvalidPropertiesFormatException {
         switch (method) {
             case "ID":
@@ -177,7 +179,6 @@ public class Address extends ICIObject {
         throw new InvalidPropertiesFormatException("affectMethodToAffection : method " + method + " not implemented");
 
     }
-
 
     /**
      * Affect the ID of buildings (from ICI objects) to the closest address(es).
@@ -324,7 +325,7 @@ public class Address extends ICIObject {
      * @param addressSFC Collection of address
      * @param demoColl   optional array of fields to add
      * @return the builder with the address's schema + wanted schema
-     * @throws InvalidPropertiesFormatException
+     * @throws InvalidPropertiesFormatException If method of affection not found
      */
     public static SimpleFeatureBuilder getSFBforAffection(String method, SimpleFeatureCollection addressSFC, String[] demoColl) throws InvalidPropertiesFormatException {
         switch (method) {
@@ -338,5 +339,49 @@ public class Address extends ICIObject {
                 return Schemas.addColsToSFB(addressSFC, demoColl, Integer.class);
         }
         throw new InvalidPropertiesFormatException("getSFBforAffection : method " + method + " not implemented");
+    }
+
+    private static SimpleFeatureBuilder getAddressSFB() {
+        SimpleFeatureTypeBuilder sfTypeBuilder = new SimpleFeatureTypeBuilder();
+        try {
+            sfTypeBuilder.setCRS(CRS.decode(Schemas.getEpsg()));
+        } catch (FactoryException e) {
+            e.printStackTrace();
+        }
+        sfTypeBuilder.setName("WalkableTile");
+        sfTypeBuilder.add(CollecMgmt.getDefaultGeomName(), Point.class);
+        sfTypeBuilder.setDefaultGeometry(CollecMgmt.getDefaultGeomName());
+        sfTypeBuilder.add("ID", String.class);
+        sfTypeBuilder.add("type", String.class);
+        sfTypeBuilder.add("number", Integer.class);
+        sfTypeBuilder.add("suffix", String.class);
+        sfTypeBuilder.add("nameStreet", String.class);
+        sfTypeBuilder.add("irisCode", Integer.class);
+        sfTypeBuilder.add("typ_loc", String.class);
+        sfTypeBuilder.add("source", String.class);
+        SimpleFeatureType featureType = sfTypeBuilder.buildFeatureType();
+        return new SimpleFeatureBuilder(featureType);
+    }
+
+    public String getNameStreet() {
+        return nameStreet;
+    }
+
+    public Point getGeom() {
+        return geom;
+    }
+
+    public SimpleFeature getAddressSF() {
+        SimpleFeatureBuilder sfb = getAddressSFB();
+        sfb.set("ID", ID);
+        sfb.set("type", type);
+        sfb.set("number", number);
+        sfb.set("suffix", suffix);
+        sfb.set("nameStreet", nameStreet);
+        sfb.set("irisCode", irisCode);
+        sfb.set("typ_loc", typ_loc);
+        sfb.set("source", source);
+        sfb.set(CollecMgmt.getDefaultGeomName(), geom);
+        return sfb.buildFeature(Attribute.makeUniqueId());
     }
 }

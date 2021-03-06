@@ -47,6 +47,7 @@ public class Building extends ICIObject {
 
     public Building(String ID, String nature, String usage1, String usage2, boolean light, double height, double area, int nbStairs, int nbLgt, List<Double> areaHousingLot, int nbWorkingPlace, int nbPOI, Polygon geom) {
         this.ID = ID;
+        this.type = "BUILDING";
         this.nature = nature;
         this.usage1 = usage1;
         this.usage2 = usage2;
